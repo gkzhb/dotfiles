@@ -1,7 +1,10 @@
+" vim: set fdm=marker: 
+
 " Plugin Settings
 set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 filetype off
 
+" {{{1 Plugins
 call plug#begin()
 
 " color theme
@@ -77,6 +80,7 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
 " Plug 'leafOfTree/vim-vue-plugin' " vue
 
+" {{{2 coc extensions
 """"""""""""""""
 " coc extensions
 """"""""""""""""
@@ -100,26 +104,25 @@ Plug 'neoclide/coc-vetur', {'do': 'yarn install --frozen-lockfile'} " vue
 Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install --frozen-lockfile'}
 Plug 'josa42/coc-sh', {'do': 'yarn install --frozen-lockfile'}
 
+" }}}
 
 
 " 你的所有插件需要在下面这行之前
 call plug#end()
+" }}}
 
-""""""""""""""""" Plugin Configure
+" {{{1 Plugin Configure
+
+" {{{2 vim tex
 " let g:vimtex_compiler_latexmk = {}
 " let g:vimtex_imaps_leader = '@'
 let g:tex_flavor = 'latex'
-
-
-"""""""""""""""""
+" }}}
 
 
 filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
 " 忽视插件改变缩进,可以使用以下替代:
 "filetype plugin on
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " au VimEnter * silent NERDTree " 启动时自动开启 NERDTree (autocmd == au)
 " from
@@ -129,7 +132,7 @@ filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和
 
 " let g:vista_icon_indent = ["a ", "b "]
 
-"""""""""""""""""""""""" coc.vim config
+" {{{2 coc.vim config
 " TextEdit might fail if hidden is not set.
 set hidden
 
@@ -242,32 +245,66 @@ xmap ic <Plug>(coc-classobj-i)
 omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
+" }}}
 
-""""""""""""""""""""""""""""""""""""""""""""""""" Colors
+" }}}
+
+" {{{1 Colors
 
 set t_Co=256 " 开启 256颜色
 set termguicolors " 使用 RGB 颜色
 set background=dark
 colorscheme iceberg " solarized
+
+" }}}
+
+
+" {{{1 display style
 syntax enable
 
 set fdm=syntax " 代码折叠 manual indent expr syntax diff marker
 " set syntax=whitespace
 " set list
 
-""""""""""""""""""""""""""""""""""""""""""""""""" Functions
-
-""""""""""""""""""""""""""""""""""""""""""""""""" Set Show Style
 set listchars=tab:▸\ ,trail:~,extends:>,precedes:<,space:␣ " ,eol:¬
-set nu		" 显示行号
-set rnu     " 相对行号
-" set guifont=Droid_Sans_Mono:h11:cANSI	" 设置字体
+set nu		" 显示行号 show line number
+set rnu     " 相对行号 use relative line number
+
+" gui font
+if has("gui_running")
+  if has("gui_gtk2") || has("gui_gtk3")
+    set guifont=Courier\ New\ 11
+  elseif has("gui_photon")
+    set guifont=Courier\ New:s11
+  elseif has("gui_kde")
+    set guifont=Courier\ New/11/-1/5/50/0/0/0/1/0
+  elseif has("x11")
+    set guifont=-*-courier-medium-r-normal-*-*-180-*-*-m-*-*
+  else
+    set guifont=Courier_New:h11:cDEFAULT
+  endif
+endif
+" set font size for firenvim
+" detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
+if has('macunix')
+    set guifont=Monaco:h14:cANSI
+endif
+" set guifont=Droid_Sans_Mono:h11:cANSI
 " set guifontwide=WenQuanYi_Micro_Hei:h11:cANSI
+
 set showcmd	" 显示输出的命令
 " fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27
 set fillchars+=vert:│ " |(U+007C)│(U+2502)
 
-""""""""""""""""""""""""""""""""""""""""""""""""" Highlight Color
+" status line and command line
+set laststatus=2	" 总是显示状态行
+set cmdheight=1	" 命令行（在状态下）的高度
+
+
+" }}}
+
+" {{{1 Highlight Color
+
 " hi StatusLine cterm=bold ctermbg=238 ctermfg=11
 " hi StatusLineNC cterm=NONE ctermbg=238 ctermfg=NONE
 """"""" CursorLine Color
@@ -285,8 +322,10 @@ hi VertSplit cterm=reverse ctermbg=243 ctermfg=236
 " hi TabLineFill cterm=NONE ctermbg=237 " Empty area
 " hi PmenuSel cterm=NONE ctermfg=229 ctermbg=240 " Buffer shown in other window
 
-""""""""""""""""""""""""""""""""""""""""""""""""" Status Line
-" set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}   "状态行显示的内容
+" }}}
+
+" {{{1 Status Line
+
 set noshowmode " 隐藏最下方显示当前模式
 
 let g:lightline = {
@@ -350,19 +389,18 @@ function! StatusDiagnostic() abort
   return join(msgs, ' ')
 endfunction
 
+" }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" Encodings
+" {{{1 Encodings
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
 " set fileencodings=ucs-bom,utf-8,cp936
 set fileencoding=utf-8
+" }}}
 
 
 set history=1000	" 历史记录数
-
-set laststatus=2	" 总是显示状态行
-set cmdheight=1	" 命令行（在状态下）的高度
 
 " autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
 
@@ -374,19 +412,23 @@ let g:tex_conceal = ''
 " To prevent conceal in any file
 set conceallevel=0
 
-""""""""""""""""""""""""""""""""""""""""""""""""" keyboard mappings/bindings & shortcuts
+" {{{1 keyboard mappings/bindings & shortcuts
 " <leader>
 let mapleader=" "
 
-""""" Plugins
+" {{{2 Plugins
 nmap <silent> <leader>e :CocCommand explorer --toggle<CR>
 nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
 nmap <leader>g :Vista coc<CR>
 nmap <leader>gg :TagbarToggle<CR>
 nmap <silent> <leader>z :MaximizerToggle<CR>
 nmap <silent> <leader>lf :Lf<CR>
+" format code 格式化代码
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 
-" easy motion
+
+" {{{3 easy motion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
 " Jump to anywhere you want with minimal keystrokes, with just one key binding.
@@ -403,7 +445,9 @@ let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+" }}}
 
+" }}}
 
 nmap <leader>w :w<CR>
 nmap <leader>q :q<CR>
@@ -424,12 +468,10 @@ noremap <F5> :set list!<CR>
 inoremap <F5> <C-o>:set list!<CR>
 cnoremap <F5> <C-c>:set list!<CR>
 
-" 格式化代码
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+" }}}
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""" 缩进
+" {{{1 indent 缩进
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
