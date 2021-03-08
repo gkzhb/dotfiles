@@ -28,6 +28,9 @@ Plug 'Rykka/colorv.vim'
 Plug 'mattn/webapi-vim' " colorv 依赖
 
 Plug 'christoomey/vim-tmux-navigator'
+" Disable tmux navigator when zooming the Vim pane
+let g:tmux_navigator_disable_when_zoomed = 1
+
 " Plug 'ap/vim-buftabline'
 Plug 'mzlogin/vim-markdown-toc'
 " Markdown TOC 生成 https://mazhuang.org/2015/12/19/vim-markdown-toc/
@@ -455,11 +458,6 @@ nmap <silent> <leader>t :tabnew<CR>
 nmap <silent> <leader>p :set invpaste<CR>
 nmap <leader>b :ls<CR>:b<Space>
 nnoremap <Leader>c :set cursorline! cursorcolumn!<CR>
-
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
 
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
