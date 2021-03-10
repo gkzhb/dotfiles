@@ -11,6 +11,10 @@ call plug#begin()
 " Plug 'altercation/vim-colors-solarized'
 " let g:solarized_termtrans=1
 Plug 'cocopon/iceberg.vim'
+Plug 'joshdick/onedark.vim'
+
+" language highlight
+Plug 'sheerun/vim-polyglot'
 
 " 显示颜色
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
@@ -21,7 +25,7 @@ let g:Hexokinase_ftOptInPatterns = {
     \ 'css': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
     \ 'html': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
     \ 'vim': 'full_hex,rgb,colour_names'
-  \ }
+    \ }
 " 方便编辑颜色
 Plug 'Rykka/colorv.vim'
 " needed for fetching schemes online.
@@ -94,6 +98,7 @@ Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-eslint', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-yank', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-git', {'do': 'yarn install --frozen-lockfile'}
 
 " language
 Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
@@ -121,6 +126,35 @@ call plug#end()
 " let g:vimtex_imaps_leader = '@'
 let g:tex_flavor = 'latex'
 " }}}
+
+" {{{2 indent line
+let g:indentLine_fileTypeExclude = ['coc-explorer']
+
+" {{{2 coc explorer
+function CocExplorerInited(filetype, bufnr)
+  call setbufvar(a:bufnr, '&number', 1)
+  call setbufvar(a:bufnr, '&relativenumber', 1)
+endfunction
+
+function! s:init_explorer()
+  set winblend=10
+
+  " Integration with other plugins
+
+  " CocList
+  nnoremap <buffer> <Leader>fg :call <SID>exec_cur_dir('CocList -I grep')<CR>
+  nnoremap <buffer> <Leader>fG :call <SID>exec_cur_dir('CocList -I grep -regex')<CR>
+  nnoremap <buffer> <C-p> :call <SID>exec_cur_dir('CocList files')<CR>
+
+  " vim-floaterm
+  nnoremap <buffer> <Leader>ft :call <SID>exec_cur_dir('FloatermNew --wintype=floating')<CR>
+endfunction
+
+augroup CocExplorerCustom
+  autocmd!
+  " autocmd BufEnter * call <SID>enter_explorer()
+  autocmd FileType coc-explorer call <SID>init_explorer()
+augroup END
 
 
 filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
@@ -150,9 +184,9 @@ set shortmess+=c
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
@@ -252,12 +286,12 @@ omap ac <Plug>(coc-classobj-a)
 
 " }}}
 
-" {{{1 Colors
+" {{{1 colors
 
 set t_Co=256 " 开启 256颜色
 set termguicolors " 使用 RGB 颜色
 set background=dark
-colorscheme iceberg " solarized
+colorscheme onedark " iceberg
 
 " }}}
 
@@ -268,9 +302,10 @@ syntax enable
 set fdm=syntax " 代码折叠 manual indent expr syntax diff marker
 " set syntax=whitespace
 " set list
+set cursorline " highlight current line of cursor
 
 set listchars=tab:▸\ ,trail:~,extends:>,precedes:<,space:␣ " ,eol:¬
-set nu		" 显示行号 show line number
+set nu    " 显示行号 show line number
 set rnu     " 相对行号 use relative line number
 
 " gui font
@@ -290,35 +325,34 @@ endif
 " set font size for firenvim
 " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
 if has('macunix')
-    set guifont=Monaco:h14:cANSI
+  set guifont=Monaco:h14:cANSI
 endif
 " set guifont=Droid_Sans_Mono:h11:cANSI
 " set guifontwide=WenQuanYi_Micro_Hei:h11:cANSI
 
-set showcmd	" 显示输出的命令
+set showcmd  " 显示输出的命令
 " fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27
 set fillchars+=vert:│ " |(U+007C)│(U+2502)
 
 " status line and command line
-set laststatus=2	" 总是显示状态行
-set cmdheight=1	" 命令行（在状态下）的高度
+set laststatus=2  " 总是显示状态行
+set cmdheight=1  " 命令行（在状态下）的高度
 
 
 " }}}
 
-" {{{1 Highlight Color
+" {{{1 highlight color
 
 " hi StatusLine cterm=bold ctermbg=238 ctermfg=11
 " hi StatusLineNC cterm=NONE ctermbg=238 ctermfg=NONE
 """"""" CursorLine Color
 " https://stackoverflow.com/questions/8247243/highlighting-the-current-line-number-in-vim
-hi clear CursorLine
-hi CursorLine cterm=NONE ctermbg=238 ctermfg=NONE
-hi CursorLineNR cterm=bold ctermbg=238 ctermfg=226
-hi LineNR ctermbg=236
-set cursorline
+" hi clear CursorLine
+" hi CursorLine cterm=NONE ctermbg=238 ctermfg=NONE
+" hi CursorLineNR cterm=bold ctermbg=238 ctermfg=226
+" hi LineNR ctermbg=236
 """"""" VertSplit Color
-hi VertSplit cterm=reverse ctermbg=243 ctermfg=236
+" hi VertSplit cterm=reverse ctermbg=243 ctermfg=236
 """"""" Tab Color
 " hi TabLine cterm=NONE ctermfg=229 ctermbg=237 " Buffer not currently visible
 " hi TabLineSel cterm=bold ctermfg=253 ctermbg=238 " Buffer shown in current window
@@ -327,67 +361,71 @@ hi VertSplit cterm=reverse ctermbg=243 ctermfg=236
 
 " }}}
 
-" {{{1 Status Line
+" {{{1 statusline
 
 set noshowmode " 隐藏最下方显示当前模式
 
+let g:statuslinebreakpoint = 45
 let g:lightline = {
-      \ 'colorscheme': 'iceberg',
-      \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'bufnum' ],
-        \             [ 'modified', 'filename', 'readonly' ],
-        \             [ 'fileencoding', 'fileformat'] ],
-        \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitbranch' ], [ 'cocstatus' ] ]
-        \ },
-      \ 'inactive': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'bufnum' ],
-        \             [ 'modified', 'filename', 'readonly' ],
-        \             [ 'fileencoding', 'fileformat'] ],
-        \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ] ]
-        \ },
-      \ 'component': {
-        \ 'fileencoding': '%{toupper(&fenc!=#""?&fenc:&enc)}',
-        \ 'fileformat': '%{toupper(&ff)}',
-        \ 'filetype': '%{&ft!=#""?&ft:"none"}'
-        \ },
-      \ 'component_function': {
-        \ 'cocstatus': 'StatusDiagnostic',
-        \ 'gitbranch': 'FugitiveHead',
-        \ },
-      \ 'component_visible_condition': {
-        \ },
-      \ 'component_function_visible_condition': {
-        \ },
-      \ 'subseparator': { 'left': '', 'right': '' },
-      \ 'mode_map': {
-        \ 'n' : 'N',
-        \ 'i' : 'I',
-        \ 'R' : 'R',
-        \ 'v' : 'V',
-        \ 'V' : 'VL',
-        \ "\<C-v>": 'VB',
-        \ 'c' : 'C',
-        \ 's' : 'S',
-        \ 'S' : 'SL',
-        \ "\<C-s>": 'SB',
-        \ 't': 'T',
-        \ },
-      \ }
-" let s:p.normal = {
-"       \ 'left': [[ ]]
-"       \ }
+  \ 'colorscheme': 'onedark',
+  \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'bufnum' ],
+    \             [ 'modified', 'filename', 'readonly' ],
+    \             [ 'fileencoding', 'fileformat'] ],
+    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitbranch' ], [ 'cocstatus' ] ]
+    \ },
+  \ 'inactive': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'bufnum' ],
+    \             [ 'modified', 'filename', 'readonly' ],
+    \             [ 'fileencoding', 'fileformat'] ],
+    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ] ]
+    \ },
+  \ 'component': {
+    \ 'mode': '%{winwidth(0)>g:statuslinebreakpoint?lightline#mode():""}',
+    \ 'filename': '%{winwidth(0)>g:statuslinebreakpoint?winwidth(0)>70?expand("%:."):expand("%:t"):""}',
+    \ 'fileencoding': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&fenc!=#""?&fenc:&enc):""}',
+    \ 'fileformat': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&ff):""}',
+    \ 'filetype': '%{&ft!=#""?&ft:"none"}',
+    \ 'modified': '%{winwidth(0)>g:statuslinebreakpoint?(&modified?"+":&modifiable?"":"-"):""}',
+    \ 'paste': '%{(winwidth(0)>g:statuslinebreakpoint && &paste)?"PASTE":""}',
+    \ 'readonly': '%{(winwidth(0)>g:statuslinebreakpoint && &ro)?"RO":""}',
+    \ 'gitbranch': '%{winwidth(0)>g:statuslinebreakpoint?FugitiveHead():""}',
+    \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), col(".")):""}',
+    \ },
+  \ 'component_function': {
+    \ 'cocstatus': 'StatusDiagnostic',
+    \ },
+  \ 'component_visible_condition': {
+    \ },
+  \ 'component_function_visible_condition': {
+    \ },
+  \ 'subseparator': { 'left': '', 'right': '' },
+  \ 'mode_map': {
+    \ 'n' : 'N',
+    \ 'i' : 'I',
+    \ 'R' : 'R',
+    \ 'v' : 'V',
+    \ 'V' : 'VL',
+    \ "\<C-v>": 'VB',
+    \ 'c' : 'C',
+    \ 's' : 'S',
+    \ 'S' : 'SL',
+    \ "\<C-s>": 'SB',
+    \ 't': 'T',
+    \ },
+  \ }
 
 function! StatusDiagnostic() abort
   let info = get(b:, 'coc_diagnostic_info', {})
   if empty(info) | return '' | endif
   let msgs = []
   if get(info, 'error', 0)
-	call add(msgs, 'E' . info['error'])
+  call add(msgs, 'E' . info['error'])
   endif
   if get(info, 'warning', 0)
-	call add(msgs, 'W' . info['warning'])
+  call add(msgs, 'W' . info['warning'])
   endif
   return join(msgs, ' ')
 endfunction
@@ -398,12 +436,11 @@ endfunction
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-" set fileencodings=ucs-bom,utf-8,cp936
 set fileencoding=utf-8
 " }}}
 
 
-set history=1000	" 历史记录数
+set history=1000  " 历史记录数
 
 " autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
 
@@ -417,11 +454,13 @@ set conceallevel=0
 
 " {{{1 keyboard mappings/bindings & shortcuts
 " <leader>
-let mapleader=" "
+let mapleader="\<space>"
 
-" {{{2 Plugins
-nmap <silent> <leader>e :CocCommand explorer --toggle<CR>
+" {{{2 plugins
+nmap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open<CR>
 nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
+nmap <leader>lb :<C-u>CocList buffers<CR>
+nmap <leader>b :<C-u>CocList --normal buffers<CR>
 nmap <leader>g :Vista coc<CR>
 nmap <leader>gg :TagbarToggle<CR>
 nmap <silent> <leader>z :MaximizerToggle<CR>
@@ -446,8 +485,8 @@ nmap s <Plug>(easymotion-overwin-f2)
 let g:EasyMotion_smartcase = 1
 
 " JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
+" map <Leader>j <Plug>(easymotion-j)
+" map <Leader>k <Plug>(easymotion-k)
 " }}}
 
 " }}}
@@ -456,8 +495,6 @@ nmap <leader>w :w<CR>
 nmap <leader>q :q<CR>
 nmap <silent> <leader>t :tabnew<CR>
 nmap <silent> <leader>p :set invpaste<CR>
-nmap <leader>b :ls<CR>:b<Space>
-nnoremap <Leader>c :set cursorline! cursorcolumn!<CR>
 
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
@@ -470,19 +507,16 @@ cnoremap <F5> <C-c>:set list!<CR>
 
 
 " {{{1 indent 缩进
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-" set noexpandtab	" 不要用空格代替Tab
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+" set noexpandtab  " 不要用空格代替Tab
 set expandtab
-set smarttab	" 在行和段开始处使用制表符
+set smarttab  " 在行和段开始处使用制表符
 set smartindent
 
 
-au BufEnter,BufNew *.php :set filetype=javascript
-au BufEnter,BufNew *.fish :set filetype=sh
-au BufEnter,BufNew Jenkinsfile :set filetype=groovy
-
+" {{{1 filetype settings
 au FileType groovy setlocal expandtab tabstop=2 shiftwidth=2 autoindent smartindent
 au FileType python setlocal expandtab tabstop=4 shiftwidth=4
 au FileType html setlocal shiftwidth=2 softtabstop=2 expandtab
