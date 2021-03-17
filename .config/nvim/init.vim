@@ -1,6 +1,6 @@
 " vim: set fdm=marker: 
 
-" Plugin Settings
+" {{{1 Pre Plugin Settings
 set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
 filetype off
 
@@ -60,7 +60,7 @@ Plug 'lervag/vimtex'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } } " 浏览器插件
 Plug 'mhinz/vim-startify' " start screen 启动屏
 Plug 'ptzz/lf.vim' " lf 插件
-Plug 'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm' " needed by lf
 let g:lf_map_keys = 0
 let g:lf_replace_netrw = 1 " Open lf when vim opens a directory
 
@@ -88,9 +88,6 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 " Plug 'leafOfTree/vim-vue-plugin' " vue
 
 " {{{2 coc extensions
-""""""""""""""""
-" coc extensions
-""""""""""""""""
 Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tabnine', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
@@ -125,7 +122,13 @@ call plug#end()
 " let g:vimtex_compiler_latexmk = {}
 " let g:vimtex_imaps_leader = '@'
 let g:tex_flavor = 'latex'
-" }}}
+" To prevent conceal in LaTeX files
+let g:vimtex_syntax_conceal_default=0
+" {{{2 firenvim
+if exists('g:started_by_firenvim')
+  " set font size for firenvim
+  set guifont=Monaco:h24:cANSI
+endif
 
 " {{{2 indent line
 let g:indentLine_fileTypeExclude = ['coc-explorer']
@@ -295,7 +298,6 @@ colorscheme onedark " iceberg
 
 " }}}
 
-
 " {{{1 display style
 syntax enable
 
@@ -322,11 +324,10 @@ if has("gui_running")
     set guifont=Courier_New:h11:cDEFAULT
   endif
 endif
-" set font size for firenvim
 " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
-if has('macunix')
-  set guifont=Monaco:h14:cANSI
-endif
+" if has('macunix')
+"   set guifont=Monaco:h14:cANSI
+" endif
 " set guifont=Droid_Sans_Mono:h11:cANSI
 " set guifontwide=WenQuanYi_Micro_Hei:h11:cANSI
 
@@ -342,23 +343,7 @@ set cmdheight=1  " 命令行（在状态下）的高度
 " }}}
 
 " {{{1 highlight color
-
-" hi StatusLine cterm=bold ctermbg=238 ctermfg=11
-" hi StatusLineNC cterm=NONE ctermbg=238 ctermfg=NONE
-""""""" CursorLine Color
-" https://stackoverflow.com/questions/8247243/highlighting-the-current-line-number-in-vim
-" hi clear CursorLine
-" hi CursorLine cterm=NONE ctermbg=238 ctermfg=NONE
-" hi CursorLineNR cterm=bold ctermbg=238 ctermfg=226
-" hi LineNR ctermbg=236
-""""""" VertSplit Color
-" hi VertSplit cterm=reverse ctermbg=243 ctermfg=236
-""""""" Tab Color
-" hi TabLine cterm=NONE ctermfg=229 ctermbg=237 " Buffer not currently visible
-" hi TabLineSel cterm=bold ctermfg=253 ctermbg=238 " Buffer shown in current window
-" hi TabLineFill cterm=NONE ctermbg=237 " Empty area
-" hi PmenuSel cterm=NONE ctermfg=229 ctermbg=240 " Buffer shown in other window
-
+" consider reading doc from onedark plugin to change the highlight color
 " }}}
 
 " {{{1 statusline
@@ -439,19 +424,6 @@ set encoding=utf-8
 set fileencoding=utf-8
 " }}}
 
-
-set history=1000  " 历史记录数
-
-" autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
-
-set splitbelow
-set splitright
-
-" To prevent conceal in LaTeX files
-let g:tex_conceal = ''
-" To prevent conceal in any file
-set conceallevel=0
-
 " {{{1 keyboard mappings/bindings & shortcuts
 " <leader>
 let mapleader="\<space>"
@@ -505,7 +477,6 @@ cnoremap <F5> <C-c>:set list!<CR>
 
 " }}}
 
-
 " {{{1 indent 缩进
 set tabstop=2
 set softtabstop=2
@@ -524,3 +495,15 @@ au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 au FileType typescript,typescriptreact,less setlocal shiftwidth=4 softtabstop=4 expandtab
 au FileType vue setlocal expandtab
 " au Filetype json let g:indentLine_setConceal = 2
+
+" {{{1 Others
+set history=1000  " 历史记录数
+
+" autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
+
+set splitbelow
+set splitright
+
+" To prevent conceal in any file
+set conceallevel=0
+
