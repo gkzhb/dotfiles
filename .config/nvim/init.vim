@@ -175,6 +175,30 @@ filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和
 " let g:vista_icon_indent = ["a ", "b "]
 
 " {{{2 coc.vim config
+
+" coc extension list
+" coc-vetur: Vue.js
+let g:coc_global_extensions = [
+            \"coc-css",
+            \"coc-cssmodules",
+            \"coc-eslint",
+            \"coc-explorer",
+            \"coc-git",
+            \"coc-go",
+            \"coc-highlight",
+            \"coc-json",
+            \"coc-lists",
+            \"coc-markdownlint",
+            \"coc-prettier",
+            \"coc-sh",
+            \"coc-tabnine",
+            \"coc-tsserver",
+            \"coc-vetur",
+            \"coc-vimlsp",
+            \"coc-vimtex",
+            \"coc-yaml",
+            \"coc-yank"
+            \]
 " TextEdit might fail if hidden is not set.
 set hidden
 
@@ -287,6 +311,13 @@ xmap ic <Plug>(coc-classobj-i)
 omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
+
+if has('nvim-0.4.3') || has('patch-8.2.0750')
+    nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+    inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+endif
 " }}}
 
 " }}}
