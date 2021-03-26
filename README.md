@@ -15,7 +15,7 @@ git clone --bare https://gitee.com/gkzhb/dotfiles.git $HOME/.dotfiles
 Set an alias temporary, and use `config` as git command
 
 ```bash
-alias config=git --git-dir=$HOME/.dotfiles --work-tree=$HOME
+alias config='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 ```
 
 Checkout the config files:
