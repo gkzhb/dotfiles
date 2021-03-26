@@ -16,27 +16,16 @@ Plug 'joshdick/onedark.vim'
 " language highlight
 Plug 'sheerun/vim-polyglot'
 
-" 显示颜色
+" 显示颜色 Golang is needed to compile it
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-" let g:Hexokinase_highlighters = ['foreground']
-" Filetype specific patterns to match
-" entry value must be comma seperated list
-let g:Hexokinase_ftOptInPatterns = {
-    \ 'css': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
-    \ 'html': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
-    \ 'vim': 'full_hex,rgb,colour_names'
-    \ }
 " 方便编辑颜色
 Plug 'Rykka/colorv.vim'
 " needed for fetching schemes online.
 Plug 'mattn/webapi-vim' " colorv 依赖
 
 Plug 'christoomey/vim-tmux-navigator'
-" Disable tmux navigator when zooming the Vim pane
-let g:tmux_navigator_disable_when_zoomed = 1
 
-" Plug 'ap/vim-buftabline'
-Plug 'mzlogin/vim-markdown-toc'
+" Plug 'mzlogin/vim-markdown-toc'
 " Markdown TOC 生成 https://mazhuang.org/2015/12/19/vim-markdown-toc/
 " :GenTocGFM 在光标处生成 GFM 风格的 Table of Contents
 " :RemoveToc 删除插件生成的 TOC
@@ -61,8 +50,6 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } } " 浏览器插
 Plug 'mhinz/vim-startify' " start screen 启动屏
 Plug 'ptzz/lf.vim' " lf 插件
 Plug 'voldikss/vim-floaterm' " needed by lf
-let g:lf_map_keys = 0
-let g:lf_replace_netrw = 1 " Open lf when vim opens a directory
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'mhinz/vim-signify' " VCS 文件修改情况显示
@@ -78,11 +65,6 @@ Plug 'markonm/traces.vim' " 实时预览命令替换
 Plug 'tpope/vim-commentary' " 注释
 " 缩进线条
 Plug 'Yggdroot/indentLine'
-let g:indentLine_enabled = 1
-" let g:indentLine_showFirstIndentLevel = 1
-" let g:indentLine_setColors = 0
-" let g:indentLine_setConceal = 0
-let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
 
 " Plug 'leafOfTree/vim-vue-plugin' " vue
@@ -120,19 +102,49 @@ call plug#end()
 
 " {{{1 Plugin Configure
 
+" {{{2 polyglot
+let g:vim_json_syntax_conceal = 0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
+" {{{2 hexokinase
+" let g:Hexokinase_highlighters = ['foreground']
+" Filetype specific patterns to match
+" entry value must be comma seperated list
+let g:Hexokinase_ftOptInPatterns = {
+    \ 'css': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
+    \ 'html': 'full_hex,rgb,rgba,hsl,hsla,colour_names',
+    \ 'vim': 'full_hex,rgb,colour_names'
+    \ }
+
+" {{{2 vim tmux navigator
+" Disable tmux navigator when zooming the Vim pane
+let g:tmux_navigator_disable_when_zoomed = 1
+
 " {{{2 vim tex
 " let g:vimtex_compiler_latexmk = {}
 " let g:vimtex_imaps_leader = '@'
 let g:tex_flavor = 'latex'
 " To prevent conceal in LaTeX files
 let g:vimtex_syntax_conceal_default=0
+
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
   " set font size for firenvim
   set guifont=Monaco:h24:cANSI
 endif
 
+" {{{2 lf
+let g:lf_map_keys = 0
+let g:lf_replace_netrw = 1 " Open lf when vim opens a directory
+
 " {{{2 indent line
+let g:indentLine_enabled = 1
+" let g:indentLine_showFirstIndentLevel = 1
+" let g:indentLine_setColors = 0
+" let g:indentLine_setConceal = 2
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+" let g:indentLine_concealcursor = ""
 let g:indentLine_fileTypeExclude = ['coc-explorer']
 
 " {{{2 coc explorer
@@ -525,13 +537,7 @@ set smartindent
 
 
 " {{{1 filetype settings
-au FileType groovy setlocal expandtab tabstop=2 shiftwidth=2 autoindent smartindent
-au FileType python setlocal expandtab tabstop=4 shiftwidth=4
-au FileType html setlocal shiftwidth=2 softtabstop=2 expandtab
-au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
-au FileType typescript,typescriptreact,less setlocal shiftwidth=4 softtabstop=4 expandtab
-au FileType vue setlocal expandtab
-" au Filetype json let g:indentLine_setConceal = 2
+" au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 
 " {{{1 Others
 set history=1000  " 历史记录数
@@ -540,7 +546,3 @@ set history=1000  " 历史记录数
 
 set splitbelow
 set splitright
-
-" To prevent conceal in any file
-set conceallevel=0
-

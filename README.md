@@ -2,57 +2,41 @@
 
 Installation script is `script/install.sh`. It will install tpm and vim-plug for you.
 
-## color palette
+## installation
 
-From dark theme of [iceberg.vim](https://github.com/cocopon/iceberg.vim):
+You are suggested to folk this repo and clone the folked repo.
 
+Use the following command to clone this repository(*replace the url with folked repo's url*):
+
+```bash
+git clone --bare https://gitee.com/gkzhb/dotfiles.git $HOME/.dotfiles
 ```
-color0 #1e2132
-color8 #6b7089
 
-# black
+Set an alias temporary, and use `config` as git command
 
-color1 #e27878
-color9 #e98989
-
-# red
-
-color2 #b4be82
-color10 #c0ca8e
-
-# green
-
-color3 #e2a478
-color11 #e9b189
-
-# yellow
-
-color4 #84a0c6
-color12 #91acd1
-
-# blue
-
-color5 #a093c7
-color13 #ada0d3
-
-# magenta
-
-color6 #89b8c2
-color14 #95c4ce
-
-# cyan
-
-color7 #c6c8d1
-color15 #d2d4de
-
-# white
+```bash
+alias config=git --git-dir=$HOME/.dotfiles --work-tree=$HOME
 ```
+
+Checkout the config files:
+
+```bash
+config checkout
+```
+
+And resolve conficts.
+
+Finally, run two bash scripts: `script/dotfiles/install.sh` and `script/dotfiles/init-after-clone.sh`.
 
 ## kitty
 
 [Kitty](https://github.com/kovidgoyal/kitty) is a terminal. The config file is `.config/kitty/kitty.yml`.
 
 I use the [iceberg.vim](https://github.com/cocopon/iceberg.vim) color theme as the color palette of my terminal.
+
+## alacritty
+
+Alacritty is another terminal, simple and fast. Config file: `.config/alacritty/alacritty.yml`.
 
 ## tmux
 
@@ -62,4 +46,4 @@ See `.tmux.conf` and color theme file `.tmux/iceberg.conf`. Use [tpm](https://gi
 
 See `.config/nvim/init.vim`. Use [Vim Plug](https://github.com/junegunn/vim-plug) as plugin manager.
 
-Use [iceberg.vim](https://github.com/cocopon/iceberg.vim) color theme and [coc.nvim](https://github.com/neoclide/coc.nvim) as auto implementation tool. Also I add plenty of coc extensions managed by vim-plug in the config file.
+Use [onedark](https://github.com/joshdick/onedark.vim) color theme and [coc.nvim](https://github.com/neoclide/coc.nvim) as auto implementation tool. Also I add plenty of coc extensions managed by vim-plug in the config file.
