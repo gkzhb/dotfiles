@@ -24,7 +24,7 @@ Checkout the config files:
 config checkout
 ```
 
-And resolve conficts.
+And resolve conflicts.
 
 Finally, run two bash scripts: `script/dotfiles/install.sh` and `script/dotfiles/init-after-clone.sh`.
 
