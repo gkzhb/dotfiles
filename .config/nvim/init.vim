@@ -151,6 +151,8 @@ let g:tmux_navigator_disable_when_zoomed = 1
 let g:tex_flavor = 'latex'
 " To prevent conceal in LaTeX files
 let g:vimtex_syntax_conceal_default=0
+" enable folding in latex
+let g:vimtex_fold_enabled = 1
 
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
