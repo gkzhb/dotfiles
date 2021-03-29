@@ -7,31 +7,16 @@ filetype off
 " {{{1 Plugins
 call plug#begin()
 
-" color theme
+" {{{2 color theme
 " Plug 'altercation/vim-colors-solarized'
 " let g:solarized_termtrans=1
 Plug 'cocopon/iceberg.vim'
 Plug 'joshdick/onedark.vim'
 
+" {{{2 language related
 " language highlight
+let g:polyglot_disabled = ['sensible']
 Plug 'sheerun/vim-polyglot'
-
-" 显示颜色 Golang is needed to compile it
-Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-" 方便编辑颜色
-Plug 'Rykka/colorv.vim'
-" needed for fetching schemes online.
-Plug 'mattn/webapi-vim' " colorv 依赖
-
-Plug 'christoomey/vim-tmux-navigator'
-
-" Plug 'mzlogin/vim-markdown-toc'
-" Markdown TOC 生成 https://mazhuang.org/2015/12/19/vim-markdown-toc/
-" :GenTocGFM 在光标处生成 GFM 风格的 Table of Contents
-" :RemoveToc 删除插件生成的 TOC
-
-" statusline
-Plug 'itchyny/lightline.vim'
 
 " ts js
 Plug 'leafgarland/typescript-vim'
@@ -39,37 +24,73 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'lukaszb/vim-web-indent'
 " let g:js_indent = '/location/to/javascript.vim'
 
-
-Plug 'majutsushi/tagbar'
-Plug 'szw/vim-maximizer' " 最大化窗口
-" Plugin 'lvht/tagbar-markdown'
-Plug 'easymotion/vim-easymotion' " 移动光标
-
+" latex
 Plug 'lervag/vimtex'
-Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } } " 浏览器插件
-Plug 'mhinz/vim-startify' " start screen 启动屏
-Plug 'ptzz/lf.vim' " lf 插件
-Plug 'voldikss/vim-floaterm' " needed by lf
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'mhinz/vim-signify' " VCS 文件修改情况显示
+" comment 注释
+Plug 'tpope/vim-commentary' 
 
-" git related
+" Plug 'leafOfTree/vim-vue-plugin' " vue
+
+" Plug 'mzlogin/vim-markdown-toc'
+" Markdown TOC 生成 https://mazhuang.org/2015/12/19/vim-markdown-toc/
+" :GenTocGFM 在光标处生成 GFM 风格的 Table of Contents
+" :RemoveToc 删除插件生成的 TOC
+
+" {{{2 display enhancement
+" 显示颜色 Golang is needed to compile it
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+" 方便编辑颜色
+Plug 'Rykka/colorv.vim'
+" colorv 依赖 needed for fetching schemes online.
+Plug 'mattn/webapi-vim' 
+" VCS 文件修改情况显示
+Plug 'mhinz/vim-signify' 
+" statusline
+Plug 'itchyny/lightline.vim'
+" start screen 启动屏
+Plug 'mhinz/vim-startify' 
+" 缩进线条 indent visualization
+Plug 'Yggdroot/indentLine'
+
+Plug 'liuchengxu/vista.vim' " 
+" 实时预览替换命令执行效果
+Plug 'markonm/traces.vim' 
+
+" needed by lf
+Plug 'voldikss/vim-floaterm'
+" lf 插件
+Plug 'ptzz/lf.vim'
+
+" denite: list all resources
+if has('nvim')
+  Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/denite.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+
+" 浏览器中使用 neovim
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+
+" {{{2 movement
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'easymotion/vim-easymotion' " 移动光标
+Plug 'szw/vim-maximizer' " 最大化窗口
+Plug 'majutsushi/tagbar'
+" Plugin 'lvht/tagbar-markdown'
+
+" {{{2 git related
 Plug 'tpope/vim-fugitive' " vim 中使用 git 的增强插件
 Plug 'junegunn/gv.vim' " git commit browser
 Plug 'sodapopcan/vim-twiggy' " git branch push/pull/rebase
 
-Plug 'liuchengxu/vista.vim' " 
 
-Plug 'markonm/traces.vim' " 实时预览命令替换
-Plug 'tpope/vim-commentary' " 注释
-" 缩进线条
-Plug 'Yggdroot/indentLine'
+" {{{2 lsp related
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-
-" Plug 'leafOfTree/vim-vue-plugin' " vue
-
-" {{{2 coc extensions
+" {{{3 coc extensions
 " extensions are removed from vim-plug
 "
 " Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
@@ -106,6 +127,9 @@ call plug#end()
 let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
 let g:vim_markdown_conceal_code_blocks = 0
+let g:tex_conceal = ""
+let g:vim_markdown_math = 1
+let g:vim_markdown_conceal_code_blocks = 0
 
 " {{{2 hexokinase
 " let g:Hexokinase_highlighters = ['foreground']
@@ -137,6 +161,23 @@ endif
 " {{{2 lf
 let g:lf_map_keys = 0
 let g:lf_replace_netrw = 1 " Open lf when vim opens a directory
+
+" {{{2 denite
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
 
 " {{{2 indent line
 let g:indentLine_enabled = 1
