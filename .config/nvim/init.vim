@@ -154,10 +154,95 @@ let g:vimtex_syntax_conceal_default=0
 " enable folding in latex
 let g:vimtex_fold_enabled = 1
 
+" }}}
+"
+" {{{2 lightline
+
+" {{{3 statusline
+set noshowmode " 隐藏最下方显示当前模式
+
+let g:statuslinebreakpoint = 45
+let g:lightline = {
+  \ 'colorscheme': 'onedark',
+  \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'bufnum' ],
+    \             [ 'modified', 'filename', 'readonly' ],
+    \             [ 'fileencoding', 'fileformat'] ],
+    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitbranch' ], [ 'cocstatus' ] ]
+    \ },
+  \ 'inactive': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'bufnum' ],
+    \             [ 'modified', 'filename', 'readonly' ],
+    \             [ 'fileencoding', 'fileformat'] ],
+    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ] ]
+    \ },
+  \ 'component': {
+    \ 'mode': '%{winwidth(0)>g:statuslinebreakpoint?lightline#mode():""}',
+    \ 'filename': '%{winwidth(0)>g:statuslinebreakpoint?winwidth(0)>70?expand("%:."):expand("%:t"):""}',
+    \ 'fileencoding': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&fenc!=#""?&fenc:&enc):""}',
+    \ 'fileformat': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&ff):""}',
+    \ 'filetype': '%{&ft!=#""?&ft:"none"}',
+    \ 'modified': '%{winwidth(0)>g:statuslinebreakpoint?(&modified?"+":&modifiable?"":"-"):""}',
+    \ 'paste': '%{(winwidth(0)>g:statuslinebreakpoint && &paste)?"PASTE":""}',
+    \ 'readonly': '%{(winwidth(0)>g:statuslinebreakpoint && &ro)?"RO":""}',
+    \ 'gitbranch': '%{winwidth(0)>g:statuslinebreakpoint?FugitiveHead():""}',
+    \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), col(".")):""}',
+    \ 'cwd': '%{getcwd()}',
+    \ },
+  \ 'component_function': {
+    \ 'cocstatus': 'StatusDiagnostic',
+    \ },
+  \ 'component_visible_condition': {
+    \ },
+  \ 'component_function_visible_condition': {
+    \ },
+  \ 'subseparator': { 'left': '', 'right': '' },
+  \ 'mode_map': {
+    \ 'n' : 'N',
+    \ 'i' : 'I',
+    \ 'R' : 'R',
+    \ 'v' : 'V',
+    \ 'V' : 'VL',
+    \ "\<C-v>": 'VB',
+    \ 'c' : 'C',
+    \ 's' : 'S',
+    \ 'S' : 'SL',
+    \ "\<C-s>": 'SB',
+    \ 't': 'T',
+    \ },
+  \ }
+
+function! StatusDiagnostic() abort
+  let info = get(b:, 'coc_diagnostic_info', {})
+  if empty(info) | return '' | endif
+  let msgs = []
+  if get(info, 'error', 0)
+  call add(msgs, 'E' . info['error'])
+  endif
+  if get(info, 'warning', 0)
+  call add(msgs, 'W' . info['warning'])
+  endif
+  return join(msgs, ' ')
+endfunction
+
+" {{{3 tabline
+let g:lightline.tabline = {
+  \ 'left': [ [ 'tabs' ] ],
+  \ 'right': [ [ 'cwd' ] ]
+  \ }
+let g:lightline.tab = {
+  \ 'active': [ 'activeTabnum', 'filename', 'modified' ],
+  \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
+  \ }
+
+" }}}
+
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
   " set font size for firenvim
-  set guifont=Monaco:h24:cANSI
+  set guifont=Monaco:h14:cANSI
 endif
 
 " {{{2 lf
@@ -380,7 +465,11 @@ endif
 " {{{1 colors
 
 set t_Co=256 " 开启 256颜色
-set termguicolors " 使用 RGB 颜色
+if (has("termguicolors"))
+  " 使用 RGB 颜色
+  set termguicolors
+endif
+set termguicolors 
 set background=dark
 colorscheme onedark " iceberg
 
@@ -434,76 +523,6 @@ set cmdheight=1  " 命令行（在状态下）的高度
 " consider reading doc from onedark plugin to change the highlight color
 " }}}
 
-" {{{1 statusline
-
-set noshowmode " 隐藏最下方显示当前模式
-
-let g:statuslinebreakpoint = 45
-let g:lightline = {
-  \ 'colorscheme': 'onedark',
-  \ 'active': {
-    \   'left': [ [ 'mode', 'paste' ],
-    \             [ 'bufnum' ],
-    \             [ 'modified', 'filename', 'readonly' ],
-    \             [ 'fileencoding', 'fileformat'] ],
-    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitbranch' ], [ 'cocstatus' ] ]
-    \ },
-  \ 'inactive': {
-    \   'left': [ [ 'mode', 'paste' ],
-    \             [ 'bufnum' ],
-    \             [ 'modified', 'filename', 'readonly' ],
-    \             [ 'fileencoding', 'fileformat'] ],
-    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ] ]
-    \ },
-  \ 'component': {
-    \ 'mode': '%{winwidth(0)>g:statuslinebreakpoint?lightline#mode():""}',
-    \ 'filename': '%{winwidth(0)>g:statuslinebreakpoint?winwidth(0)>70?expand("%:."):expand("%:t"):""}',
-    \ 'fileencoding': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&fenc!=#""?&fenc:&enc):""}',
-    \ 'fileformat': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&ff):""}',
-    \ 'filetype': '%{&ft!=#""?&ft:"none"}',
-    \ 'modified': '%{winwidth(0)>g:statuslinebreakpoint?(&modified?"+":&modifiable?"":"-"):""}',
-    \ 'paste': '%{(winwidth(0)>g:statuslinebreakpoint && &paste)?"PASTE":""}',
-    \ 'readonly': '%{(winwidth(0)>g:statuslinebreakpoint && &ro)?"RO":""}',
-    \ 'gitbranch': '%{winwidth(0)>g:statuslinebreakpoint?FugitiveHead():""}',
-    \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), col(".")):""}',
-    \ },
-  \ 'component_function': {
-    \ 'cocstatus': 'StatusDiagnostic',
-    \ },
-  \ 'component_visible_condition': {
-    \ },
-  \ 'component_function_visible_condition': {
-    \ },
-  \ 'subseparator': { 'left': '', 'right': '' },
-  \ 'mode_map': {
-    \ 'n' : 'N',
-    \ 'i' : 'I',
-    \ 'R' : 'R',
-    \ 'v' : 'V',
-    \ 'V' : 'VL',
-    \ "\<C-v>": 'VB',
-    \ 'c' : 'C',
-    \ 's' : 'S',
-    \ 'S' : 'SL',
-    \ "\<C-s>": 'SB',
-    \ 't': 'T',
-    \ },
-  \ }
-
-function! StatusDiagnostic() abort
-  let info = get(b:, 'coc_diagnostic_info', {})
-  if empty(info) | return '' | endif
-  let msgs = []
-  if get(info, 'error', 0)
-  call add(msgs, 'E' . info['error'])
-  endif
-  if get(info, 'warning', 0)
-  call add(msgs, 'W' . info['warning'])
-  endif
-  return join(msgs, ' ')
-endfunction
-
-" }}}
 
 " {{{1 Encodings
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
