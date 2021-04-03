@@ -236,8 +236,9 @@ function! s:trimString(str, maxlen, position) abort
 endfunction
 
 function! LightlineRelativePathFileName() abort
-  return winwidth(0) > g:statuslinebreakpoint
-    \ ? winwidth(0) > 70 ? s:trimString(expand("%:."), 40, 'l') : expand("%:t")
+  let width = winwidth(0)
+  return width > g:statuslinebreakpoint
+    \ ? width > 80 ? s:trimString(expand("%:."), width / 3, 'l') : s:trimString(expand("%:."), width / 2, 'l')
     \ : ""
 endfunction
 
