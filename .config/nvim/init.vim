@@ -180,7 +180,6 @@ let g:lightline = {
     \ },
   \ 'component': {
     \ 'mode': '%{winwidth(0)>g:statuslinebreakpoint?lightline#mode():""}',
-    \ 'filename': '%{winwidth(0)>g:statuslinebreakpoint?winwidth(0)>70?expand("%:."):expand("%:t"):""}',
     \ 'fileencoding': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&fenc!=#""?&fenc:&enc):""}',
     \ 'fileformat': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&ff):""}',
     \ 'filetype': '%{&ft!=#""?&ft:"none"}',
@@ -192,6 +191,7 @@ let g:lightline = {
     \ 'cwd': '%{getcwd()}',
     \ },
   \ 'component_function': {
+    \ 'filename': 'LightlineRelativePathFileName',
     \ 'cocstatus': 'StatusDiagnostic',
     \ },
   \ 'component_visible_condition': {
@@ -213,6 +213,33 @@ let g:lightline = {
     \ 't': 'T',
     \ },
   \ }
+
+" trim string on different position([l]eft, [r]ight or [c]enter)
+" @overflow: how to describe trimmed string
+function! s:trimString(str, maxlen, position) abort
+  let position = get(a:, 'position', 'l') " position='l' by default
+  const overflow = '...'
+  if len(a:str) < a:maxlen
+    return a:str
+  endif
+  if position == 'l'
+    return overflow . a:str[len(a:str) - a:maxlen + 3:]
+  endif
+  if position == 'r'
+    return a:str[:a:maxlen - 3] . overflow
+  endif
+  if position == 'c'
+    let halflen = (a:maxlen - 3) / 2
+    return a:str[:halflen - 1] . overflow . a:str[len(a:str) - halflen:]
+  endif
+  return a:str " incorrect position value
+endfunction
+
+function! LightlineRelativePathFileName() abort
+  return winwidth(0) > g:statuslinebreakpoint
+    \ ? winwidth(0) > 70 ? s:trimString(expand("%:."), 40, 'l') : expand("%:t")
+    \ : ""
+endfunction
 
 function! StatusDiagnostic() abort
   let info = get(b:, 'coc_diagnostic_info', {})
