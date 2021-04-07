@@ -54,6 +54,7 @@ Plug 'mhinz/vim-startify'
 Plug 'Yggdroot/indentLine'
 
 Plug 'liuchengxu/vista.vim' " 
+" preview the result of replace command in real time
 " 实时预览替换命令执行效果
 Plug 'markonm/traces.vim' 
 
@@ -356,40 +357,16 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 " let g:indentLine_concealcursor = ""
 let g:indentLine_fileTypeExclude = ['coc-explorer']
 
+" {{{2 vista
+let g:vista_default_executive = 'coc'
+let g:vista_executive_for = {
+    \ 'vimwiki': 'markdown',
+    \ 'pandoc': 'markdown',
+    \ 'markdown': 'toc',
+    \ }
+
 " {{{2 choosewin
 let g:choosewin_overlay_enable = 1
-
-" {{{2 coc explorer
-function CocExplorerInited(filetype, bufnr)
-  call setbufvar(a:bufnr, '&number', 1)
-  call setbufvar(a:bufnr, '&relativenumber', 1)
-endfunction
-
-function! s:init_explorer()
-  set winblend=10
-
-  " Integration with other plugins
-
-  " CocList
-  nnoremap <buffer> <Leader>fg :call <SID>exec_cur_dir('CocList -I grep')<CR>
-  nnoremap <buffer> <Leader>fG :call <SID>exec_cur_dir('CocList -I grep -regex')<CR>
-  nnoremap <buffer> <C-p> :call <SID>exec_cur_dir('CocList files')<CR>
-
-  " vim-floaterm
-  nnoremap <buffer> <Leader>ft :call <SID>exec_cur_dir('FloatermNew --wintype=floating')<CR>
-endfunction
-
-augroup CocExplorerCustom
-  autocmd!
-  " autocmd BufEnter * call <SID>enter_explorer()
-  autocmd FileType coc-explorer call <SID>init_explorer()
-augroup END
-
-" let g:coc_explorer_global_presets = {
-"   \ 'workspace': {
-"     \ 'root-uri': getcwd(),
-"     \ },
-"   \ }
 
 " {{{2 coc.vim config
 
@@ -426,7 +403,7 @@ call coc#config('list.source.grep.args', ['--hidden', '--vimgrep', '--heading', 
 call coc#config('session.directory', stdpath('data').'/session') " in startify autoload/startify.vim
 
 
-" {{{3 coc extension list
+" {{{3 coc-extension list
 " coc-vetur: Vue.js
 let g:coc_global_extensions = [
             \"coc-css",
@@ -571,6 +548,37 @@ if has('nvim-0.4.3') || has('patch-8.2.0750')
     inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
 endif
 " }}}
+" {{{2 coc-explorer
+function CocExplorerInited(filetype, bufnr)
+  call setbufvar(a:bufnr, '&number', 1)
+  call setbufvar(a:bufnr, '&relativenumber', 1)
+endfunction
+
+function! s:init_explorer()
+  set winblend=10
+
+  " Integration with other plugins
+
+  " CocList
+  nnoremap <buffer> <Leader>fg :call <SID>exec_cur_dir('CocList -I grep')<CR>
+  nnoremap <buffer> <Leader>fG :call <SID>exec_cur_dir('CocList -I grep -regex')<CR>
+  nnoremap <buffer> <C-p> :call <SID>exec_cur_dir('CocList files')<CR>
+
+  " vim-floaterm
+  nnoremap <buffer> <Leader>ft :call <SID>exec_cur_dir('FloatermNew --wintype=floating')<CR>
+endfunction
+
+augroup CocExplorerCustom
+  autocmd!
+  " autocmd BufEnter * call <SID>enter_explorer()
+  autocmd FileType coc-explorer call <SID>init_explorer()
+augroup END
+
+" let g:coc_explorer_global_presets = {
+"   \ 'workspace': {
+"     \ 'root-uri': getcwd(),
+"     \ },
+"   \ }
 
 " }}}
 
@@ -652,22 +660,34 @@ set ttimeout
 
 " {{{2 plugins
 
-" choosewin
-nmap - <Plug>(choosewin)
+" {{{3 fugitive
+nnoremap <silent> <leader>G :G<CR>
 
-" {{{3 coc
+" {{{3 choosewin
+nnoremap - <Plug>(choosewin)
+
+" {{{3 coc.nvim and coc-extensions
+" {{{4 coc-explorer
 nnoremap <silent> <leader>e :call CocAction('runCommand', 'explorer', getcwd(), '--toggle', '--quit-on-open')<CR>
-" nmap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open getcwd()<CR>
+" nnoremap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open getcwd()<CR>
+" {{{4 coc-lists
 nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
-nmap <leader>lb :<C-u>CocList buffers<CR>
-nmap <leader>b :<C-u>CocList --normal buffers<CR>
-nmap <leader>g :Vista coc<CR>
-nmap <leader>gg :TagbarToggle<CR>
-nmap <silent> <leader>z :MaximizerToggle<CR>
-nmap <silent> <leader>lf :Lf<CR>
+nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>
+nnoremap <silent> <leader>ls :<C-u>CocList files<CR>
+nnoremap <silent> <leader>lg :<C-u>CocList grep<CR>
+nnoremap <silent> <leader>b :<C-u>CocList --normal buffers<CR>
+" {{{4 coc action
 " format code 格式化代码
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+vnoremap <leader>f  <Plug>(coc-format-selected)
+nnoremap <leader>f  <Plug>(coc-format-selected)
+" {{{3 vista
+nnoremap <silent> <leader>g :Vista!!<CR>
+" {{{3 tagbar
+nnoremap <silent> <leader>gg :TagbarToggle<CR>
+" {{{3 lf
+nnoremap <silent> <leader>lf :Lf<CR>
+" {{{3 maximizer
+nnoremap <silent> <leader>z :MaximizerToggle<CR>
 
 " {{{3 denite
 "   ;         - Browser currently open buffers
@@ -745,7 +765,6 @@ function! s:denite_my_settings() abort
   \ denite#do_map('toggle_select').'j'
 endfunction
 
-
 " {{{3 easy motion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
@@ -755,7 +774,7 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " or
 " `s{char}{char}{label}`
 " Need one more keystroke, but on average, it may be more comfortable.
-nmap s <Plug>(easymotion-overwin-f2)
+nnoremap s <Plug>(easymotion-overwin-f2)
 
 " Turn on case-insensitive feature
 let g:EasyMotion_smartcase = 1
@@ -767,14 +786,12 @@ let g:EasyMotion_smartcase = 1
 
 " {{{2 others
 " sudo save file
-cmap w!! w !sudo tee > /dev/null %
+cnoremap w!! w !sudo tee > /dev/null %
 
-" }}}
-
-nmap <leader>w :w<CR>
-nmap <leader>q :q<CR>
-nmap <silent> <leader>t :tabnew<CR>
-nmap <silent> <leader>p :set invpaste<CR>
+nnoremap <leader>w :w<CR>
+nnoremap <silent> <leader>q :q<CR>
+nnoremap <silent> <leader>t :tabnew<CR>
+nnoremap <silent> <leader>p :set invpaste<CR>
 
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
@@ -799,12 +816,12 @@ set expandtab
 set smarttab  " 在行和段开始处使用制表符
 set smartindent
 
-
 " {{{1 filetype settings
 " au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 
 " {{{1 Others
 set history=1000  " 历史记录数
+set undofile " save undo history
 
 " autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
 
