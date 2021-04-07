@@ -76,6 +76,8 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 
 " {{{2 movement
 Plug 'christoomey/vim-tmux-navigator'
+" Move to window just like tmux by specifying number of window
+Plug 't9md/vim-choosewin' 
 Plug 'easymotion/vim-easymotion' " 移动光标
 Plug 'szw/vim-maximizer' " 最大化窗口
 Plug 'majutsushi/tagbar'
@@ -155,7 +157,7 @@ let g:vimtex_syntax_conceal_default=0
 let g:vimtex_fold_enabled = 1
 
 " }}}
-"
+
 " {{{2 lightline
 
 " {{{3 statusline
@@ -267,6 +269,12 @@ let g:lightline.tab = {
 
 " }}}
 
+" {{{2 startify
+" session directory, default to `$XDG_DATA_HOME/nvim/session`
+" should be the same as Coc Session 'session.directory' in coc-settings.json
+"
+" let g:startify_session_dir = '$XDG_DATA_HOME/nvim/session'
+
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
   " set font size for firenvim
@@ -322,6 +330,8 @@ let s:denite_options = {'default' : {
 \ 'auto_resize': 1,
 \ 'source_names': 'short',
 \ 'prompt': 'λ ',
+\ 'highlight_matched_char': 'Search',
+\ 'highlight_matched_range': 'Search',
 \ 'winrow': 1,
 \ 'vertical_preview': 1
 \ }}
@@ -345,6 +355,9 @@ let g:indentLine_enabled = 1
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 " let g:indentLine_concealcursor = ""
 let g:indentLine_fileTypeExclude = ['coc-explorer']
+
+" {{{2 choosewin
+let g:choosewin_overlay_enable = 1
 
 " {{{2 coc explorer
 function CocExplorerInited(filetype, bufnr)
@@ -372,22 +385,48 @@ augroup CocExplorerCustom
   autocmd FileType coc-explorer call <SID>init_explorer()
 augroup END
 
-
-filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
-" 忽视插件改变缩进,可以使用以下替代:
-"filetype plugin on
-
-" au VimEnter * silent NERDTree " 启动时自动开启 NERDTree (autocmd == au)
-" from
-" https://stackoverflow.com/questions/29973424/open-nerdtree-when-vim-is-opened-without-args-but-not-with
-" autocmd StdinReadPre * let g:isReadingFromStdin = 1
-" autocmd VimEnter * if !argc() && !exists('g:isReadingFromStdin') | NERDTree | endif
-
-" let g:vista_icon_indent = ["a ", "b "]
+" let g:coc_explorer_global_presets = {
+"   \ 'workspace': {
+"     \ 'root-uri': getcwd(),
+"     \ },
+"   \ }
 
 " {{{2 coc.vim config
 
-" coc extension list
+" {{{3 coc-settings.json
+" alternative way to configure in vim script
+" but don't use both at the same time
+" help: coc#config()
+
+" {{{4 coc explorer
+call coc#config('explorer', {
+      \ 'buffer.root.template': '[icon & 1] BUFFERS',
+      \ 'file.root.template': '[icon & 1] PROJECT ([root]) [fullpath]',
+      \ 'file.child.template': '[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]',
+      \ 'file.showHiddenFiles': v:true,
+      \ 'file.autoReveal': v:false,
+      \ 'icon.enableVimDevicons': v:false,
+      \ 'icon.enableNerdfont': v:false,
+      \ 'previewAction.onHover': 'labeling',
+      \ 'keyMappings.global': {
+        \ 'v': 'open:vsplit',
+        \ '<cr>': ['wait', 'expandable?', 'expanded?', 'collapse', 'expand', 'open'],
+        \ 'cd': ['cd'],
+        \ 'm': 'actionMenu',
+        \ 'mc': 'copyFile',
+        \ 'C': 'copyFile',
+        \ 'md': 'delete',
+        \ 'D': 'delete',
+        \ 'H': ['wait', 'gotoParent'],
+        \ 'L': ['cd']
+        \ }
+      \ })
+" {{{4 coc lists
+call coc#config('list.source.grep.args', ['--hidden', '--vimgrep', '--heading', '-S'])
+call coc#config('session.directory', stdpath('data').'/session') " in startify autoload/startify.vim
+
+
+" {{{3 coc extension list
 " coc-vetur: Vue.js
 let g:coc_global_extensions = [
             \"coc-css",
@@ -410,6 +449,8 @@ let g:coc_global_extensions = [
             \"coc-yaml",
             \"coc-yank"
             \]
+
+" {{{3 coc settings and shortcuts
 " TextEdit might fail if hidden is not set.
 set hidden
 
@@ -605,9 +646,18 @@ set fileencoding=utf-8
 " {{{1 keyboard mappings/bindings & shortcuts
 " <leader>
 let mapleader="\<space>"
+" see help ttimeout
+set notimeout
+set ttimeout
 
 " {{{2 plugins
-nmap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open<CR>
+
+" choosewin
+nmap - <Plug>(choosewin)
+
+" {{{3 coc
+nnoremap <silent> <leader>e :call CocAction('runCommand', 'explorer', getcwd(), '--toggle', '--quit-on-open')<CR>
+" nmap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open getcwd()<CR>
 nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
 nmap <leader>lb :<C-u>CocList buffers<CR>
 nmap <leader>b :<C-u>CocList --normal buffers<CR>
@@ -627,20 +677,24 @@ nmap <leader>f  <Plug>(coc-format-selected)
 nmap ; :Denite buffer<CR>
 nmap <leader>pj :DeniteProjectDir file/rec<CR>
 nnoremap <leader>s :<C-u>Denite grep:. -no-empty<CR>
+nnoremap <leader>sf :<C-u>Denite file/rec<CR>
 nnoremap <leader>j :<C-u>DeniteCursorWord grep:.<CR>
 
 " Define mappings while in 'filter' mode
 "   <C-o>         - Switch to normal mode inside of search results
+"   <C-q>         - Quit Denite window
 "   <Esc>         - Exit denite window in any mode
 "   <CR>          - Open currently selected file in any mode
 "   <C-t>         - Open currently selected file in a new tab
 "   <C-v>         - Open currently selected file a vertical split
 "   <C-h>         - Open currently selected file in a horizontal split
+"   <C-j>         - Move cursor to the next candidate
+"   <C-k>         - Move cursor to the previous candidate
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
-  inoremap <silent><buffer><expr> <Esc>
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> <Esc>
+  inoremap <silent><buffer> <C-o>
+  \ <Esc><C-w>p
+  inoremap <silent><buffer><expr> <C-q>
   \ denite#do_map('quit')
   inoremap <silent><buffer><expr> <CR>
   \ denite#do_map('do_action')
@@ -650,6 +704,10 @@ function! s:denite_filter_my_settings() abort
   \ denite#do_map('do_action', 'vsplit')
   inoremap <silent><buffer><expr> <C-h>
   \ denite#do_map('do_action', 'split')
+  inoremap <silent><buffer> <C-j>
+  \ <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
+  inoremap <silent><buffer> <C-k>
+  \ <Esc><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
 endfunction
 
 " Define mappings while in denite window
@@ -728,6 +786,11 @@ cnoremap <F5> <C-c>:set list!<CR>
 " }}}
 
 " {{{1 indent 缩进
+
+filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
+" 忽视插件改变缩进,可以使用以下替代:
+"filetype plugin on
+
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
