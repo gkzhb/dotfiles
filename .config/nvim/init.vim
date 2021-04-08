@@ -266,8 +266,8 @@ let g:lightline.tabline = {
   \ 'right': [ [ 'cwd' ] ]
   \ }
 let g:lightline.tab = {
-  \ 'active': [ 'activeTabnum', 'filename', 'modified' ],
-  \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
+  \ 'active': [ 'tabnum', 'modified', 'filename' ],
+  \ 'inactive': [ 'tabnum', 'modified', 'filename' ]
   \ }
 
 " }}}
