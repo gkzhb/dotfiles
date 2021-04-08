@@ -665,7 +665,7 @@ set ttimeout
 nnoremap <silent> <leader>G :G<CR>
 
 " {{{3 choosewin
-nnoremap - <Plug>(choosewin)
+nmap - <Plug>(choosewin)
 
 " {{{3 coc.nvim and coc-extensions
 " {{{4 coc-explorer
@@ -680,8 +680,8 @@ nnoremap <silent> <leader>lg :<C-u>CocList grep<CR>
 nnoremap <silent> <leader>b :<C-u>CocList --normal buffers<CR>
 " {{{4 coc action
 " format code 格式化代码
-vnoremap <leader>f  <Plug>(coc-format-selected)
-nnoremap <leader>f  <Plug>(coc-format-selected)
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 " {{{3 vista
 nnoremap <silent> <leader>g :Vista!!<CR>
 " {{{3 tagbar
@@ -696,8 +696,8 @@ nnoremap <silent> <leader>z :MaximizerToggle<CR>
 "   <leader>pj - Browse list of files in current directory
 "   <leader>s - Search current directory for occurences of given term and close window if no results
 "   <leader>j - Search current directory for occurences of word under cursor
-nmap ; :Denite buffer<CR>
-nmap <leader>pj :DeniteProjectDir file/rec<CR>
+nnoremap ; :Denite buffer<CR>
+nnoremap <leader>pj :DeniteProjectDir file/rec<CR>
 nnoremap <leader>s :<C-u>Denite grep:. -no-empty<CR>
 nnoremap <leader>sf :<C-u>Denite file/rec<CR>
 nnoremap <leader>j :<C-u>DeniteCursorWord grep:.<CR>
@@ -776,7 +776,7 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " or
 " `s{char}{char}{label}`
 " Need one more keystroke, but on average, it may be more comfortable.
-nnoremap s <Plug>(easymotion-overwin-f2)
+nmap s <Plug>(easymotion-overwin-f2)
 
 " Turn on case-insensitive feature
 let g:EasyMotion_smartcase = 1
