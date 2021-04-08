@@ -38,8 +38,10 @@ Plug 'tpope/vim-commentary'
 " :RemoveToc 删除插件生成的 TOC
 
 " {{{2 display enhancement
-" 显示颜色 Golang is needed to compile it
-Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+if executable('go')
+  " 显示颜色 Golang is needed to compile it
+  Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+endif
 " 方便编辑颜色
 Plug 'Rykka/colorv.vim'
 " colorv 依赖 needed for fetching schemes online.
@@ -643,7 +645,6 @@ set cmdheight=1  " 命令行（在状态下）的高度
 " consider reading doc from onedark plugin to change the highlight color
 " }}}
 
-
 " {{{1 Encodings
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
@@ -671,6 +672,7 @@ nnoremap - <Plug>(choosewin)
 nnoremap <silent> <leader>e :call CocAction('runCommand', 'explorer', getcwd(), '--toggle', '--quit-on-open')<CR>
 " nnoremap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open getcwd()<CR>
 " {{{4 coc-lists
+nnoremap <silent> <leader>l :<C-u>CocList <CR>
 nnoremap <silent> <leader>y  :<C-u>CocList -A --normal yank<cr>
 nnoremap <silent> <leader>lb :<C-u>CocList buffers<CR>
 nnoremap <silent> <leader>ls :<C-u>CocList files<CR>
@@ -827,3 +829,9 @@ set undofile " save undo history
 
 set splitbelow
 set splitright
+
+" {{{1 load local vim config file `.config/nvim/customize.vim`
+let customize_file=expand(stdpath('config') . '/customize.vim')
+if filereadable(customize_file)
+  exec ':source ' . customize_file
+endif
