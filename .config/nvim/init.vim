@@ -277,6 +277,9 @@ let g:lightline.tab = {
 " should be the same as Coc Session 'session.directory' in coc-settings.json
 "
 " let g:startify_session_dir = '$XDG_DATA_HOME/nvim/session'
+" do not change cwd when opening files
+let g:startify_change_to_dir = 0
+let g:startify_change_to_vcs_root = 0
 
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
@@ -597,7 +600,7 @@ colorscheme onedark " iceberg
 
 " }}}
 
-" {{{1 display style
+" {{{1 Display Style
 syntax enable
 
 set fdm=syntax " 代码折叠 manual indent expr syntax diff marker
@@ -641,7 +644,7 @@ set cmdheight=1  " 命令行（在状态下）的高度
 
 " }}}
 
-" {{{1 highlight color
+" {{{1 Highlight Color
 " consider reading doc from onedark plugin to change the highlight color
 " }}}
 
@@ -652,7 +655,7 @@ set encoding=utf-8
 set fileencoding=utf-8
 " }}}
 
-" {{{1 keyboard mappings/bindings & shortcuts
+" {{{1 Keyboard Mappings/Bindings & Shortcuts
 " <leader>
 let mapleader="\<space>"
 " see help ttimeout
@@ -804,7 +807,7 @@ cnoremap <F5> <C-c>:set list!<CR>
 
 " }}}
 
-" {{{1 indent 缩进
+" {{{1 Indent 缩进
 
 filetype plugin indent on    " 必须 加载vim自带和插件相应的语法和文件类型相关脚本
 " 忽视插件改变缩进,可以使用以下替代:
@@ -818,19 +821,22 @@ set expandtab
 set smarttab  " 在行和段开始处使用制表符
 set smartindent
 
-" {{{1 filetype settings
+" {{{1 Filetype Settings
 " au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 
 " {{{1 Others
 set history=1000  " 历史记录数
 set undofile " save undo history
+" do not save empty windows in vim sessions
+set ssop-=blank " sessionoptions
 
 " autocmd BufWritePost $MYVIMRC source $MYVIMRC " 配置立即生效
 
 set splitbelow
 set splitright
 
-" {{{1 load local vim config file `.config/nvim/customize.vim`
+" {{{1 Load Local Configuration
+" load local vim config file `.config/nvim/customize.vim`
 let customize_file=expand(stdpath('config') . '/customize.vim')
 if filereadable(customize_file)
   exec ':source ' . customize_file
