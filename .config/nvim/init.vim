@@ -121,6 +121,13 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " }}}
 
+" {{{2 others
+if executable('sudo')
+  " sudo read/write files
+  Plug 'lambdalisue/suda.vim'
+endif
+
+" }}}
 
 " 你的所有插件需要在下面这行之前
 call plug#end()
@@ -158,8 +165,6 @@ let g:tex_flavor = 'latex'
 let g:vimtex_syntax_conceal_default=0
 " enable folding in latex
 let g:vimtex_fold_enabled = 1
-
-" }}}
 
 " {{{2 lightline
 
@@ -585,9 +590,14 @@ augroup END
 "     \ },
 "   \ }
 
+
+" {{{2 suda
+let g:suda_smart_edit = 1
 " }}}
 
-" {{{1 colors
+" }}}
+
+" {{{1 Colors
 
 set t_Co=256 " 开启 256颜色
 if (has("termguicolors"))
