@@ -289,7 +289,11 @@ let g:startify_change_to_vcs_root = 0
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
   " set font size for firenvim
-  set guifont=Monaco:h14:cANSI
+  if has("macunix")
+    set guifont=Monaco:h20:cANSI
+  elseif has("unix")
+    set guifont=Courier\ New\ 11:h20
+  endif
 endif
 
 " {{{2 lf
@@ -705,11 +709,11 @@ nnoremap <silent> <leader>lf :Lf<CR>
 nnoremap <silent> <leader>z :MaximizerToggle<CR>
 
 " {{{3 denite
-"   ;         - Browser currently open buffers
+"   <leader>db - Browser currently open buffers
 "   <leader>pj - Browse list of files in current directory
 "   <leader>s - Search current directory for occurences of given term and close window if no results
 "   <leader>j - Search current directory for occurences of word under cursor
-nnoremap ; :Denite buffer<CR>
+nnoremap <leader>db :Denite buffer<CR>
 nnoremap <leader>pj :DeniteProjectDir file/rec<CR>
 nnoremap <leader>s :<C-u>Denite grep:. -no-empty<CR>
 nnoremap <leader>sf :<C-u>Denite file/rec<CR>
