@@ -430,6 +430,7 @@ let g:coc_global_extensions = [
             \"coc-json",
             \"coc-lists",
             \"coc-markdownlint",
+            \"coc-pairs",
             \"coc-prettier",
             \"coc-sh",
             \"coc-tabnine",
