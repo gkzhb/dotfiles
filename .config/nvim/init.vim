@@ -127,6 +127,9 @@ if executable('sudo')
   Plug 'lambdalisue/suda.vim'
 endif
 
+let g:vimspector_enable_mappings = 'HUMAN'
+Plug 'puremourning/vimspector'
+
 " }}}
 
 " 你的所有插件需要在下面这行之前
@@ -673,6 +676,7 @@ set fileencoding=utf-8
 " {{{1 Keyboard Mappings/Bindings & Shortcuts
 " <leader>
 let mapleader="\<space>"
+let maplocalleader=','
 " see help ttimeout
 set notimeout
 set ttimeout
@@ -802,6 +806,13 @@ let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 " map <Leader>j <Plug>(easymotion-j)
 " map <Leader>k <Plug>(easymotion-k)
+" {{{3 vimspector
+" for normal mode - the word under the cursor
+nmap <Leader>di <Plug>VimspectorBalloonEval
+" for visual mode, the visually selected text
+xmap <Leader>di <Plug>VimspectorBalloonEval"
+nmap <LocalLeader><F11> <Plug>VimspectorUpFrame
+nmap <LocalLeader><F12> <Plug>VimspectorDownFrame
 " }}}
 
 " {{{2 others
@@ -816,9 +827,9 @@ nnoremap <silent> <leader>p :set invpaste<CR>
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
-noremap <F5> :set list!<CR>
-inoremap <F5> <C-o>:set list!<CR>
-cnoremap <F5> <C-c>:set list!<CR>
+noremap <Leader>ci :set list!<CR>
+" inoremap <F5> <C-o>:set list!<CR>
+" cnoremap <F5> <C-c>:set list!<CR>
 
 " }}}
 
