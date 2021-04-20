@@ -1,12 +1,10 @@
 " vim: set fdm=marker: 
-
 " {{{1 Pre Plugin Settings
-set nocompatible  "去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+set nocompatible 
 filetype off
 
 " {{{1 Plugins
 call plug#begin()
-
 " {{{2 color theme
 " Plug 'altercation/vim-colors-solarized'
 " let g:solarized_termtrans=1
@@ -23,6 +21,8 @@ Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'lukaszb/vim-web-indent'
 " let g:js_indent = '/location/to/javascript.vim'
+" json with comments
+Plug 'kevinoid/vim-jsonc'
 
 " latex
 Plug 'lervag/vimtex'
@@ -39,7 +39,8 @@ Plug 'tpope/vim-commentary'
 
 " {{{2 display enhancement
 if executable('go')
-  " 显示颜色 Golang is needed to compile it
+  " Display colors of color values in vim
+	" Golang is needed to compile it
   Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 endif
 " 方便编辑颜色
@@ -55,10 +56,12 @@ Plug 'mhinz/vim-startify'
 " 缩进线条 indent visualization
 Plug 'Yggdroot/indentLine'
 
-Plug 'liuchengxu/vista.vim' " 
+Plug 'liuchengxu/vista.vim'
 " preview the result of replace command in real time
 " 实时预览替换命令执行效果
 Plug 'markonm/traces.vim' 
+" change foldtext
+Plug 'scr1pt0r/crease.vim'
 
 " needed by lf
 Plug 'voldikss/vim-floaterm'
@@ -131,13 +134,9 @@ let g:vimspector_enable_mappings = 'HUMAN'
 Plug 'puremourning/vimspector'
 
 " }}}
-
-" 你的所有插件需要在下面这行之前
 call plug#end()
-" }}}
 
 " {{{1 Plugin Configure
-
 " {{{2 polyglot
 let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
@@ -289,12 +288,35 @@ let g:lightline.tab = {
 let g:startify_change_to_dir = 0
 let g:startify_change_to_vcs_root = 0
 
+" {{{2 crease
+" Ref: https://github.com/AdamWagner/stackline/issues/42#issuecomment-696817874
+function! CreaseIndent() abort " {{{
+  let fs = nextnonblank(v:foldstart)    
+  let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')  
+  let foldLevelStr = repeat(' ', match(line,'\S'))  
+  return foldLevelStr    
+endfunction    " }}}
+
+function! CreaseHashtagIndent() abort " {{{
+  return repeat('#', v:foldlevel)
+endfunction " }}}
+
+function! CreaseLineInfo() abort " {{{
+  let width = &numberwidth - 1
+  return printf('%*u -- %*u : %*u lines  ', width, v:foldstart, width, v:foldend, width, v:foldend - v:foldstart + 1)
+endfunction " }}}
+
+set fillchars+=fold:·
+let g:crease_foldtext = {
+	\ 'default': '%{CreaseIndent()}%t  %=  %{CreaseLineInfo()}%f%f%f%f',
+	\ 'marker': '%{CreaseHashtagIndent()} %t  %=  %{CreaseLineInfo()}%f%f%f%f',
+	\ }
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
   " set font size for firenvim
-  if has("macunix")
+  if has('macunix')
     set guifont=Monaco:h20:cANSI
-  elseif has("unix")
+  elseif has('unix')
     set guifont=Courier\ New\ 11:h20
   endif
 endif
@@ -418,31 +440,43 @@ call coc#config('explorer', {
 " {{{4 coc lists
 call coc#config('list.source.grep.args', ['--hidden', '--vimgrep', '--heading', '-S'])
 call coc#config('session.directory', stdpath('data').'/session') " in startify autoload/startify.vim
+" {{{4 coc json
+" json schemas
+call coc#config('json.schemas', [
+    \ {
+      \ 'fileMatch': [ '.vimspector.json' ],
+      \ 'url': 'file://' . stdpath('config') . '/plugged/vimspector/docs/schema/vimspector.schema.json',
+    \ },
+    \ {
+      \ 'fileMatch': [ '.gadgets.json', '.gadgets.d/*.json' ],
+      \ 'url': 'file://' . stdpath('config') . '/plugged/vimspector/docs/schema/gadgets.schema.json',
+    \ }
+  \ ])
 
 
 " {{{3 coc-extension list
 " coc-vetur: Vue.js
 let g:coc_global_extensions = [
-            \"coc-css",
-            \"coc-cssmodules",
-            \"coc-eslint",
-            \"coc-explorer",
-            \"coc-git",
-            \"coc-go",
-            \"coc-highlight",
-            \"coc-json",
-            \"coc-lists",
-            \"coc-markdownlint",
-            \"coc-pairs",
-            \"coc-prettier",
-            \"coc-sh",
-            \"coc-tabnine",
-            \"coc-tsserver",
-            \"coc-vetur",
-            \"coc-vimlsp",
-            \"coc-vimtex",
-            \"coc-yaml",
-            \"coc-yank"
+            \'coc-css',
+            \'coc-cssmodules',
+            \'coc-eslint',
+            \'coc-explorer',
+            \'coc-git',
+            \'coc-go',
+            \'coc-highlight',
+            \'coc-json',
+            \'coc-lists',
+            \'coc-markdownlint',
+            \'coc-pairs',
+            \'coc-prettier',
+            \'coc-sh',
+            \'coc-tabnine',
+            \'coc-tsserver',
+            \'coc-vetur',
+            \'coc-vimlsp',
+            \'coc-vimtex',
+            \'coc-yaml',
+            \'coc-yank'
             \]
 
 " {{{3 coc settings and shortcuts
@@ -516,7 +550,7 @@ function! s:show_documentation()
   elseif (coc#rpc#ready())
     call CocActionAsync('doHover')
   else
-    execute '!' . &keywordprg . " " . expand('<cword>')
+    execute '!' . &keywordprg . ' ' . expand('<cword>')
   endif
 endfunction
 
@@ -592,11 +626,13 @@ augroup CocExplorerCustom
   autocmd FileType coc-explorer call <SID>init_explorer()
 augroup END
 
-" let g:coc_explorer_global_presets = {
-"   \ 'workspace': {
-"     \ 'root-uri': getcwd(),
-"     \ },
-"   \ }
+let g:coc_explorer_global_presets = {
+  \ 'workspace': {
+      \ 'position': 'floating',
+      \ 'toggle': v:true,
+      \ 'quit-on-open': v:true,
+    \ },
+  \ }
 
 
 " {{{2 suda
@@ -608,7 +644,7 @@ let g:suda_smart_edit = 1
 " {{{1 Colors
 
 set t_Co=256 " 开启 256颜色
-if (has("termguicolors"))
+if (has('termguicolors'))
   " 使用 RGB 颜色
   set termguicolors
 endif
@@ -631,14 +667,14 @@ set nu    " 显示行号 show line number
 set rnu     " 相对行号 use relative line number
 
 " gui font
-if has("gui_running")
-  if has("gui_gtk2") || has("gui_gtk3")
+if has('gui_running')
+  if has('gui_gtk2') || has('gui_gtk3')
     set guifont=Courier\ New\ 11
-  elseif has("gui_photon")
+  elseif has('gui_photon')
     set guifont=Courier\ New:s11
-  elseif has("gui_kde")
+  elseif has('gui_kde')
     set guifont=Courier\ New/11/-1/5/50/0/0/0/1/0
-  elseif has("x11")
+  elseif has('x11')
     set guifont=-*-courier-medium-r-normal-*-*-180-*-*-m-*-*
   else
     set guifont=Courier_New:h11:cDEFAULT
@@ -691,7 +727,7 @@ nmap - <Plug>(choosewin)
 
 " {{{3 coc.nvim and coc-extensions
 " {{{4 coc-explorer
-nnoremap <silent> <leader>e :call CocAction('runCommand', 'explorer', getcwd(), '--toggle', '--quit-on-open')<CR>
+nnoremap <silent> <leader>e :call CocAction('runCommand', 'explorer', '--preset', 'workspace', getcwd())<CR>
 " nnoremap <silent> <leader>e :CocCommand explorer --toggle --quit-on-open getcwd()<CR>
 " {{{4 coc-lists
 nnoremap <silent> <leader>l :<C-u>CocList <CR>
@@ -810,7 +846,7 @@ let g:EasyMotion_smartcase = 1
 " for normal mode - the word under the cursor
 nmap <Leader>di <Plug>VimspectorBalloonEval
 " for visual mode, the visually selected text
-xmap <Leader>di <Plug>VimspectorBalloonEval"
+xmap <Leader>di <Plug>VimspectorBalloonEval
 nmap <LocalLeader><F11> <Plug>VimspectorUpFrame
 nmap <LocalLeader><F12> <Plug>VimspectorDownFrame
 " }}}
@@ -847,8 +883,11 @@ set expandtab
 set smarttab  " 在行和段开始处使用制表符
 set smartindent
 
+" {{{1 Folding
+set foldlevelstart=0
 " {{{1 Filetype Settings
 " au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
+au FileType json set filetype=jsonc
 
 " {{{1 Others
 set history=1000  " 历史记录数
