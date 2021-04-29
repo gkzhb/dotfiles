@@ -1,5 +1,10 @@
 # Configuration for Alacritty, the GPU enhanced terminal emulator
 
+import:
+  - ~/.config/alacritty/font.yml
+  - ~/.config/alacritty/shell.yml
+  - ~/.config/alacritty/custom.yml
+
 # Any items in the `env` entry below will be added as
 # environment variables. Some entries may override variables
 # set by alacritty it self.
@@ -61,65 +66,6 @@ scrolling:
   # Number of lines the viewport will move for every line scrolled when
   # scrollback is enabled (history > 0).
   multiplier: 3
-
-# Font configuration (changes require restart)
-font:
-  # The normal (roman) font face to use.
-  # Style can be specified to pick a specific face.
-  # normal:
-  # family: Iosevka
-  # style: Light
-    # family: "Fira Code"
-    # family: "Source Code Pro"
-    # style: Retina
-
-  # The bold font face
-  # bold:
-  # family: Iosevka
-  # style: Medium
-    # family: "Fira Code"
-    # family: "Source Code Pro"
-
-  # The italic font face
-  # italic:
-  # family: Iosevka
-  # style: "Light Italic"
-    # style: "Light Oblique"
-    # family: "Fira Code"
-    # family: "Source Code Pro"
-    # style: "Medium Italic"
-
-  # Point size of the font
-  size: 14.0
-
-  # Offset is the extra space around each character. offset.y can be thought of
-  # as modifying the linespacing, and offset.x as modifying the letter spacing.
-  offset:
-    x: 0
-    y: 0
-
-  # Glyph offset determines the locations of the glyphs within their cells with
-  # the default being at the bottom. Increase the x offset to move the glyph to
-  # the right, increase the y offset to move the glyph upward.
-  glyph_offset:
-    x: 0
-    y: 0
-
-  # Thin stroke font rendering (macOS only)
-  #
-  # Thin strokes are suitable for retina displays, but for non-retina you
-  # probably want this set to false.
-  #
-  # macOS >= 10.14.x:
-  #
-  # If the font quality on non-retina display looks bad then set
-  # `use_thin_strokes` to `true` and enable font smoothing by running the
-  # following command:
-  #   `defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO`
-  #
-  # This is a global setting and will require a log out or restart to take
-  # effect.
-  use_thin_strokes: true
 
 # When true, bold text is drawn using the bright variant of colors.
 draw_bold_text_with_bright_colors: false
@@ -510,15 +456,6 @@ cursor:
 
 # Live config reload (changes require restart)
 live_config_reload: true
-# 
-# Shell
-#
-# You can set shell.program to the path of your favorite shell, e.g. /bin/fish.
-# Entries in shell.args are passed unmodified as arguments to the shell.
-shell:
-  program: /usr/local/bin/fish
-  args:
-    - --login
 
 debug:
   # Should display the render timer

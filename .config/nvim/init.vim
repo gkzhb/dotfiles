@@ -317,7 +317,7 @@ if exists('g:started_by_firenvim')
   if has('macunix')
     set guifont=Monaco:h20:cANSI
   elseif has('unix')
-    set guifont=Courier\ New\ 11:h20
+    set guifont=Courier\ New\ 11:h10
   endif
 endif
 
