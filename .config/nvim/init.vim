@@ -13,8 +13,12 @@ Plug 'joshdick/onedark.vim'
 
 " {{{2 language related
 " language highlight
-let g:polyglot_disabled = ['sensible']
+let g:polyglot_disabled = ['sensible', 'ftdetect']
 Plug 'sheerun/vim-polyglot'
+
+" assembly
+" Plug 'wsdjeg/vim-assembly'
+Plug 'ARM9/arm-syntax-vim'
 
 " ts js
 Plug 'leafgarland/typescript-vim'
@@ -888,6 +892,7 @@ set foldlevelstart=0
 " {{{1 Filetype Settings
 " au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 au FileType json set filetype=jsonc
+au FileType *.s,*.S set filetype arm
 
 " {{{1 Others
 set history=1000  " 历史记录数
