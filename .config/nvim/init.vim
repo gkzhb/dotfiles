@@ -203,7 +203,7 @@ let g:lightline = {
     \ 'paste': '%{(winwidth(0)>g:statuslinebreakpoint && &paste)?"PASTE":""}',
     \ 'readonly': '%{(winwidth(0)>g:statuslinebreakpoint && &ro)?"RO":""}',
     \ 'gitbranch': '%{winwidth(0)>g:statuslinebreakpoint?FugitiveHead():""}',
-    \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), col(".")):""}',
+    \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), virtcol(".")):""}',
     \ 'cwd': '%{getcwd()}',
     \ },
   \ 'component_function': {
