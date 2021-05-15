@@ -24,7 +24,7 @@ Plug 'ARM9/arm-syntax-vim'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'lukaszb/vim-web-indent'
-" let g:js_indent = '/location/to/javascript.vim'
+let g:js_indent = stdpath('config') . '/plugged/vim-web-indent/indent/javascript.vim'
 " json with comments
 Plug 'kevinoid/vim-jsonc'
 
@@ -305,6 +305,11 @@ function! CreaseHashtagIndent() abort " {{{
   return repeat('#', v:foldlevel)
 endfunction " }}}
 
+function! CreaseFoldContent() abort " {{{
+  let text = foldtext()
+  return text[match(text, ':') + 2:]
+endfunction " }}}
+
 function! CreaseLineInfo() abort " {{{
   let width = &numberwidth - 1
   return printf('%*u -- %*u : %*u lines  ', width, v:foldstart, width, v:foldend, width, v:foldend - v:foldstart + 1)
@@ -312,8 +317,8 @@ endfunction " }}}
 
 set fillchars+=fold:·
 let g:crease_foldtext = {
-	\ 'default': '%{CreaseIndent()}%t  %=  %{CreaseLineInfo()}%f%f%f%f',
-	\ 'marker': '%{CreaseHashtagIndent()} %t  %=  %{CreaseLineInfo()}%f%f%f%f',
+	\ 'default': '%{CreaseIndent()}%{CreaseFoldContent()} ···  %=  %{CreaseLineInfo()}%f%f%f%f',
+	\ 'marker': '%{CreaseHashtagIndent()} %{CreaseFoldContent()}  %=  %{CreaseLineInfo()}%f%f%f%f',
 	\ }
 " {{{2 firenvim
 if exists('g:started_by_firenvim')
@@ -461,6 +466,7 @@ call coc#config('json.schemas', [
 " {{{3 coc-extension list
 " coc-vetur: Vue.js
 let g:coc_global_extensions = [
+            \'coc-clangd',
             \'coc-css',
             \'coc-cssmodules',
             \'coc-eslint',
@@ -641,6 +647,12 @@ let g:coc_explorer_global_presets = {
 
 " {{{2 suda
 let g:suda_smart_edit = 1
+" {{{2 vimspector
+let g:vimspector_sign_priority = {
+  \ 'vimspectorBP':         11,
+  \ 'vimspectorBPCond':     11,
+  \ 'vimspectorBPDisabled': 11,
+  \ }
 " }}}
 
 " }}}
@@ -669,6 +681,8 @@ set cursorline " highlight current line of cursor
 set listchars=tab:▸\ ,trail:~,extends:>,precedes:<,space:␣ " ,eol:¬
 set nu    " 显示行号 show line number
 set rnu     " 相对行号 use relative line number
+
+set signcolumn=auto:2 " allow vimspector and vim-signify to showup at the same time
 
 " gui font
 if has('gui_running')
