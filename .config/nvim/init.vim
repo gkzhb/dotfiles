@@ -23,8 +23,6 @@ Plug 'ARM9/arm-syntax-vim'
 " ts js
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'lukaszb/vim-web-indent'
-let g:js_indent = stdpath('config') . '/plugged/vim-web-indent/indent/javascript.vim'
 " json with comments
 Plug 'kevinoid/vim-jsonc'
 
