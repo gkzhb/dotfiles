@@ -13,15 +13,17 @@ Plug 'joshdick/onedark.vim'
 
 " {{{2 language related
 " language highlight
-let g:polyglot_disabled = ['sensible', 'ftdetect']
-Plug 'sheerun/vim-polyglot'
+" let g:polyglot_disabled = ['sensible', 'ftdetect']
+" Plug 'sheerun/vim-polyglot'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " assembly
 " Plug 'wsdjeg/vim-assembly'
 Plug 'ARM9/arm-syntax-vim'
 
 " ts js
-Plug 'leafgarland/typescript-vim'
+" Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 " json with comments
 Plug 'kevinoid/vim-jsonc'
@@ -45,6 +47,8 @@ if executable('go')
 	" Golang is needed to compile it
   Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 endif
+" 快捷键显示
+Plug 'liuchengxu/vim-which-key'
 " 方便编辑颜色
 Plug 'Rykka/colorv.vim'
 " colorv 依赖 needed for fetching schemes online.
@@ -161,6 +165,23 @@ let g:Hexokinase_ftOptInPatterns = {
 " Disable tmux navigator when zooming the Vim pane
 let g:tmux_navigator_disable_when_zoomed = 1
 
+" {{{2 nvim treesitter
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ignore_install = {  }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = {  },  -- list of language that will be disabled
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+" }}}
 " {{{2 vim tex
 " let g:vimtex_compiler_latexmk = {}
 " let g:vimtex_imaps_leader = '@'
@@ -427,7 +448,7 @@ call coc#config('explorer', {
       \ 'file.root.template': '[icon & 1] PROJECT ([root]) [fullpath]',
       \ 'file.child.template': '[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]',
       \ 'file.showHiddenFiles': v:true,
-      \ 'file.autoReveal': v:false,
+      \ 'file.auto': v:false,
       \ 'icon.enableVimDevicons': v:false,
       \ 'icon.enableNerdfont': v:false,
       \ 'previewAction.onHover': 'labeling',
@@ -730,11 +751,15 @@ set fileencoding=utf-8
 let mapleader="\<space>"
 let maplocalleader=','
 " see help ttimeout
-set notimeout
+" set notimeout
 set ttimeout
+set tm=500
 
 " {{{2 plugins
 
+" {{{3 vim-which-key
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+" }}}
 " {{{3 fugitive
 nnoremap <silent> <leader>G :G<CR>
 
