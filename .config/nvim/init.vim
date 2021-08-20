@@ -13,8 +13,8 @@ Plug 'joshdick/onedark.vim'
 
 " {{{2 language related
 " language highlight
-" let g:polyglot_disabled = ['sensible', 'ftdetect']
-" Plug 'sheerun/vim-polyglot'
+let g:polyglot_disabled = ['sensible', 'ftdetect']
+Plug 'sheerun/vim-polyglot'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
@@ -926,6 +926,8 @@ set smartindent
 
 " {{{1 Folding
 set foldlevelstart=0
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 " {{{1 Filetype Settings
 " au FileType javascript,json setlocal shiftwidth=2 softtabstop=2 expandtab
 au FileType json set filetype=jsonc
