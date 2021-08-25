@@ -480,6 +480,10 @@ call coc#config('json.schemas', [
       \ 'url': 'file://' . stdpath('config') . '/plugged/vimspector/docs/schema/gadgets.schema.json',
     \ }
   \ ])
+" {{{ 4 coc rust
+call coc#config('rust-analyzer', {
+    \ 'server.path': stdpath('data') . '/../../bin/rust-analyzer'
+    \ })
 
 
 " {{{3 coc-extension list
@@ -498,6 +502,7 @@ let g:coc_global_extensions = [
             \'coc-markdownlint',
             \'coc-pairs',
             \'coc-prettier',
+            \'coc-rust-analyzer',
             \'coc-sh',
             \'coc-tabnine',
             \'coc-tsserver',
