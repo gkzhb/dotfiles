@@ -135,6 +135,7 @@ if executable('sudo')
   " sudo read/write files
   Plug 'lambdalisue/suda.vim'
 endif
+Plug 'kana/vim-fakeclip'
 
 let g:vimspector_enable_mappings = 'HUMAN'
 Plug 'puremourning/vimspector'
