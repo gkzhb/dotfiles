@@ -480,11 +480,18 @@ call coc#config('json.schemas', [
       \ 'url': 'file://' . stdpath('config') . '/plugged/vimspector/docs/schema/gadgets.schema.json',
     \ }
   \ ])
+" {{{4 coc eslint
+" json schemas
+call coc#config('eslint', {
+    \ 'filetypes': [
+    \ ]
+  \ })
 
 
 " {{{3 coc-extension list
 " coc-vetur: Vue.js
 let g:coc_global_extensions = [
+            \'coc-browser',
             \'coc-clangd',
             \'coc-css',
             \'coc-cssmodules',
@@ -905,6 +912,15 @@ nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
 noremap <Leader>ci :set list!<CR>
+
+function! SetTab(size) abort
+  exec "set tabstop=" . a:size
+  exec "set softtabstop=" . a:size
+  exec "set shiftwidth=" . a:size
+endfunction
+
+noremap <Leader>ct4 :call SetTab(4)<CR>
+noremap <Leader>ct2 :call SetTab(2)<CR>
 " inoremap <F5> <C-o>:set list!<CR>
 " cnoremap <F5> <C-c>:set list!<CR>
 
