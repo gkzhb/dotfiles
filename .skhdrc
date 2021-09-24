@@ -83,8 +83,8 @@ alt - k : yabai -m window --focus north
 alt - l : yabai -m window --focus east
 
 
-alt - tab : $HOME/script/yabai/switch-monitor.sh next
-shift + alt - tab : $HOME/script/yabai/switch-monitor.sh prev
+alt - tab : yabai -m display --focus next; or yabai -m display --focus first
+shift + alt - tab : yabai -m display --focus prev; or yabai -m display --focus last
 
 # swap managed window
 # shift + alt - h : yabai -m window --swap north
