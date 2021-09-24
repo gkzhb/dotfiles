@@ -768,7 +768,8 @@ set tm=500
 nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 " }}}
 " {{{3 fugitive
-nnoremap <silent> <leader>G :G<CR>
+nnoremap <silent> <leader>g :G<CR>
+nnoremap <leader>g<Space> :G<Space>
 
 " {{{3 choosewin
 nmap - <Plug>(choosewin)
@@ -789,7 +790,7 @@ nnoremap <silent> <leader>b :<C-u>CocList --normal buffers<CR>
 vmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 " {{{3 vista
-nnoremap <silent> <leader>g :Vista!!<CR>
+" nnoremap <silent> <leader>g :Vista!!<CR>
 " {{{3 tagbar
 nnoremap <silent> <leader>gg :TagbarToggle<CR>
 " {{{3 lf
