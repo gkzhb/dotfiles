@@ -487,7 +487,6 @@ call coc#config('eslint', {
   \ })
 " {{{ 4 coc rust
 call coc#config('rust-analyzer', {
-    \ 'server.path': stdpath('data') . '/../../bin/rust-analyzer'
     \ })
 
 
