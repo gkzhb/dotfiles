@@ -168,7 +168,9 @@ let g:tmux_navigator_disable_when_zoomed = 1
 " {{{2 nvim treesitter
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = {
+    'bash', 'c' , 'cpp', 'cmake', 'css', 'dockerfile', 'fish', 'go', 'html', 'java', 'javascript', 'jsonc', 'latex', 'lua', 'php', 'python', 'rust', 'scss', 'tsx', 'typescript', 'vim', 'vue', 'yaml'
+  }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = {  }, -- List of parsers to ignore installing
   highlight = {
     enable = true,              -- false will disable the whole extension
@@ -178,6 +180,9 @@ require'nvim-treesitter.configs'.setup {
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = true
   },
 }
 EOF
