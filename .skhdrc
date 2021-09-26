@@ -77,10 +77,10 @@
 # ############################################################### #
 
 # focus window
-alt - h : yabai -m window --focus west
-alt - j : yabai -m window --focus south
-alt - k : yabai -m window --focus north
-alt - l : yabai -m window --focus east
+alt - h : yabai -m window --focus west; or yabai -m display --focus west
+alt - j : yabai -m window --focus south; or yabai -m display --focus south
+alt - k : yabai -m window --focus north; or yabai -m display --focus north
+alt - l : yabai -m window --focus east; or yabai -m display --focus east
 
 
 alt - tab : yabai -m display --focus next; or yabai -m display --focus first
