@@ -54,7 +54,7 @@ Plug 'Rykka/colorv.vim'
 " colorv 依赖 needed for fetching schemes online.
 Plug 'mattn/webapi-vim' 
 " VCS 文件修改情况显示
-Plug 'mhinz/vim-signify' 
+" Plug 'mhinz/vim-signify' 
 " statusline
 Plug 'itchyny/lightline.vim'
 " start screen 启动屏
@@ -169,7 +169,7 @@ let g:tmux_navigator_disable_when_zoomed = 1
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = {
-    'bash', 'c' , 'cpp', 'cmake', 'css', 'dockerfile', 'fish', 'go', 'html', 'java', 'javascript', 'jsonc', 'latex', 'lua', 'php', 'python', 'rust', 'scss', 'tsx', 'typescript', 'vim', 'vue', 'yaml'
+    'bash', 'c', 'cpp', 'cmake', 'css', 'dockerfile', 'fish', 'go', 'html', 'java', 'javascript', 'jsonc', 'latex', 'lua', 'php', 'python', 'rust', 'scss', 'tsx', 'typescript', 'vim', 'vue', 'yaml'
   }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = {  }, -- List of parsers to ignore installing
   highlight = {
@@ -209,7 +209,7 @@ let g:lightline = {
     \             [ 'bufnum' ],
     \             [ 'modified', 'filename', 'readonly' ],
     \             [ 'fileencoding', 'fileformat'] ],
-    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitbranch' ], [ 'cocstatus' ] ]
+    \   'right': [ [ 'percent' ], [ 'lineinfo' ], [ 'filetype' ], [ 'gitstatus' ], [ 'cocstatus' ] ]
     \ },
   \ 'inactive': {
     \   'left': [ [ 'mode', 'paste' ],
@@ -223,10 +223,10 @@ let g:lightline = {
     \ 'fileencoding': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&fenc!=#""?&fenc:&enc):""}',
     \ 'fileformat': '%{winwidth(0)>g:statuslinebreakpoint?toupper(&ff):""}',
     \ 'filetype': '%{&ft!=#""?&ft:"none"}',
-    \ 'modified': '%{winwidth(0)>g:statuslinebreakpoint?(&modified?"+":&modifiable?"":"-"):""}',
+    \ 'modified': '%{winwidth(0)>g:statuslinebreakpoint?((&modified?"+":&modifiable?"":"-") . get(b:,"coc_git_status","")):""}',
     \ 'paste': '%{(winwidth(0)>g:statuslinebreakpoint && &paste)?"PASTE":""}',
     \ 'readonly': '%{(winwidth(0)>g:statuslinebreakpoint && &ro)?"RO":""}',
-    \ 'gitbranch': '%{winwidth(0)>g:statuslinebreakpoint?FugitiveHead():""}',
+    \ 'gitstatus': '%{winwidth(0)>g:statuslinebreakpoint?get(g:,"coc_git_status",""):""}',
     \ 'lineinfo': '%{winwidth(0)>g:statuslinebreakpoint?printf("%3s:%-2s", line("."), virtcol(".")):""}',
     \ 'cwd': '%{getcwd()}',
     \ },
@@ -607,7 +607,7 @@ set listchars=tab:▸\ ,trail:~,extends:>,precedes:<,space:␣ " ,eol:¬
 set nu    " 显示行号 show line number
 set rnu     " 相对行号 use relative line number
 
-set signcolumn=auto:2 " allow vimspector and vim-signify to showup at the same time
+" set signcolumn=auto:2 " allow vimspector and vim-signify to showup at the same time
 
 " gui font
 if has('gui_running')
