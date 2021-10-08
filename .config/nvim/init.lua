@@ -60,6 +60,7 @@ vim.opt.history=1000  -- 历史记录数
 vim.opt.undofile=true -- save undo history
 -- do not save empty windows in vim sessions
 vim.opt.ssop:remove('blank') -- sessionoptions
+vim.opt.scrolloff = 5
 
 -- autocmd BufWritePost $MYVIMRC source $MYVIMRC -- 配置立即生效
 

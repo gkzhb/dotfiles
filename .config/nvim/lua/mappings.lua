@@ -119,5 +119,11 @@ function M.setMappings()
   map('n', '<leader>ls', ':<C-u>CocList files<CR>')
   map('n', '<leader>lg', ':<C-u>CocList grep<CR>')
   map('n', '<leader>b', ':<C-u>CocList --normal buffers<CR>')
+
+  -- telescope
+  map('n', '<leader>ff', '<cmd>lua require("telescope.builtin").find_files()<cr>')
+  map('n', '<leader>fg', '<cmd>lua require("telescope.builtin").live_grep()<cr>')
+  map('n', '<leader>fb', '<cmd>lua require("telescope.builtin").buffers()<cr>')
+  map('n', '<leader>fh', '<cmd>lua require("telescope.builtin").help_tags()<cr>')
 end
 return M

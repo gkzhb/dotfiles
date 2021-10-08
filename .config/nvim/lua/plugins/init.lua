@@ -1,4 +1,4 @@
--- vim: set fdm=marker: 
+-- vim: set fdm=marker:
 vim.cmd [[packadd packer.nvim]]
 
 -- {{{1 Packer managed plugins
@@ -11,7 +11,10 @@ return require('packer').startup(function(use)
   -- {{{2 language related TODO
   use 'tpope/vim-commentary'
   -- {{{2 display enhancement TODO
-  use 'karb94/neoscroll.nvim'
+  use {
+    'karb94/neoscroll.nvim',
+    config = require('plugins.neoscroll').init
+  }
   use {
     'liuchengxu/vim-which-key'
   }
@@ -61,6 +64,11 @@ return require('packer').startup(function(use)
   }
   use 'easymotion/vim-easymotion'
   use 'szw/vim-maximizer'
+  -- {{{2 edit
+  use {
+    'tpope/vim-surround',
+    keys = {'c', 'd', 'y'}
+  }
   -- {{{2 git related
   use {
     'tpope/vim-fugitive', -- vim 中使用 git 的增强插件
@@ -98,6 +106,10 @@ return require('packer').startup(function(use)
   use {
     'nvim-treesitter/playground'
   }
+  use {
+    'folke/lua-dev.nvim',
+    config = require('plugins.lua-dev').init
+  }
   -- lsp client
   use {
     'neoclide/coc.nvim',
@@ -105,4 +117,10 @@ return require('packer').startup(function(use)
     config = require('plugins.coc-nvim').init
   }
   use 'kevinoid/vim-jsonc'
+
+  -- {{{2 search
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = { {'nvim-lua/plenary.nvim'} }
+  }
 end)
