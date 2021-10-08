@@ -1,7 +1,6 @@
--- vim: set fdm=marker: 
+-- vim: set fdm=marker:
 -- {{{1 predefined variables
 -- predefine function
-local map = vim.api.nvim_set_keymap
 
 -- {{{1 check packer installation
 local packerPath = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'

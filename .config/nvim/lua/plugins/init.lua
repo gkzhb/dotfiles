@@ -123,4 +123,13 @@ return require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim',
     requires = { {'nvim-lua/plenary.nvim'} }
   }
+  use {
+    'folke/trouble.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = require('plugins.trouble').init
+  }
+  use {
+    'https://gitlab.com/yorickpeterse/nvim-pqf.git',
+    config = require('plugins.pqf').init
+  }
 end)

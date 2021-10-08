@@ -34,7 +34,11 @@ function M.setMappings()
   map('n', '<leader>z', ':MaximizerToggle<CR>')
 
   -- tab actions
-  map('n', '<leader>t', ':tabnew<CR>')
+  map('n', '<leader>t', '<cmd>TablineTabNew<CR>')
+  map('n', '<leader>tr', '<cmd>TablineTabRename ')
+  -- tabline.nvim
+  -- map('n', 'gt', '<cmd>TablineBufferNext<CR>')
+  -- map('n', 'gT', '<cmd>TablineBufferPrevious<CR>')
   -- quick actions
   map('n', '<leader>w', ':w<CR>')
   map('n', '<leader>q', ':q<CR>')
