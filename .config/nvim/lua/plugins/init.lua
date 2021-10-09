@@ -7,7 +7,7 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
   -- {{{2 color theme
-  use 'joshdick/onedark.vim'
+  use 'navarasu/onedark.nvim'
   -- {{{2 language related TODO
   use 'tpope/vim-commentary'
   -- {{{2 display enhancement TODO
