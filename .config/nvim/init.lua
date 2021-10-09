@@ -24,7 +24,7 @@ vim.g.colors_name = 'onedark'
 
 -- {{{2 display
 -- fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27
-vim.opt.fillchars:append({ vert = '│', fold = '·' })
+vim.opt.fillchars = { vert = '│', fold = '·' }
 vim.opt.listchars = {
   tab = '▸ ',
   trail = '~',
