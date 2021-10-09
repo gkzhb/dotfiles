@@ -63,8 +63,9 @@ function M.init()
     },
     workspace = {
       library = {
-        [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-        [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
+        -- do not load neovim runtime library by default
+        -- [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+        -- [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
       }
     }
   })

@@ -42,8 +42,9 @@ function M.setMappings()
   -- quick actions
   map('n', '<leader>w', ':w<CR>')
   map('n', '<leader>q', ':q<CR>')
-  map('n', '<leader>p', ':set invpaste<CR>')
+  map('n', '<leader>cp', ':set invpaste<CR>')
   map('n', '<leader>ci', ':set list!<CR>')
+  map('n', '<leader>ch', ':noh<CR>')
 
   map('n', '<C-N>', ':bnext<CR>')
   map('n', '<C-P>', ':bprev<CR>')
@@ -51,6 +52,8 @@ function M.setMappings()
 
   map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
   map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
+  -- project actions
+  map('n', '<leader>pc', '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>')
 
   -- coc.nvim
   -- local coc = require('plugins.coc-nvim')

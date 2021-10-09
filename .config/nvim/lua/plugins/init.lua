@@ -41,7 +41,6 @@ return require('packer').startup(function(use)
     'kdheepak/tabline.nvim',
     config = require('plugins.tabline').init
   }
-  -- use 'voldikss/vim-floaterm'
   use {
     'ptzz/lf.vim',
     requires = { { 'voldikss/vim-floaterm' } },
@@ -68,6 +67,10 @@ return require('packer').startup(function(use)
   use {
     'tpope/vim-surround',
     keys = {'c', 'd', 'y'}
+  }
+  use {
+    'windwp/nvim-projectconfig',
+    config = require('plugins.projectconfig').init
   }
   -- {{{2 git related
   use {
