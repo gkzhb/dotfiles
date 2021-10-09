@@ -2,9 +2,12 @@
 vim.cmd [[packadd packer.nvim]]
 
 -- {{{1 Packer managed plugins
-return require('packer').startup(function(use)
+return require('packer').startup(function()
   -- Packer itself
   use 'wbthomason/packer.nvim'
+
+  -- {{{2 performance
+  use 'dstein64/vim-startuptime'
 
   -- {{{2 color theme
   use 'navarasu/onedark.nvim'
@@ -72,6 +75,10 @@ return require('packer').startup(function(use)
     'windwp/nvim-projectconfig',
     config = require('plugins.projectconfig').init
   }
+  use {
+    'lambdalisue/suda.vim',
+    setup = require('plugins.suda').setup
+  }
   -- {{{2 git related
   use {
     'tpope/vim-fugitive', -- vim 中使用 git 的增强插件
@@ -88,7 +95,8 @@ return require('packer').startup(function(use)
       'GRemove',
       'GRename',
       'Glgrep',
-      'Gedit'
+      'Gedit',
+      'Gclog'
     },
     ft = {'fugitive'}
   }

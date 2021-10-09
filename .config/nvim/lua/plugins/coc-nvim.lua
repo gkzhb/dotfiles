@@ -1,6 +1,19 @@
 local M = {}
 local utils = require('utils')
 
+-- lsp configs
+M.luaConfig = {
+  completion = {
+    keywordSnippet = "Disable"
+  },
+  diagnostics = {
+    disable = { 'lowercase-global', 'different-requires' }
+  },
+  workspace = {
+    library = {}
+  }
+}
+
 function M.init()
   -- {{{2 coc.vim config
   -- {{{3 coc-settings.json
@@ -53,22 +66,7 @@ function M.init()
   vim.fn['coc#config']('rust-analyzer', {
   })
   -- {{{4 coc lua
-  vim.fn['coc#config']('Lua', {
-    completion = {
-      keywordSnippet = "Disable"
-    },
-    diagnostics = {
-      globals = { 'vim', 'use' },
-      disable = { 'lowercase-global' }
-    },
-    workspace = {
-      library = {
-        -- do not load neovim runtime library by default
-        -- [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-        -- [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
-      }
-    }
-  })
+  vim.fn['coc#config']('Lua', M.luaConfig)
 
   -- {{{3 coc-extension list
   vim.g.coc_global_extensions = {

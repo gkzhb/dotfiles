@@ -1,7 +1,5 @@
 # dotfiles
 
-Installation script is `script/install.sh`. It will install tpm and vim-plug for you.
-
 ## installation
 
 You are suggested to folk this repo and clone the folked repo.
