@@ -1,19 +1,6 @@
 local M = {}
 local utils = require('utils')
 
--- lsp configs
-M.luaConfig = {
-  completion = {
-    keywordSnippet = "Disable"
-  },
-  diagnostics = {
-    disable = { 'lowercase-global', 'different-requires' }
-  },
-  workspace = {
-    library = {}
-  }
-}
-
 function M.init()
   -- {{{2 coc.vim config
   -- {{{3 coc-settings.json
@@ -64,9 +51,25 @@ function M.init()
   })
   -- {{{4 coc rust
   vim.fn['coc#config']('rust-analyzer', {
+    enable = true
+  })
+  --- {{{4 coc go
+  -- temporary disable go lsp
+  vim.fn['coc#config']('go', {
+    enable = false
   })
   -- {{{4 coc lua
-  vim.fn['coc#config']('Lua', M.luaConfig)
+  vim.fn['coc#config']('Lua', {
+    completion = {
+      keywordSnippet = "Disable"
+    },
+    diagnostics = {
+      disable = { 'lowercase-global', 'different-requires' }
+    },
+    workspace = {
+      library = {}
+    }
+  })
 
   -- {{{3 coc-extension list
   vim.g.coc_global_extensions = {
