@@ -8,7 +8,7 @@ function FugitiveAfterGit()
     return
   end
   local result = vim.fn.FugitiveResult()
-  if not vim.fn.filereadable(result.file or '') or (result.args and result.args[0] or '') == 'commit' or not result.exit_status then
+  if not vim.fn.filereadable(result.file or '') or (result.args and result.args[0] or '') ~= 'commit' or not result.exit_status then
     return
   end
   vim.cmd([[Gsplit -]])
