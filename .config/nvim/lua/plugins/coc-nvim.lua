@@ -67,6 +67,7 @@ function M.init()
       disable = { 'lowercase-global', 'different-requires' }
     },
     workspace = {
+      checkThirdParty = false,
       library = {}
     }
   })
@@ -88,6 +89,7 @@ function M.init()
     'coc-markdownlint',
     'coc-pairs',
     'coc-prettier',
+    'coc-protobuf',
     'coc-rust-analyzer',
     'coc-sh',
     'coc-tabnine',

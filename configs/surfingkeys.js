@@ -1,3 +1,8 @@
+// vim:fileencoding=utf-8:foldmethod=marker
+// {{{1 options
+settings.useNeovim = true
+
+// {{{1 key mappings
 // an example to create a new mapping `ctrl-y`
 
 // mapkey('<ctrl-y>', 'Show me the money', function() {
@@ -26,8 +31,16 @@ mapkey('yr', 'copy link as ref', (key) => {
         Clipboard.write(linkRefMap.default(url, title));
     }
 })
+mapkey('q', 'close extension imcompatible alert', () => {
+  const closeBtn = document.querySelector('#mainContainer .not-compatible__announce .ud__notice__close');
+  closeBtn && closeBtn.click();
+}, { domain: /feishu\.cn/i })
 
-settings.useNeovim = true
+// use vim-style to cycle through ominibar
+cmap('<Ctrl-n>', '<Tab>');
+cmap('<Ctrl-p>', '<Shift-Tab>');
+
+// {{1 color theme
 // set theme
 settings.theme = `
 .sk_theme {
@@ -64,6 +77,6 @@ settings.theme = `
     background: #3e4452;
 }
 #sk_status, #sk_find {
-    font-size: 20pt;
+    font-size: 15pt;
 }`;
 // click `Save` button to make above settings to take effect.</ctrl-i></ctrl-y>

@@ -50,10 +50,6 @@ return require('packer').startup(function()
     setup = require('plugins.lf').setup
   }
   use {
-    'Shougo/denite.nvim',
-    run = ':UpdateRemotePlugins'
-  }
-  use {
     'glacambre/firenvim',
     run = function() vim.fn['firenvim#install'](0) end,
     config = require('plugins.firenvim').init
@@ -73,7 +69,8 @@ return require('packer').startup(function()
   }
   use {
     'windwp/nvim-projectconfig',
-    config = require('plugins.projectconfig').init
+    config = require('plugins.projectconfig').init,
+    after = 'coc.nvim'
   }
   use {
     'lambdalisue/suda.vim',
@@ -98,7 +95,8 @@ return require('packer').startup(function()
       'Gedit',
       'Gclog'
     },
-    ft = {'fugitive'}
+    ft = {'fugitive'},
+    config = require('plugins.fugitive').init
   }
   use 'junegunn/gv.vim' -- git commit browser
   use 'sodapopcan/vim-twiggy' -- git branch push/pull/rebase
@@ -107,8 +105,13 @@ return require('packer').startup(function()
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
+    branch = '0.5-compat',
     run = ':TSUpdate',
     config = require('plugins.nvim-treesitter').init
+  }
+  use {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = '0.5-compat'
   }
   use {
     'JoosepAlviste/nvim-ts-context-commentstring',
@@ -117,6 +120,7 @@ return require('packer').startup(function()
   use {
     'nvim-treesitter/playground'
   }
+  -- neovim lua
   use {
     'folke/lua-dev.nvim',
     config = require('plugins.lua-dev').init

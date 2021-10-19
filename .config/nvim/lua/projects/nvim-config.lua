@@ -12,6 +12,7 @@ function M.init()
       disable = { 'lowercase-global', 'different-requires' }
     },
     workspace = {
+      checkThirdParty = false,
       library = {
         -- do not load neovim runtime library by default
         [vim.fn.expand("$VIMRUNTIME/lua")] = true,

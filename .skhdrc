@@ -128,6 +128,8 @@ shift + alt - 6 : yabai -m window --space  6 # ; yabai -m space --focus 6
 shift + alt - 7 : yabai -m window --space  7 # ; yabai -m space --focus 7
 shift + alt - 8 : yabai -m window --space  8 # ; yabai -m space --focus 8
 shift + alt - 9 : yabai -m window --space  9 # ; yabai -m space --focus 9
+shift + alt - n : yabai -m window --space  next
+shift + alt - p : yabai -m window --space  prev
 
 # focus monitor
 # ctrl + alt - z  : yabai -m display --focus prev
