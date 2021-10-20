@@ -2,7 +2,7 @@ local M = {}
 local utils = require('utils')
 local map = utils.map
 
-function SetTab (size)
+function SetTab(size)
   vim.opt.tabstop = size
   vim.opt.softtabstop = size
   vim.opt.shiftwidth = size
@@ -41,7 +41,7 @@ function M.setMappings()
   -- map('n', 'gT', '<cmd>TablineBufferPrevious<CR>')
   -- quick actions
   map('n', '<leader>w', ':w<CR>')
-  map('n', '<leader>q', ':q<CR>')
+  map('n', '<leader>q', ':Wquit<CR>')
   map('n', '<leader>cp', ':set invpaste<CR>')
   map('n', '<leader>ci', ':set list!<CR>')
   map('n', '<leader>ch', ':noh<CR>')

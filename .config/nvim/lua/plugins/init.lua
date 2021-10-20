@@ -1,19 +1,21 @@
 -- vim: set fdm=marker:
-vim.cmd [[packadd packer.nvim]]
-
 -- {{{1 Packer managed plugins
-return require('packer').startup(function()
+return require('packer').startup({function()
   -- Packer itself
   use 'wbthomason/packer.nvim'
 
+  -- {{{2 dependencies
+  use 'kyazdani42/nvim-web-devicons'
+  use 'nvim-lua/plenary.nvim'
+
   -- {{{2 performance
   use 'dstein64/vim-startuptime'
+  -- use cache to speed up lua module loading
+  use 'lewis6991/impatient.nvim'
 
   -- {{{2 color theme
   use 'navarasu/onedark.nvim'
-  -- {{{2 language related TODO
-  use 'tpope/vim-commentary'
-  -- {{{2 display enhancement TODO
+  -- {{{2 display enhancement
   use {
     'karb94/neoscroll.nvim',
     config = require('plugins.neoscroll').init
@@ -21,7 +23,13 @@ return require('packer').startup(function()
   use {
     'liuchengxu/vim-which-key'
   }
-  use 'mhinz/vim-startify'
+  -- use 'mhinz/vim-startify'
+  -- greeter
+  use {
+      'goolord/alpha-nvim',
+      requires = { 'nvim-web-devicons' },
+      config = require('plugins.alpha-greeter').init
+  }
   -- use 'Yggdroot/indentLine'
   use {
     "lukas-reineke/indent-blankline.nvim",
@@ -35,11 +43,20 @@ return require('packer').startup(function()
     'scr1pt0r/crease.vim',
     config = require('plugins.crease').init
   }
+  -- status line
+  -- TODO: style tabline and remove lualine
   use {
     'hoob3rt/lualine.nvim',
-    requires = { { 'kyazdani42/nvim-web-devicons', opt = true } },
+    requires = { { 'nvim-web-devicons', opt = true } },
     config = require('plugins.lualine').init
   }
+  -- global status line
+  use {
+    'windwp/windline.nvim',
+    config = require('plugins.windline').init,
+    after = 'lualine.nvim'
+  }
+  -- tab line
   use {
     'kdheepak/tabline.nvim',
     config = require('plugins.tabline').init
@@ -55,7 +72,10 @@ return require('packer').startup(function()
     config = require('plugins.firenvim').init
   }
   -- {{{2 movement
-  use 'christoomey/vim-tmux-navigator'
+  use {
+    'christoomey/vim-tmux-navigator',
+    config = require('plugins.tmux-navigator').init
+  }
   use {
     't9md/vim-choosewin',
     config = require('plugins.choosewin').init
@@ -102,6 +122,7 @@ return require('packer').startup(function()
   use 'sodapopcan/vim-twiggy' -- git branch push/pull/rebase
 
   -- {{{2 language related
+  use 'tpope/vim-commentary'
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
@@ -136,15 +157,28 @@ return require('packer').startup(function()
   -- {{{2 search
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { {'nvim-lua/plenary.nvim'} }
+    requires = { 'plenary.nvim' }
   }
+  -- pretty list
   use {
     'folke/trouble.nvim',
-    requires = 'kyazdani42/nvim-web-devicons',
+    requires = 'nvim-web-devicons',
     config = require('plugins.trouble').init
   }
   use {
     'https://gitlab.com/yorickpeterse/nvim-pqf.git',
     config = require('plugins.pqf').init
   }
-end)
+  -- {{{2 others
+  use {
+    'Shatur/neovim-session-manager',
+    config = require('plugins.session-manager').init,
+    requires = { 'telescope.nvim', 'plenary.nvim' }
+  }
+end,
+  config = {
+    compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',
+    display = {
+      open_fn = function() require('packer.util').float({ border = 'single' }) end,
+    }
+}})
