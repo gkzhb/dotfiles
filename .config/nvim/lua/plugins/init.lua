@@ -7,6 +7,11 @@ return require('packer').startup({function()
   -- {{{2 dependencies
   use 'kyazdani42/nvim-web-devicons'
   use 'nvim-lua/plenary.nvim'
+  use 'tami5/sqlite.lua'
+  use {
+    'norcalli/nvim-terminal.lua',
+    config = function() require('terminal').setup() end
+  }
 
   -- {{{2 performance
   use 'dstein64/vim-startuptime'
@@ -20,21 +25,21 @@ return require('packer').startup({function()
     'karb94/neoscroll.nvim',
     config = require('plugins.neoscroll').init
   }
-  use {
-    'liuchengxu/vim-which-key'
-  }
-  -- use 'mhinz/vim-startify'
+  use 'liuchengxu/vim-which-key'
   -- greeter
   use {
       'goolord/alpha-nvim',
       requires = { 'nvim-web-devicons' },
       config = require('plugins.alpha-greeter').init
   }
-  -- use 'Yggdroot/indentLine'
   use {
-    "lukas-reineke/indent-blankline.nvim",
-    event = "BufRead",
+    'lukas-reineke/indent-blankline.nvim',
+    event = 'BufRead',
     config = require('plugins.indent-blankline').init
+  }
+  use {
+    'norcalli/nvim-colorizer.lua',
+    config = require('plugins.colorizer').init
   }
   -- preview the result of replace command in real time
   -- 实时预览替换命令执行效果
@@ -43,33 +48,31 @@ return require('packer').startup({function()
     'scr1pt0r/crease.vim',
     config = require('plugins.crease').init
   }
-  -- status line
-  -- TODO: style tabline and remove lualine
-  use {
-    'hoob3rt/lualine.nvim',
-    requires = { { 'nvim-web-devicons', opt = true } },
-    config = require('plugins.lualine').init
-  }
-  -- global status line
-  use {
-    'windwp/windline.nvim',
-    config = require('plugins.windline').init,
-    after = 'lualine.nvim'
-  }
-  -- tab line
+  -- status line and tab line
   use {
     'kdheepak/tabline.nvim',
     config = require('plugins.tabline').init
   }
   use {
+    'windwp/windline.nvim',
+    config = require('plugins.windline').init
+  }
+  -- file explorer
+  use {
     'ptzz/lf.vim',
-    requires = { { 'voldikss/vim-floaterm' } },
+    requires = { 'voldikss/vim-floaterm' },
     setup = require('plugins.lf').setup
   }
+
+  -- pretty list
   use {
-    'glacambre/firenvim',
-    run = function() vim.fn['firenvim#install'](0) end,
-    config = require('plugins.firenvim').init
+    'folke/trouble.nvim',
+    requires = 'nvim-web-devicons',
+    config = require('plugins.trouble').init
+  }
+  use {
+    'https://gitlab.com/yorickpeterse/nvim-pqf.git',
+    config = require('plugins.pqf').init
   }
   -- {{{2 movement
   use {
@@ -141,6 +144,9 @@ return require('packer').startup({function()
   use {
     'nvim-treesitter/playground'
   }
+  -- coc.nvim provides rename and highlight current symbol
+  -- use { 'nvim-treesitter/nvim-treesitter-refactor' }
+
   -- neovim lua
   use {
     'folke/lua-dev.nvim',
@@ -154,31 +160,63 @@ return require('packer').startup({function()
   }
   use 'kevinoid/vim-jsonc'
 
-  -- {{{2 search
+  -- {{{2 search: telescope related
   use {
     'nvim-telescope/telescope.nvim',
-    requires = { 'plenary.nvim' }
-  }
-  -- pretty list
-  use {
-    'folke/trouble.nvim',
-    requires = 'nvim-web-devicons',
-    config = require('plugins.trouble').init
+    requires = { 'plenary.nvim' },
+    config = require('plugins.telescope').init
   }
   use {
-    'https://gitlab.com/yorickpeterse/nvim-pqf.git',
-    config = require('plugins.pqf').init
+    'nvim-telescope/telescope-fzf-native.nvim',
+    run = 'make',
+    after = 'telescope.nvim',
+    config = function() require('telescope').load_extension('fzf') end
   }
-  -- {{{2 others
+  use {
+    'TC72/telescope-tele-tabby.nvim',
+    after = 'telescope.nvim',
+    config = function() require('telescope').load_extension('tele_tabby') end
+  }
+  use {
+    'camgraff/telescope-tmux.nvim',
+    after = 'telescope.nvim',
+    requires = 'nvim-terminal.lua',
+    config = function() require('telescope').load_extension('tmux') end
+  }
+  use {
+    'nvim-telescope/telescope-project.nvim',
+    after = 'telescope.nvim'
+  }
+  use {
+    'sudormrfbin/cheatsheet.nvim',
+    config = require('plugins.cheatsheet').init
+  }
+  use {
+    'AckslD/nvim-neoclip.lua',
+    requires = { 'sqlite.lua' },
+    after = 'telescope.nvim',
+    config = require('plugins.neoclip').init
+  }
+  use {
+    'nvim-telescope/telescope-frecency.nvim',
+    config = function() require('telescope').load_extension('frecency') end,
+    requires = { 'sqlite.lua' }
+  }
   use {
     'Shatur/neovim-session-manager',
     config = require('plugins.session-manager').init,
     requires = { 'telescope.nvim', 'plenary.nvim' }
   }
+  -- {{{2 others
+  use {
+    'glacambre/firenvim',
+    run = function() vim.fn['firenvim#install'](0) end,
+    config = require('plugins.firenvim').init
+  }
 end,
   config = {
     compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',
     display = {
-      open_fn = function() require('packer.util').float({ border = 'single' }) end,
+      open_fn = require('packer.util').float
     }
 }})

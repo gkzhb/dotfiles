@@ -128,9 +128,17 @@ function M.setMappings()
   map('n', '<leader>b', ':<C-u>CocList --normal buffers<CR>')
 
   -- telescope
-  map('n', '<leader>ff', '<cmd>lua require("telescope.builtin").find_files()<cr>')
-  map('n', '<leader>fg', '<cmd>lua require("telescope.builtin").live_grep()<cr>')
-  map('n', '<leader>fb', '<cmd>lua require("telescope.builtin").buffers()<cr>')
-  map('n', '<leader>fh', '<cmd>lua require("telescope.builtin").help_tags()<cr>')
+  map('n', '<leader>sf', '<cmd>lua require("telescope.builtin").find_files()<cr>')
+  map('n', '<leader>sg', '<cmd>lua require("telescope.builtin").live_grep()<cr>')
+  map('n', '<leader>sb', '<cmd>lua require("telescope.builtin").buffers()<cr>')
+  map('n', '<leader>sh', '<cmd>lua require("telescope.builtin").help_tags()<cr>')
+  map('n', '<leader>sc', '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>')
+  map('n', '<leader>sp', '<cmd>lua require"telescope".extensions.project.project{}<cr>')
+  map('n', '<leader>st', '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>')
+  map('n', '<leader>sy', '<cmd>lua require("telescope").extensions.neoclip.default()<cr>')
+  map('n', '<leader>sw', '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>')
+  map('n', '<leader>ss', '<cmd>lua require("telescope").extensions.sessions.sessions()<cr>')
+  map('n', '<leader>sr', '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>')
+
 end
 return M

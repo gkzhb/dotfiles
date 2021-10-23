@@ -327,13 +327,39 @@ windline.setup({
         quickfix,
         explorer,
     },
-    -- tabline = {
-    --     template = {},
-    --     tab_end = {
-    --         tab.section_c,
-    --         tab.section_x,
-    --     },
-    -- },
+    tabline = {
+        template = {},
+        tab_end = {
+            tab.section_c,
+            tab.section_x,
+        },
+        -- template = {
+        --     select        = {''                    , {'TabSelectionFg' , 'TabSelectionBg'}} ,
+        --     select_start  = {sep.slant_left  , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
+        --     select_end    = {sep.slant_right , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
+        --     select_last   = {sep.slant_right , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
+        --     normal        = {''                    , {'TabLineFg'      , 'TabLineBg'}}      ,
+        --     normal_start  = {sep.slant_left  , {'TabLineBg'      , 'TabLineFillBg'}}  ,
+        --     normal_end    = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg'}}  ,
+        --     normal_last   = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg' }} ,
+        --     normal_select = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg' }} ,
+        -- },
+        -- tab_end = {
+        --     { '%=', { 'NormalFg', 'NormalBg' } },
+        --     {
+        --         function(tab_index)
+        --             return vim.fn.tabpagewinnr(tab_index, '$')
+        --         end,
+        --         { 'green', 'NormalBg' },
+        --     },
+        --     {
+        --         function()
+        --             return ' ' .. vim.fn.strftime('%H:%M:%S') .. ' '
+        --         end,
+        --         { 'red', 'NormalBg' },
+        --     },
+        -- }
+    },
 })
 
 floatline.setup({

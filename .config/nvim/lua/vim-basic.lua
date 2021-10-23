@@ -40,13 +40,12 @@ vim.opt.hidden=true
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
 -- {{{2 others
-vim.opt.history=1000  -- 历史记录数
+vim.opt.history=1000  -- save history
 vim.opt.undofile=true -- save undo history
 -- do not save empty windows in vim sessions
 vim.opt.ssop:remove('blank') -- sessionoptions
+vim.opt.ssop:append({ 'tabpages', 'globals' }) -- from tabline.nvim
 vim.opt.scrolloff = 5
-
--- autocmd BufWritePost $MYVIMRC source $MYVIMRC -- 配置立即生效
 
 vim.opt.splitbelow=true
 vim.opt.splitright=true
@@ -57,7 +56,7 @@ vim.opt.tabstop=2
 vim.opt.softtabstop=2
 vim.opt.shiftwidth=2
 vim.opt.expandtab=true
-vim.opt.smarttab=true  -- 在行和段开始处使用制表符
+vim.opt.smarttab=true
 vim.opt.smartindent=true
 
 -- {{{2 folding
