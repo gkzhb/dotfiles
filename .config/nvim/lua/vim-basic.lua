@@ -29,6 +29,9 @@ vim.opt.rnu=true
 -- enable syntax
 vim.cmd([[ syntax enable ]])
 
+---{{{2 tabpage
+-- always show tabline
+vim.opt.showtabline = 2
 
 -- {{{2 file encoding
 vim.opt.fencs={ 'utf-8', 'ucs-bom', 'shift-jis', 'gb18030', 'gbk', 'gb2312', 'cp936' }
