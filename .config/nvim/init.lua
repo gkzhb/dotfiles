@@ -1,6 +1,6 @@
 -- vim: set fdm=marker:
 -- {{{1 basic config
-require('vim-basic')
+pcall(require, 'vim-basic')
 local mappings = require('mappings')
 mappings.init()
 -- {{{1 plugins
