@@ -5,6 +5,10 @@ function M.init()
   -- {{{2 coc.vim config
   -- {{{3 coc-settings.json
   -- help: coc#config()
+  -- {{{4 coc browser
+  vim.fn['coc#config']('browser', {
+    port = 8990,
+  })
   -- {{{4 coc explorer
   vim.fn['coc#config']('explorer', {
     ['buffer.root.template'] = '[icon & 1] BUFFERS',
