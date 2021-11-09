@@ -25,7 +25,10 @@ return require('packer').startup({function()
     'karb94/neoscroll.nvim',
     config = require('plugins.neoscroll').init
   }
-  use 'liuchengxu/vim-which-key'
+  use {
+    'folke/which-key.nvim',
+    config = require('plugins.which-key').init
+  }
   -- greeter
   use {
       'goolord/alpha-nvim',
@@ -83,13 +86,14 @@ return require('packer').startup({function()
     't9md/vim-choosewin',
     config = require('plugins.choosewin').init
   }
-  use 'easymotion/vim-easymotion'
+  use 'dstein64/vim-win'
+  use 'ggandor/lightspeed.nvim'
   use 'szw/vim-maximizer'
   -- {{{2 edit
-  use {
-    'tpope/vim-surround',
-    keys = {'c', 'd', 'y'}
-  }
+  -- use {
+  --   'tpope/vim-surround',
+  --   keys = {'c', 'd', 'y'}
+  -- }
   use {
     'windwp/nvim-projectconfig',
     config = require('plugins.projectconfig').init,

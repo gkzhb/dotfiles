@@ -17,8 +17,7 @@ function M.init()
 end
 
 function M.setMappings()
-  -- which key plugin
-  map('n', '<leader>', ':WhichKey "<Space>"<CR>')
+  -- TODO: register map with which-key.nvim and add comments for mappings
 
   -- fugitive
   map('n', '<leader>g', ':G<CR>')
@@ -33,12 +32,19 @@ function M.setMappings()
   -- maximizer
   map('n', '<leader>z', ':MaximizerToggle<CR>')
 
+  -- buffer actions
+  map('n', '<C-N>', ':bnext<CR>')
+  map('n', '<C-P>', ':bprev<CR>')
+  -- [n]gb switch to buffer [n]
+  map('n', 'gb', 'v:lua.switchBuffer(v:count)', { expr = true })
+
   -- tab actions
   map('n', '<leader>tn', '<cmd>TablineTabNew<CR>')
-  map('n', '<leader>tr', '<cmd>TablineTabRename ')
+  map('n', '<leader>tr', ':<C-u>TablineTabRename ')
   -- tabline.nvim
   -- map('n', 'gt', '<cmd>TablineBufferNext<CR>')
   -- map('n', 'gT', '<cmd>TablineBufferPrevious<CR>')
+  
   -- quick actions
   map('n', '<leader>w', ':w<CR>')
   map('n', '<leader>q', ':Wquit<CR>')
@@ -46,31 +52,22 @@ function M.setMappings()
   map('n', '<leader>ci', ':set list!<CR>')
   map('n', '<leader>ch', ':noh<CR>')
 
-  map('n', '<C-N>', ':bnext<CR>')
-  map('n', '<C-P>', ':bprev<CR>')
-
-
   map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
   map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
   -- project actions
   map('n', '<leader>pc', '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>')
 
   require('plugins.coc-nvim').mappings()
-
-  -- telescope
-  map('n', '<leader>sf', '<cmd>lua require("telescope.builtin").find_files()<cr>')
-  map('n', '<leader>sg', '<cmd>lua require("telescope.builtin").live_grep()<cr>')
-  map('n', '<leader>sb', '<cmd>lua require("telescope.builtin").buffers()<cr>')
-  map('n', '<leader>sh', '<cmd>lua require("telescope.builtin").help_tags()<cr>')
-  map('n', '<leader>sl', '<cmd>lua require("telescope.builtin").resume()<cr>')
-
-  map('n', '<leader>sc', '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>')
-  map('n', '<leader>sp', '<cmd>lua require("telescope").extensions.project.project{}<cr>')
-  map('n', '<leader>st', '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>')
-  map('n', '<leader>sy', '<cmd>lua require("telescope").extensions.neoclip.default()<cr>')
-  map('n', '<leader>sw', '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>')
-  map('n', '<leader>ss', '<cmd>lua require("telescope").extensions.sessions.sessions()<cr>')
-  map('n', '<leader>sr', '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>')
+  require('plugins.telescope').mappings()
 
 end
+
+-- switch current active buffer to buffer number c
+function switchBuffer(c)
+  if c > 0 and vim.fn.bufnr(c) > -1 then
+    return utils.esc(':<C-U>' .. c .. 'b<CR>')
+  end
+  return ''
+end
+
 return M
