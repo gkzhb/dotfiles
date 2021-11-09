@@ -2,7 +2,7 @@
 -- {{{1 basic config
 pcall(require, 'vim-basic')
 local mappings = require('mappings')
-mappings.init()
+pcall(mappings.init)
 -- {{{1 plugins
 -- check packer installation and load packer
 local packerPath = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
@@ -22,7 +22,7 @@ pcall(require, 'packer_compiled') -- load packer lua cache
 -- plugins and configs are in 'lua/plugins/init.lua'
 -- }}}
 -- {{{1 Keyboard Mappings/Bindings & Shortcuts
-mappings.setMappings()
+pcall(mappings.setMappings)
 
 -- {{{1 Load Local Configuration
 -- load local vim config file `.config/nvim/customize.vim`
