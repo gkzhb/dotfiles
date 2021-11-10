@@ -64,6 +64,9 @@ function M.init()
           ["[]"] = "@class.outer",
         },
       }
+    },
+    matchup = { -- vim-matchup
+      enable = true,
     }
   })
 

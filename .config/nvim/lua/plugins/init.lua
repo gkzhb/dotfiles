@@ -148,6 +148,8 @@ return require('packer').startup({function()
   use {
     'nvim-treesitter/playground'
   }
+  use 'andymass/vim-matchup'  -- support tree-sitter
+
   -- coc.nvim provides rename and highlight current symbol
   -- use { 'nvim-treesitter/nvim-treesitter-refactor' }
 
@@ -162,7 +164,6 @@ return require('packer').startup({function()
     branch = 'release',
     config = require('plugins.coc-nvim').init
   }
-  use 'kevinoid/vim-jsonc'
 
   -- {{{2 search: telescope related
   use {
