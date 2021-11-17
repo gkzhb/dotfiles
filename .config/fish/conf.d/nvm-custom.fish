@@ -1,5 +1,4 @@
-export NVM_NODEJS_ORG_MIRROR=http://npm.taobao.org/mirrors/node
-export NVM_IOJS_ORG_MIRROR=http://npm.taobao.org/mirrors/iojs
-
+# set node download mirror
+set -uU nvm_mirror http://npm.taobao.org/mirrors/node
 # set node default version
-set --universal nvm_default_version v12
+set -uU nvm_default_version v12
