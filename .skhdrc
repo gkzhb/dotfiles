@@ -173,3 +173,4 @@ alt - p : yabai -m window --toggle sticky;\
 
 # Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
+alt - t : kitty -d=$HOME
