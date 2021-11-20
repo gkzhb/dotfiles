@@ -1,3 +1,6 @@
+# enable file icons
+set icons
+# set previewer $HOME/scripts/utils/scope.sh
 # interpreter for shell commands
 set shell sh
 
