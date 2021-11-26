@@ -5,6 +5,11 @@ function M.init()
   -- {{{2 coc.vim config
   -- {{{3 coc-settings.json
   -- help: coc#config()
+  vim.fn['coc#config']('coc', {
+    preferences = {
+      colorSupport = false, -- coc-highlight
+    },
+  })
   -- {{{4 coc browser
   vim.fn['coc#config']('browser', {
     port = 8990,
@@ -36,11 +41,6 @@ function M.init()
   vim.fn['coc#config']('list.source.grep.args', {'--hidden', '--vimgrep', '--heading', '-S'})
   vim.fn['coc#config']('session.directory', vim.fn.stdpath('data')..'/session') -- in startify autoload/startify.vim
   -- {{{4 coc json
-  vim.fn['coc#config']('coc', {
-    preferences = {
-      colorSupport = false,
-    },
-  })
   -- json schemas
   local pluginPath = vim.fn.stdpath('data') .. '/site/pack/packer/start'
   local fileUrlPath = string.format('file://%s', pluginPath)
@@ -180,10 +180,21 @@ function M.init()
       ['quit-on-open'] = true
     }
   }
+
+  vim.cmd([[
+    augroup mycocgroup
+      autocmd!
+      " Setup formatexpr specified filetype(s).
+      autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+      " Update signature help on jump placeholder.
+      autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+    augroup end
+  ]])
 end
 
 function M.mappings()
   local map = utils.map
+  local wk = require('which-key')
   -- coc.nvim
   -- local coc = require('plugins.coc-nvim')
   map('i', '<TAB>', 'v:lua.CocTab()', { expr = true, silent = false, nowait = true })
@@ -200,7 +211,12 @@ function M.mappings()
   local noNoremap = { noremap = false }
   map('n', '[g', '<Plug>(coc-diagnostic-prev)', noNoremap)
   map('n', ']g', '<Plug>(coc-diagnostic-next)', noNoremap)
-
+  map('n', '[e', '<Plug>(coc-diagnostic-prev-error)', noNoremap)
+  map('n', ']e', '<Plug>(coc-diagnostic-next-error)', noNoremap)
+  -- jump to float window
+  map('n', 'gw', '<plug>(coc-float-jump)', noNoremap)
+  -- close all coc.nvim float window
+  map('n', '<leader>cw', '<plug>(coc-float-hide)', noNoremap)
   -- GoTo code navigation.
   map('n', 'gd', '<Plug>(coc-definition)', noNoremap)
   map('n', 'gy', '<Plug>(coc-type-definition)', noNoremap)
@@ -208,7 +224,6 @@ function M.mappings()
   map('n', 'gr', '<Plug>(coc-references)', noNoremap)
   -- Use K to show documentation in preview window.
   map('n', 'K', ':call v:lua.CocShowDocumentation()<CR>')
-  -- TODO: show documentation
   -- Highlight the symbol and its references when holding the cursor.
   vim.cmd([[
     autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -219,6 +234,15 @@ function M.mappings()
   map('n', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
   map('x', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
   map('v', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
+  vim.cmd([[command! -nargs=0 Format :call CocAction('format')]]) -- `:Format` format current buffer
+  -- `:Fold` fold current buffer
+  vim.cmd([[command! -nargs=? Fold :call     CocAction('fold', <f-args>)]])
+  -- `:OR` organize imports
+  vim.cmd([[command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')]])
+  -- quickfix action
+  map('n', '<leader>cf', '<plug>(coc-fix-current)')
+  -- diagnostic
+  map('n', '<leader>cd', '<plug>(coc-diagnostic-info)')
   -- Applying codeAction to the selected region.
   -- Example: `<leader>aap` for current paragraph
   map('x', '<leader>a', '<Plug>(coc-codeaction-selected)', noNoremap)
@@ -247,32 +271,42 @@ function M.mappings()
   map('i', '<C-b>', 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', { nowait = true, expr = true })
 
   -- coc explorer
+
   map('n', '<leader>e', ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>')
   -- coc lists
-  map('n', '<leader>l', ':<C-u>CocList <CR>')
+  -- map('n', '<leader>l', ':<C-u>CocList <CR>')
   map('n', '<leader>y', ':<C-u>CocList -A --normal yank<cr>')
-  map('n', '<leader>lb', ':<C-u>CocList buffers<CR>')
-  map('n', '<leader>ls', ':<C-u>CocList files<CR>')
-  map('n', '<leader>lg', ':<C-u>CocList grep<CR>')
   map('n', '<leader>b', ':<C-u>CocList --normal buffers<CR>')
+  wk.register({
+    name = 'CocList',
+    b = { '<cmd>CocList buffers<CR>', 'buffers' },
+    c = { '<cmd>CocList commands<CR>', 'coc commands' },
+    d = { '<cmd>CocList diagnostics<CR>', 'diagnostics' },
+    f = { '<cmd>CocList files<CR>', 'files' },
+    g = { '<cmd>CocList grep<CR>', 'grep content' },
+    l = { '<cmd>CocListResume<CR>', 'last view' },
+    o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
+    s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
+
+  }, { prefix = '<leader>l'})
 end
 
-function checkBackSpace()
+function _G.CheckBackSpace()
   local col = vim.fn.col('.') - 1
   return col <= 0 or vim.fn.getline('.'):sub(col, col):match('%s')
 end
 
-function CocTab()
+function _G.CocTab()
   if vim.fn.pumvisible() ~= 0 then
     return utils.esc('<C-n>')
-  elseif checkBackSpace() then
+  elseif _G.CheckBackSpace() then
       return utils.esc('<TAB>')
     else
       return vim.fn['coc#refresh']()
   end
 end
 
-function CocSTab()
+function _G.CocSTab()
   if vim.fn.pumvisible() then
     return utils.esc('<C-p>')
   else
@@ -280,7 +314,7 @@ function CocSTab()
   end
 end
 
-function CocEnterConfirm()
+function _G.CocEnterConfirm()
   if vim.fn.pumvisible() ~= 0 then
     return vim.fn['coc#_select_confirm']()
   else
@@ -288,8 +322,8 @@ function CocEnterConfirm()
   end
 end
 
-function CocShowDocumentation()
-  if vim.fn.index({'vim', 'help'}, vim.o.filetype) > 0 then
+function _G.CocShowDocumentation()
+  if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
     vim.cmd('h ' .. vim.fn.expand('<cword>'))
   elseif vim.fn['coc#rpc#ready']() then
     vim.fn.CocActionAsync('doHover')

@@ -151,7 +151,7 @@ return require('packer').startup({function()
   use 'andymass/vim-matchup'  -- support tree-sitter
 
   -- coc.nvim provides rename and highlight current symbol
-  -- use { 'nvim-treesitter/nvim-treesitter-refactor' }
+  use { 'nvim-treesitter/nvim-treesitter-refactor' }
 
   -- neovim lua
   use {
@@ -218,6 +218,8 @@ return require('packer').startup({function()
     run = function() vim.fn['firenvim#install'](0) end,
     config = require('plugins.firenvim').init
   }
+  -- https://github.com/neovim/neovim/issues/12587
+  use 'antoinemadec/FixCursorHold.nvim' -- TODO(remove this): temporarily fix CursorHold not triggerred
 end,
   config = {
     compile_path = vim.fn.stdpath('config')..'/lua/packer_compiled.lua',

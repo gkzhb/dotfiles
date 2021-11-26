@@ -2,7 +2,7 @@
 -- {{{1 basic vim config
 -- {{{2 set colorscheme
 if vim.fn.has('termguicolors') then
-  vim.opt.termguicolors=true
+  vim.opt.termguicolors = true
 end
 vim.opt.background = 'dark'
 vim.g.colors_name = 'onedark'
@@ -18,14 +18,14 @@ vim.opt.listchars = {
   space = '␣',
   eol = '¬'
 }
-vim.opt.laststatus=2
-vim.opt.cmdheight=1
-vim.opt.showmode=false
+vim.opt.laststatus = 2
+vim.opt.cmdheight = 1
+vim.opt.showmode = false
 
-vim.opt.cursorline=true
+vim.opt.cursorline = true
 -- line number
-vim.opt.nu=true
-vim.opt.rnu=true
+vim.opt.nu = true
+vim.opt.rnu = true
 -- enable syntax
 vim.cmd([[ syntax enable ]])
 
@@ -34,35 +34,38 @@ vim.cmd([[ syntax enable ]])
 vim.opt.showtabline = 2
 
 -- {{{2 file encoding
-vim.opt.fencs={ 'utf-8', 'ucs-bom', 'shift-jis', 'gb18030', 'gbk', 'gb2312', 'cp936' }
-vim.opt.encoding='utf-8'
-vim.opt.fileencoding='utf-8'
+vim.opt.fencs = { 'utf-8', 'ucs-bom', 'shift-jis', 'gb18030', 'gbk', 'gb2312', 'cp936' }
+vim.opt.encoding = 'utf-8'
+vim.opt.fileencoding = 'utf-8'
 
 -- {{{2 edit
-vim.opt.hidden=true
+vim.opt.hidden = true
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
--- {{{2 others
-vim.opt.history=1000  -- save history
-vim.opt.undofile=true -- save undo history
--- do not save empty windows in vim sessions
-vim.opt.ssop:remove('blank') -- sessionoptions
-vim.opt.ssop:append({ 'tabpages', 'globals' }) -- from tabline.nvim
-vim.opt.scrolloff = 5
-
-vim.opt.splitbelow=true
-vim.opt.splitright=true
-
 -- {{{2 indent
 vim.cmd([[ filetype plugin indent on]])
-vim.opt.tabstop=2
-vim.opt.softtabstop=2
-vim.opt.shiftwidth=2
-vim.opt.expandtab=true
-vim.opt.smarttab=true
-vim.opt.smartindent=true
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.opt.smarttab = true
+vim.opt.smartindent = true
 
 -- {{{2 folding
 vim.opt.foldlevelstart = 0
 vim.opt.foldlevel = 99
 
+-- {{{2 others
+vim.opt.history = 1000  -- save history
+vim.opt.undofile = true -- save undo history
+-- do not save empty windows in vim sessions
+vim.opt.ssop:remove('blank') -- sessionoptions
+vim.opt.ssop:append({ 'tabpages', 'globals' }) -- from tabline.nvim
+vim.opt.scrolloff = 5
+
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
+vim.opt.updatetime = 300 -- CursorHold delay
+vim.wo.signcolumn = 'number'
+vim.opt.shortmess:append({ c = true })

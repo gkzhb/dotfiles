@@ -67,7 +67,11 @@ function M.init()
     },
     matchup = { -- vim-matchup
       enable = true,
-    }
+    },
+    refactor = {
+      highlight_definitions = { enable = false },
+      highlight_current_scope = { enable = false },
+    },
   })
 
   vim.opt.foldmethod = 'expr'

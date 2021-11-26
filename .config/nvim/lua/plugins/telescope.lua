@@ -27,7 +27,7 @@ function M.mappings()
     s = {
       name = 'telescope search',
       f = { '<cmd>lua require("telescope.builtin").find_files()<cr>', 'files' },
-      g = { '<cmd>lua require("telescope.builtin").live_grep()<cr>', 'grep content'},
+      g = { '<cmd>lua require("telescope.builtin").live_grep()<cr>', 'grep content' },
       b = { '<cmd>lua require("telescope.builtin").buffers()<cr>', 'buffers' },
       h = { '<cmd>lua require("telescope.builtin").help_tags()<cr>', 'help tags' },
       l = { '<cmd>lua require("telescope.builtin").resume()<cr>', 'last view' },
