@@ -36,6 +36,11 @@ function M.init()
   vim.fn['coc#config']('list.source.grep.args', {'--hidden', '--vimgrep', '--heading', '-S'})
   vim.fn['coc#config']('session.directory', vim.fn.stdpath('data')..'/session') -- in startify autoload/startify.vim
   -- {{{4 coc json
+  vim.fn['coc#config']('coc', {
+    preferences = {
+      colorSupport = false,
+    },
+  })
   -- json schemas
   local pluginPath = vim.fn.stdpath('data') .. '/site/pack/packer/start'
   local fileUrlPath = string.format('file://%s', pluginPath)
@@ -53,6 +58,15 @@ function M.init()
   vim.fn['coc#config']('eslint', {
     filetypes = {}
   })
+  -- {{{4 coc highlight
+  vim.fn['coc#config']('highlight', {
+    colors = {
+      enable = false,
+    },
+    document = {
+      enable = false,
+    },
+  })
   -- {{{4 coc rust
   vim.fn['coc#config']('rust-analyzer', {
     enable = true
@@ -62,18 +76,24 @@ function M.init()
   vim.fn['coc#config']('go', {
     enable = false
   })
-  -- {{{4 coc lua
+  -- {{{4 coc sumneko lua
+  vim.fn['coc#config']('sumneko-lua', {
+    enableNvimLuaDev = true,
+  })
   vim.fn['coc#config']('Lua', {
     completion = {
-      keywordSnippet = "Disable"
+      -- keywordSnippet = "Disable"
     },
     diagnostics = {
-      disable = { 'lowercase-global', 'different-requires' }
+      -- disable = { 'lowercase-global', 'different-requires' }
     },
     workspace = {
       checkThirdParty = false,
       library = {}
-    }
+    },
+    telemetry = {
+      enable = false,
+    },
   })
 
   -- {{{3 coc-extension list
@@ -89,13 +109,13 @@ function M.init()
     'coc-highlight',
     'coc-json',
     'coc-lists',
-    'coc-lua',
     'coc-markdownlint',
     'coc-pairs',
     'coc-prettier',
     'coc-protobuf',
     'coc-rust-analyzer',
     'coc-sh',
+    'coc-sumneko-lua',
     'coc-tabnine',
     'coc-tsserver',
     'coc-vetur', -- Vue.js

@@ -64,4 +64,5 @@ vim.opt.smartindent=true
 
 -- {{{2 folding
 vim.opt.foldlevelstart = 0
+vim.opt.foldlevel = 99
 

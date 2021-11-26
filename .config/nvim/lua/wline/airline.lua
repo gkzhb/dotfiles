@@ -12,7 +12,6 @@ local lsp_comps = require('windline.components.lsp')
 local git_comps = require('windline.components.git')
 
 local utils = require('wline.utils')
-local tabline = require('tabline')
 
 local hl_list = {
     Black = { 'white', 'black' },
@@ -22,7 +21,6 @@ local hl_list = {
     Active = { 'ActiveFg', 'ActiveBg' },
 }
 local basic = {}
-local tab = {}
 
 local airline_colors = {}
 
@@ -213,24 +211,6 @@ basic.git = {
     end,
 }
 
-tab.section_c = {
-    hl_colors = airline_colors.c,
-    text = function()
-        return {
-            { tabline.tabline_buffers },
-        }
-    end,
-}
-
-tab.section_x = {
-    hl_colors = airline_colors.c,
-    text = function()
-        return {
-            { tabline.tabline_tabs },
-        }
-    end,
-}
-
 local quickfix = {
     filetypes = { 'qf', 'Trouble' },
     active = {
@@ -326,39 +306,6 @@ windline.setup({
         default,
         quickfix,
         explorer,
-    },
-    tabline = {
-        template = {},
-        tab_end = {
-            tab.section_c,
-            tab.section_x,
-        },
-        -- template = {
-        --     select        = {''                    , {'TabSelectionFg' , 'TabSelectionBg'}} ,
-        --     select_start  = {sep.slant_left  , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
-        --     select_end    = {sep.slant_right , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
-        --     select_last   = {sep.slant_right , {'TabSelectionBg' , 'TabLineFillBg'}}  ,
-        --     normal        = {''                    , {'TabLineFg'      , 'TabLineBg'}}      ,
-        --     normal_start  = {sep.slant_left  , {'TabLineBg'      , 'TabLineFillBg'}}  ,
-        --     normal_end    = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg'}}  ,
-        --     normal_last   = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg' }} ,
-        --     normal_select = {sep.slant_right , {'TabLineBg'      , 'TabLineFillBg' }} ,
-        -- },
-        -- tab_end = {
-        --     { '%=', { 'NormalFg', 'NormalBg' } },
-        --     {
-        --         function(tab_index)
-        --             return vim.fn.tabpagewinnr(tab_index, '$')
-        --         end,
-        --         { 'green', 'NormalBg' },
-        --     },
-        --     {
-        --         function()
-        --             return ' ' .. vim.fn.strftime('%H:%M:%S') .. ' '
-        --         end,
-        --         { 'red', 'NormalBg' },
-        --     },
-        -- }
     },
 })
 

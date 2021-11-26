@@ -71,7 +71,7 @@ function M.init()
   })
 
   vim.opt.foldmethod = 'expr'
-  vim.opt.foldexpr = require'nvim-treesitter.fold'.get_fold_indic(vim.v.lnum)
+  vim.wo.foldexpr = "luaeval(\"require'nvim-treesitter.fold'.get_fold_indic(vim.v.lnum)\")"
 end
 
 return M

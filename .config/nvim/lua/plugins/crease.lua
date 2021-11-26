@@ -1,28 +1,26 @@
 local M = {}
 -- Ref: https://github.com/AdamWagner/stackline/issues/42#issuecomment-696817874
-function CreaseIndent() -- {{{
-  local fs = vim.fn.nextnonblank(vim.v.foldstart)    
+function _G.CreaseIndent()
+  local fs = vim.fn.nextnonblank(vim.v.foldstart)
   local line = string.gsub(vim.fn.getline(fs), '\t', string.rep(' ', vim.o.tabstop))
-  local foldLevel = string.match(line, '%s')
-  local foldLevelStr = string.rep(' ', foldLevel)
-  return foldLevelStr
-end -- }}}
+  return string.match(line, '%s*')
+end
 
-function CreaseHashtagIndent() -- {{{
+function _G.CreaseHashtagIndent()
   return string.rep('#', vim.v.foldlevel)
-end -- }}}
+end
 
-function CreaseFoldContent() -- {{{
+function _G.CreaseFoldContent()
   local text = vim.fn.foldtext()
   local startIdx = string.find(text, ':')
   return text:sub(startIdx + 2)
-end -- }}}
+end
 
-function CreaseLineInfo() -- {{{
+function _G.CreaseLineInfo()
   local width = (vim.g.numberwidth or 4) - 1
   local strTemplate = string.format('%%%du -- %%%du : %%%du lines  ', width, width, width)
   return string.format(strTemplate, vim.v.foldstart, vim.v.foldend, vim.v.foldend - vim.v.foldstart + 1)
-end -- }}}
+end
 
 function M.init()
   vim.g.crease_foldtext = {
