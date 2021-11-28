@@ -53,8 +53,8 @@ return require('packer').startup({function()
   }
   -- status line and tab line
   use {
-    'kdheepak/tabline.nvim',
-    config = require('plugins.tabline').init
+    'akinsho/bufferline.nvim',
+    config = require('plugins.bufferline').init
   }
   use {
     'windwp/windline.nvim',
