@@ -212,6 +212,11 @@ return require('packer').startup({function()
     config = require('plugins.session-manager').init,
     requires = { 'telescope.nvim', 'plenary.nvim' }
   }
+  use {
+    'fannheyward/telescope-coc.nvim',
+    after = 'telescope.nvim',
+    config = function() require('telescope').load_extension('coc') end
+  }
   -- {{{2 others
   use {
     'glacambre/firenvim',

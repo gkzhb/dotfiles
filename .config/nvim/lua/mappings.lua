@@ -27,7 +27,7 @@ function M.setMappings()
   map('n', '-', '<Plug>(choosewin)', { noremap = false, silent = true })
 
   -- lf
-  map('n', '<leader>lf', ':Lf<CR>')
+  map('n', '<leader>d', ':Lf<CR>')
 
   -- maximizer
   map('n', '<leader>z', ':MaximizerToggle<CR>')

@@ -1,6 +1,10 @@
 local M = {}
 local utils = require('utils')
 
+function M.initSnippet()
+  -- TODO: add config
+end
+
 function M.init()
   -- {{{2 coc.vim config
   -- {{{3 coc-settings.json
@@ -115,6 +119,7 @@ function M.init()
     'coc-protobuf',
     'coc-rust-analyzer',
     'coc-sh',
+    'coc-snippets',
     'coc-sumneko-lua',
     'coc-tabnine',
     'coc-tsserver',
@@ -126,7 +131,7 @@ function M.init()
   }
 
   -- {{{3 coc-explorer
-  function CocExplorerInited(bufnr)
+  function _G.CocExplorerInited(bufnr)
     vim.fn.setbufvar(bufnr, '&number', 1)
     vim.fn.setbufvar(bufnr, '&relativenumber', 1)
   end
@@ -138,18 +143,18 @@ function M.init()
     endfunction
   ]])
 
-  function CocExplorerCurDir()
+  function _G.CocExplorerCurDir()
     local nodeInfo = vim.fn.CocAction('runCommand', 'explorer.getNodeInfo', 0)
     return vim.fn.fnamemodify(nodeInfo.fullpath, ':h')
   end
 
-  function CocExecCurDir(cmd)
+  function _G.CocExecCurDir(cmd)
     local dir = CocExplorerCurDir()
     vim.fn.execute('cd ' .. dir)
     vim.fn.execute(cmd)
   end
 
-  function CocInitExplorer()
+  function _G.CocInitExplorer()
     local bMap = vim.api.nvim_buf_set_keymap
     vim.opt.winblend = 10
 
@@ -299,37 +304,40 @@ end
 function _G.CocTab()
   if vim.fn.pumvisible() ~= 0 then
     return utils.esc('<C-n>')
-  elseif _G.CheckBackSpace() then
-      return utils.esc('<TAB>')
-    else
-      return vim.fn['coc#refresh']()
   end
+  if vim.fn['coc#expandableOrJumpable']() then
+    return utils.esc('<C-r>=coc#rpc#request("doKeyMap", ["snippets-expand-jump", ""])<CR>')
+  end
+  if _G.CheckBackSpace() then
+    return utils.esc('<TAB>')
+  end
+  return vim.fn['coc#refresh']()
 end
 
 function _G.CocSTab()
   if vim.fn.pumvisible() then
     return utils.esc('<C-p>')
-  else
-    return utils.esc('<C-h>')
   end
+  return utils.esc('<C-h>')
 end
 
 function _G.CocEnterConfirm()
   if vim.fn.pumvisible() ~= 0 then
     return vim.fn['coc#_select_confirm']()
-  else
-    return utils.esc("<C-g>u<CR><C-R>=coc#on_enter()<CR>")
   end
+  return utils.esc("<C-g>u<CR><C-R>=coc#on_enter()<CR>")
 end
 
 function _G.CocShowDocumentation()
   if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
     vim.cmd('h ' .. vim.fn.expand('<cword>'))
-  elseif vim.fn['coc#rpc#ready']() then
-    vim.fn.CocActionAsync('doHover')
-  else
-    vim.cmd('!' .. vim.o.keywordprg .. ' ' .. vim.fn.expand('<cword>'))
+    return
   end
+  if vim.fn['coc#rpc#ready']() then
+    vim.fn.CocActionAsync('doHover')
+    return
+  end
+  vim.cmd('!' .. vim.o.keywordprg .. ' ' .. vim.fn.expand('<cword>'))
 end
 
 return M
