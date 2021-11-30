@@ -130,6 +130,7 @@ return require('packer').startup({function()
 
   -- {{{2 language related
   use 'tpope/vim-commentary'
+  use 'honza/vim-snippets' -- coc-snippets needs snippets
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',

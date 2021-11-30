@@ -67,23 +67,39 @@ basic.divider = { b_components.divider, hl_list.Normal }
 
 local width_breakpoint = 100
 
+local paste_mode = function()
+	if vim.o.paste then
+		return ' ' -- nf-mdi-content_paste
+	end
+end
+
 basic.section_a = {
     hl_colors = airline_colors.a,
     text = function(_,_,width)
         if width > width_breakpoint then
             return {
                 { ' ' .. state.mode[1] .. ' ', state.mode[2] },
+                { paste_mode, state.mode[2] },
                 { sep.right_filled, state.mode[2] .. 'Sep' },
             }
         end
         return {
             { ' ' .. state.mode[1]:sub(1, 1) .. ' ', state.mode[2] },
+			{ paste_mode, state.mode[2] },
             { sep.right_filled, state.mode[2] .. 'Sep' },
         }
     end,
 }
 
 local get_git_branch = git_comps.git_branch()
+local file_modified = function()
+    if vim.bo.modified then
+        return ' ' -- nf-oct-pencil
+    end
+    if vim.bo.modifiable == false  then
+        return ' ' -- nf-mdi-pencil_off
+    end
+end
 
 basic.section_b = {
     hl_colors = airline_colors.b,
@@ -107,9 +123,7 @@ basic.section_c = {
         return {
             { ' ', state.mode[2] },
             { b_components.cache_file_name('[No Name]', 'unique')},
-            { ' '},
-            { b_components.file_modified(' '), '' },
-            { ' '},
+            { file_modified, '' },
             { sep.right_filled, state.mode[2] .. 'Sep' },
         }
     end,
@@ -140,6 +154,7 @@ basic.section_y = {
         if width > width_breakpoint then
             return {
                 { sep.left_filled, state.mode[2] .. 'Sep' },
+                { ' ', state.mode[2] },
                 { b_components.cache_file_type({ icon = true }), state.mode[2] },
                 { ' ' },
             }
@@ -205,6 +220,7 @@ basic.git = {
                 { utils.format({ format = ' %s', value = string.match(buf_git_status, '+(%d+)') }), 'green' },
                 { utils.format({ format = '  %s', value = string.match(buf_git_status, '-(%d+)') }), 'red' },
                 { utils.format({ format = ' 柳%s', value = string.match(buf_git_status, '~(%d+)') }), 'blue' },
+                { ' ', '' },
             }
         end
         return ''
