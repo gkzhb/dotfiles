@@ -2,6 +2,7 @@
 -- {{{1 basic config
 pcall(require, 'vim-basic')
 local mappings = require('mappings')
+local utils = require('utils')
 pcall(mappings.init)
 -- {{{1 plugins
 -- check packer installation and load packer
@@ -28,5 +29,7 @@ pcall(mappings.setMappings)
 -- load local vim config file `.config/nvim/customize.vim`
 local customizeFile = vim.fn.expand(vim.fn.stdpath('config') .. '/customize.lua')
 if vim.fn.filereadable(customizeFile) > 0 then
-  vim.cmd('source ' .. customizeFile)
+  local m = utils.loadLocal('customize')
+  if m and m.afterAll then m.afterAll() end
+  -- vim.cmd('source ' .. customizeFile)
 end

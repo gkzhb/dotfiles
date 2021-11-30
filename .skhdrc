@@ -173,4 +173,4 @@ alt - p : yabai -m window --toggle sticky;\
 
 # Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
-alt - t : $HOME/scripts/open-kitty.sh
+alt - t : $HOME/scripts/yabai/open-kitty.sh

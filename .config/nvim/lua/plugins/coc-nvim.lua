@@ -14,6 +14,10 @@ function M.init()
       colorSupport = false, -- coc-highlight
     },
   })
+  -- {{{4 codeLens
+  vim.fn['coc#config']('codeLens', {
+    enable = true,
+  })
   -- {{{4 coc browser
   vim.fn['coc#config']('browser', {
     port = 8990,
@@ -202,7 +206,7 @@ function M.mappings()
   local wk = require('which-key')
   -- coc.nvim
   -- local coc = require('plugins.coc-nvim')
-  map('i', '<TAB>', 'v:lua.CocTab()', { expr = true, silent = false, nowait = true })
+  map('i', '<TAB>', 'v:lua.CocTab()', { expr = true, silent = true, nowait = true })
   map('i', '<S-TAB>', 'v:lua.CocSTab()', { expr = true })
   map('i', '<CR>', 'v:lua.CocEnterConfirm()', { expr = true, nowait = true })
   -- vim.cmd([[
@@ -255,6 +259,7 @@ function M.mappings()
 
   -- Remap keys for applying codeAction to the current buffer.
   map('n', '<leader>ac', '<Plug>(coc-codeaction)', noNoremap)
+  map('n', '<leader>al', '<Plug>(coc-codelens-action)', noNoremap)
   -- Apply AutoFix to problem on the current line.
   map('n', '<leader>qf', '<Plug>(coc-fix-current)', noNoremap)
 

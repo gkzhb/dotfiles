@@ -36,11 +36,11 @@ function M.setMappings()
   map('n', '<C-N>', ':bnext<CR>')
   map('n', '<C-P>', ':bprev<CR>')
   -- [n]gb switch to buffer [n]
-  map('n', 'gb', 'v:lua.switchBuffer(v:count)', { expr = true })
+  map('n', 'gb', 'v:lua.SwitchBuffer(v:count)', { expr = true })
 
   -- tab actions
-  map('n', '<leader>tn', '<cmd>TablineTabNew<CR>')
-  map('n', '<leader>tr', ':<C-u>TablineTabRename ')
+  map('n', '<leader>tn', '<cmd>tabnew<CR>')
+  -- map('n', '<leader>tr', ':<C-u>TablineTabRename ')
   -- tabline.nvim
   -- map('n', 'gt', '<cmd>TablineBufferNext<CR>')
   -- map('n', 'gT', '<cmd>TablineBufferPrevious<CR>')
@@ -63,7 +63,7 @@ function M.setMappings()
 end
 
 -- switch current active buffer to buffer number c
-function switchBuffer(c)
+function _G.SwitchBuffer(c)
   if c > 0 and vim.fn.bufnr(c) > -1 then
     return utils.esc(':<C-U>' .. c .. 'b<CR>')
   end

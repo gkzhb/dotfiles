@@ -10,13 +10,14 @@ vim.g.colors_name = 'onedark'
 -- {{{2 display
 -- fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27
 vim.opt.fillchars = { vert = '│', fold = '·' }
+vim.opt.list = true
 vim.opt.listchars = {
   tab = '▸ ',
   trail = '~',
   extends = '>',
   precedes = '<',
-  space = '␣',
-  eol = '¬'
+  space = '⋅',
+  eol = '↴'
 }
 vim.opt.laststatus = 2
 vim.opt.cmdheight = 1
