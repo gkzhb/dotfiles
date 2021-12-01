@@ -1,7 +1,7 @@
 local M = {}
 
 function M.init()
-  require('colorizer').setup({})
+  require('colorizer').setup()
 end
 
 return M

@@ -1,11 +1,9 @@
 -- vim: set fdm=marker:
 -- {{{1 basic vim config
 -- {{{2 set colorscheme
-if vim.fn.has('termguicolors') then
-  vim.opt.termguicolors = true
-end
+vim.opt.termguicolors = true
 vim.opt.background = 'dark'
-vim.g.colors_name = 'onedark'
+-- vim.g.colors_name = 'onedark' -- onedarkpro
 
 -- {{{2 display
 -- fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27

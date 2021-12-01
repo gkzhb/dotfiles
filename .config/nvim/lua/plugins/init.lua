@@ -19,7 +19,10 @@ return require('packer').startup({function()
   use 'lewis6991/impatient.nvim'
 
   -- {{{2 color theme
-  use 'navarasu/onedark.nvim'
+  use {
+    'olimorris/onedarkpro.nvim',
+    config = require('plugins.onedarkpro').init,
+  }
   -- {{{2 display enhancement
   use {
     'karb94/neoscroll.nvim',
@@ -134,13 +137,11 @@ return require('packer').startup({function()
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
-    branch = '0.5-compat',
     run = ':TSUpdateSync',
     config = require('plugins.nvim-treesitter').init
   }
   use {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    branch = '0.5-compat'
   }
   use {
     'JoosepAlviste/nvim-ts-context-commentstring',
