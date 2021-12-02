@@ -27,7 +27,6 @@ function M.init()
 end
 
 function M.mappings()
-  local map = require('utils').map
   local wk = require('which-key')
   wk.register({
     s = {
@@ -45,8 +44,9 @@ function M.mappings()
       w = { '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', 'tmux win' },
       s = { '<cmd>lua require("telescope").extensions.sessions.sessions()<cr>', 'sessions' },
       r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
+      n = { '<cmd>lua require("telescope").extensions.notify.notify()'}
     },
-  }, { prefix = '<leader>'})
+  }, { prefix = '<leader>' })
 end
 
 return M

@@ -2,10 +2,29 @@ local M = {}
 local utils = require('utils')
 local map = utils.map
 
-function SetTab(size)
+function _G.SetTab(size)
   vim.opt.tabstop = size
   vim.opt.softtabstop = size
   vim.opt.shiftwidth = size
+end
+
+function _G.SynGroup()
+    local s = vim.fn.synID(vim.fn.line('.'), vim.fn.col('.'), 1)
+    print(vim.fn.synIDattr(s, 'name') .. ' -> ' .. vim.fn.synIDattr(vim.fn.synIDtrans(s), 'name'))
+end
+
+function _G.SynStack()
+  local res = vim.fn.synstack(vim.fn.line('.'), vim.fn.col('.'))
+  for s = 1, #res do
+    local i1 = res[s]
+    local i2 = vim.fn.synIDtrans(i1)
+    local n1 = vim.fn.synIDattr(i1, 'name')
+    local n2 = vim.fn.synIDattr(i2, 'name')
+    print(n1 .. '->' .. n2)
+  end
+  if #res == 0 then
+    print('no hl group')
+  end
 end
 
 function M.init()
@@ -51,6 +70,8 @@ function M.setMappings()
   map('n', '<leader>cp', ':set invpaste<CR>')
   map('n', '<leader>ci', ':set list!<CR>')
   map('n', '<leader>ch', ':noh<CR>')
+  map('n', '<leader>cg', '<cmd>lua SynGroup()<CR>')
+  map('n', '<leader>cgg', '<cmd>lua SynStack()<CR>')
 
   map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
   map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
@@ -59,6 +80,7 @@ function M.setMappings()
 
   require('plugins.coc-nvim').mappings()
   require('plugins.telescope').mappings()
+  require('plugins.notify').mappings()
 
 end
 

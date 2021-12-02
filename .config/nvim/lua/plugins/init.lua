@@ -43,6 +43,12 @@ return require('packer').startup({function()
     event = 'BufRead',
     config = require('plugins.indent-blankline').init
   }
+  -- beautify notifications
+  use {
+    'rcarriga/nvim-notify',
+    config = require('plugins.notify').init,
+  }
+  -- show colors
   use {
     'norcalli/nvim-colorizer.lua',
     config = require('plugins.colorizer').init
