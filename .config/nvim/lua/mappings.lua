@@ -36,6 +36,7 @@ function M.init()
 end
 
 function M.setMappings()
+  local wk = require('which-key')
   -- TODO: register map with which-key.nvim and add comments for mappings
 
   -- fugitive
@@ -70,11 +71,18 @@ function M.setMappings()
   map('n', '<leader>cp', ':set invpaste<CR>')
   map('n', '<leader>ci', ':set list!<CR>')
   map('n', '<leader>ch', ':noh<CR>')
-  map('n', '<leader>cg', '<cmd>lua SynGroup()<CR>')
-  map('n', '<leader>cgg', '<cmd>lua SynStack()<CR>')
 
   map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
   map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
+  -- show highlight
+  wk.register({
+    h = {
+      name = 'show highlight',
+      s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
+      ss = { '<cmd>lua SynStack()<CR>', 'get SynStack' },
+      t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight'},
+    }
+  }, { prefix = '<leader>' })
   -- project actions
   map('n', '<leader>pc', '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>')
 

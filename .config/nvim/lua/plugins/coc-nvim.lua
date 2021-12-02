@@ -75,6 +75,8 @@ function M.init()
       enable = false,
     },
   })
+  vim.g.coc_default_semantic_highlight_groups = 1
+
   -- {{{4 coc rust
   vim.fn['coc#config']('rust-analyzer', {
     enable = true
