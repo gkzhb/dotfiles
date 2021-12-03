@@ -80,7 +80,7 @@ function M.setMappings()
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
       ss = { '<cmd>lua SynStack()<CR>', 'get SynStack' },
-      t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight'},
+      t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight' },
     }
   }, { prefix = '<leader>' })
   -- project actions

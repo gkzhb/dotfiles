@@ -233,8 +233,18 @@ function M.mappings()
   map('n', 'gy', '<Plug>(coc-type-definition)', noNoremap)
   map('n', 'gi', '<Plug>(coc-implementation)', noNoremap)
   map('n', 'gr', '<Plug>(coc-references)', noNoremap)
+  -- current cursor reltead
   -- Use K to show documentation in preview window.
   map('n', 'K', ':call v:lua.CocShowDocumentation()<CR>')
+  wk.register({
+    k = {
+      name = 'symbol under cursor',
+      c = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
+      d = { '<cmd>call v:lua.CocAction("definitionHover")<CR>', 'get definition' },
+      k = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
+      v = { '<cmd>call v:lua.CocAction("doHover")<CR>', 'get info' },
+    },
+  }, { prefix = '<leader>' })
   -- Highlight the symbol and its references when holding the cursor.
   vim.cmd([[
     autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -333,6 +343,25 @@ function _G.CocEnterConfirm()
     return vim.fn['coc#_select_confirm']()
   end
   return utils.esc("<C-g>u<CR><C-R>=coc#on_enter()<CR>")
+end
+
+function _G.CocAction(cmd)
+  if vim.fn['coc#rpc#ready']() then
+    vim.fn.CocActionAsync(cmd)
+  end
+end
+
+function _G.CocGetHover()
+  if not vim.fn['coc#rpc#ready']() then
+    return
+  end
+  -- getHover returns info the same as doHover
+  local list = vim.fn.CocAction('getHover')
+  for idx, item in pairs(list) do
+    print(idx, item)
+  end
+  print(list)
+  -- vim.notify(list)
 end
 
 function _G.CocShowDocumentation()

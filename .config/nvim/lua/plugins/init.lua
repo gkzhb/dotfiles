@@ -8,6 +8,7 @@ return require('packer').startup({function()
   use 'kyazdani42/nvim-web-devicons'
   use 'nvim-lua/plenary.nvim'
   use 'tami5/sqlite.lua'
+  use 'voldikss/vim-floaterm'
   use {
     'norcalli/nvim-terminal.lua',
     config = function() require('terminal').setup() end
@@ -53,10 +54,8 @@ return require('packer').startup({function()
     'norcalli/nvim-colorizer.lua',
     config = require('plugins.colorizer').init
   }
-  -- preview the result of replace command in real time
-  -- 实时预览替换命令执行效果
-  use 'markonm/traces.vim'
-  use { -- set foldtext
+  -- set foldtext
+  use {
     'scr1pt0r/crease.vim',
     config = require('plugins.crease').init
   }
@@ -72,7 +71,7 @@ return require('packer').startup({function()
   -- file explorer
   use {
     'ptzz/lf.vim',
-    requires = { 'voldikss/vim-floaterm' },
+    requires = { 'vim-floaterm' },
     setup = require('plugins.lf').setup
   }
 
