@@ -13,10 +13,11 @@ function M.init()
     hlgroups = {
       TSVariable = { fg = '${white}' },
       TSProperty = { fg = '${cyan}' },
-      NormalFloat = { bg = '#282c34', fg = '${white}'}
+      NormalFloat = { bg = '#282c34', fg = '${white}'},
+      CocFadeOut = { bg = '#282c34' },
     },
   })
-  onedarkpro.load() 
+  onedarkpro.load()
 end
 
 return M
