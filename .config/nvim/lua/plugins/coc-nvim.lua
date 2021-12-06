@@ -204,38 +204,37 @@ function M.init()
 end
 
 function M.mappings()
-  local map = utils.map
   local wk = require('which-key')
-  -- coc.nvim
-  -- local coc = require('plugins.coc-nvim')
-  map('i', '<TAB>', 'v:lua.CocTab()', { expr = true, silent = true, nowait = true })
-  map('i', '<S-TAB>', 'v:lua.CocSTab()', { expr = true })
-  map('i', '<CR>', 'v:lua.CocEnterConfirm()', { expr = true, nowait = true })
-  -- vim.cmd([[
-  --   inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-  --     \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-  -- ]])
-
+  wk.register({
+    ['<TAB>'] = { 'v:lua.CocTab()', '' },
+    ['<S-TAB>'] = { 'v:lua.CocSTab()', '' },
+    ['<CR>'] = { 'v:lua.CocEnterConfirm()', '' },
+  }, { mode = 'i', expr = true, nowait = true })
 
   -- Use `[g` and `]g` to navigate diagnostics
   -- Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-  local noNoremap = { noremap = false }
-  map('n', '[g', '<Plug>(coc-diagnostic-prev)', noNoremap)
-  map('n', ']g', '<Plug>(coc-diagnostic-next)', noNoremap)
-  map('n', '[e', '<Plug>(coc-diagnostic-prev-error)', noNoremap)
-  map('n', ']e', '<Plug>(coc-diagnostic-next-error)', noNoremap)
-  -- jump to float window
-  map('n', 'gw', '<plug>(coc-float-jump)', noNoremap)
-  -- close all coc.nvim float window
-  map('n', '<leader>cw', '<plug>(coc-float-hide)', noNoremap)
-  -- GoTo code navigation.
-  map('n', 'gd', '<Plug>(coc-definition)', noNoremap)
-  map('n', 'gy', '<Plug>(coc-type-definition)', noNoremap)
-  map('n', 'gi', '<Plug>(coc-implementation)', noNoremap)
-  map('n', 'gr', '<Plug>(coc-references)', noNoremap)
+  wk.register({
+    g = { '<Plug>(coc-diagnostic-prev)', 'prev diagnostic' },
+    e = { '<Plug>(coc-diagnostic-prev-error)', 'prev error' },
+  }, { prefix = '[' })
+  wk.register({
+    g = { '<Plug>(coc-diagnostic-next)', 'next diagnostic' },
+    e = { '<Plug>(coc-diagnostic-next-error)', 'next error' },
+  }, { prefix = ']' })
+  wk.register({
+    name = 'goto somewhere',
+    w = { '<plug>(coc-float-jump)', 'jump to coc float window' },
+    -- GoTo code navigation.
+    d = { '<Plug>(coc-definition)', 'goto code definition' },
+    y = { '<Plug>(coc-type-definition)', 'goto type definition' },
+    i = { '<Plug>(coc-implementation)', 'goto implementation' },
+    r = { '<Plug>(coc-references)', 'goto references' }
+  }, { prefix = 'g' })
+
   -- current cursor reltead
-  -- Use K to show documentation in preview window.
-  map('n', 'K', ':call v:lua.CocShowDocumentation()<CR>')
+  wk.register({
+    K = { ':call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
+  }, { mode = 'n' })
   wk.register({
     k = {
       name = 'symbol under cursor',
@@ -244,61 +243,73 @@ function M.mappings()
       k = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
       v = { '<cmd>call v:lua.CocAction("doHover")<CR>', 'get info' },
     },
-  }, { prefix = '<leader>' })
+    cw = { '<Plug>(coc-float-hide)', 'close all coc float window' }
+  }, { prefix = '<Leader>' })
   -- Highlight the symbol and its references when holding the cursor.
   vim.cmd([[
     autocmd CursorHold * silent call CocActionAsync('highlight')
   ]])
-  -- Symbol renaming.
-  map('n', '<leader>rn', '<Plug>(coc-rename)', noNoremap)
-  -- Formatting selected code.
-  map('n', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
-  map('x', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
-  map('v', '<leader>f', '<Plug>(coc-format-selected)', noNoremap)
-  vim.cmd([[command! -nargs=0 Format :call CocAction('format')]]) -- `:Format` format current buffer
+
+  wk.register({
+    -- Symbol renaming.
+    rn = { '<Plug>(coc-rename)', 'rename variable' },
+
+    f = { '<Plug>(coc-format-selected)', 'format selected code' },
+    cf = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
+    cd = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
+    a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
+    -- Example: `<leader>aap` for current paragraph
+    ac = { '<Plug>(coc-codeaction)', 'apply codeAction' },
+    al = { '<Plug>(coc-codelens-action)', 'apply CodeLens Action' },
+  }, { prefix = '<Leader>' })
+  wk.register({
+    f = { '<Plug>(coc-format-selected)', 'format selected code' },
+    a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
+  }, { mode = 'x' })
+  wk.register({
+    f = { '<Plug>(coc-format-selected)', 'format selected code' },
+  }, { mode = 'v' })
+
+  -- `:Format` format current buffer
+  vim.cmd([[command! -nargs=0 Format :call CocAction('format')]])
   -- `:Fold` fold current buffer
   vim.cmd([[command! -nargs=? Fold :call     CocAction('fold', <f-args>)]])
   -- `:OR` organize imports
   vim.cmd([[command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')]])
-  -- quickfix action
-  map('n', '<leader>cf', '<plug>(coc-fix-current)')
-  -- diagnostic
-  map('n', '<leader>cd', '<plug>(coc-diagnostic-info)')
-  -- Applying codeAction to the selected region.
-  -- Example: `<leader>aap` for current paragraph
-  map('x', '<leader>a', '<Plug>(coc-codeaction-selected)', noNoremap)
-  map('n', '<leader>a', '<Plug>(coc-codeaction-selected)', noNoremap)
 
-  -- Remap keys for applying codeAction to the current buffer.
-  map('n', '<leader>ac', '<Plug>(coc-codeaction)', noNoremap)
-  map('n', '<leader>al', '<Plug>(coc-codelens-action)', noNoremap)
-  -- Apply AutoFix to problem on the current line.
-  map('n', '<leader>qf', '<Plug>(coc-fix-current)', noNoremap)
 
   -- Map function and class text objects
   -- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-  map('x', 'if', '<Plug>(coc-funcobj-i)', noNoremap)
-  map('o', 'if', '<Plug>(coc-funcobj-i)', noNoremap)
-  map('x', 'af', '<Plug>(coc-funcobj-a)', noNoremap)
-  map('o', 'af', '<Plug>(coc-funcobj-a)', noNoremap)
-  map('x', 'ic', '<Plug>(coc-classobj-i)', noNoremap)
-  map('o', 'ic', '<Plug>(coc-classobj-i)', noNoremap)
-  map('x', 'ac', '<Plug>(coc-classobj-a)', noNoremap)
-  map('o', 'ac', '<Plug>(coc-classobj-a)', noNoremap)
+  wk.register({
+    ['if'] = { '<Plug>(coc-funcobj-i)', 'Select inside function' },
+      af = { '<Plug>(coc-funcobj-a)', 'Select around function' },
+      ic = { '<Plug>(coc-classobj-i)', 'Select inside class/struct/interface' },
+      ac = { '<Plug>(coc-classobj-a)', 'Select around class/struct/interface' },
+  }, { mode = 'x' })
+  wk.register({
+    ['if'] = { '<Plug>(coc-funcobj-i)', 'Select inside function' },
+      af = { '<Plug>(coc-funcobj-a)', 'Select around function' },
+      ic = { '<Plug>(coc-classobj-i)', 'Select inside class/struct/interface' },
+      ac = { '<Plug>(coc-classobj-a)', 'Select around class/struct/interface' },
+  }, { mode = 'o' })
 
   -- scroll float window
-  map('n', '<C-f>', 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', { nowait = true, expr = true })
-  map('n', '<C-b>', 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', { nowait = true, expr = true })
-  map('i', '<C-f>', 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', { nowait = true, expr = true })
-  map('i', '<C-b>', 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', { nowait = true, expr = true })
+  wk.register({
+    ['<C-f>'] = { 'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"', 'float window scroll down'},
+    ['<C-b>'] = { 'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"', 'float window scroll up' },
+  }, { mode = 'n', expr = true, nowait = true })
+  wk.register({
+    ['<C-f>'] = { 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(1)<cr>" : "<Right>"', 'float window scroll down'},
+    ['<C-b>'] = { 'coc#float#has_scroll() ? "<c-r>=coc#float#scroll(0)<cr>" : "<Left>"', 'float window scroll up' },
+  }, { mode = 'i', expr = true, nowait = true })
 
-  -- coc explorer
+  wk.register({
+    e = { ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>', 'coc explorer' },
+    y = { ':<C-u>CocList -A --normal yank<CR>', 'coc yank list' },
+    b = { ':<C-u>CocList --normal buffers<CR>', 'coc buffer list' },
+  }, { prefix = '<Leader>' })
 
-  map('n', '<leader>e', ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>')
   -- coc lists
-  -- map('n', '<leader>l', ':<C-u>CocList <CR>')
-  map('n', '<leader>y', ':<C-u>CocList -A --normal yank<cr>')
-  map('n', '<leader>b', ':<C-u>CocList --normal buffers<CR>')
   wk.register({
     name = 'CocList',
     b = { '<cmd>CocList buffers<CR>', 'buffers' },
@@ -309,8 +320,8 @@ function M.mappings()
     l = { '<cmd>CocListResume<CR>', 'last view' },
     o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
     s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
-
   }, { prefix = '<leader>l'})
+
 end
 
 function _G.CheckBackSpace()
@@ -323,7 +334,7 @@ function _G.CocTab()
     return utils.esc('<C-n>')
   end
   if vim.fn['coc#expandableOrJumpable']() then
-    return utils.esc('<C-r>=coc#rpc#request("doKeyMap", ["snippets-expand-jump", ""])<CR>')
+    return utils.esc('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump", ""])<CR>')
   end
   if _G.CheckBackSpace() then
     return utils.esc('<TAB>')
@@ -342,7 +353,7 @@ function _G.CocEnterConfirm()
   if vim.fn.pumvisible() ~= 0 then
     return vim.fn['coc#_select_confirm']()
   end
-  return utils.esc("<C-g>u<CR><C-R>=coc#on_enter()<CR>")
+  return utils.esc("<C-g>u<CR><C-r>=coc#on_enter()<CR>")
 end
 
 function _G.CocAction(cmd)
