@@ -1,12 +1,40 @@
 local M = {}
 local utils = require('utils')
 
-function M.initSnippet()
-  -- TODO: add config
-end
-
 function M.init()
   -- {{{2 coc.vim config
+  --
+  -- {{{3 config variables
+  -- coc-extension list
+  vim.g.coc_global_extensions = {
+    'coc-browser',
+    'coc-clangd',
+    'coc-css',
+    'coc-cssmodules',
+    'coc-eslint',
+    'coc-explorer',
+    'coc-git',
+    'coc-go',
+    'coc-highlight',
+    'coc-json',
+    'coc-lists',
+    'coc-markdownlint',
+    'coc-pairs',
+    'coc-prettier',
+    'coc-protobuf',
+    'coc-rust-analyzer',
+    'coc-sh',
+    'coc-snippets',
+    'coc-sumneko-lua',
+    'coc-tabnine',
+    'coc-tsserver',
+    'coc-vetur', -- Vue.js
+    'coc-vimlsp',
+    'coc-vimtex',
+    'coc-yaml',
+    'coc-yank'
+  }
+
   -- {{{3 coc-settings.json
   -- help: coc#config()
   vim.fn['coc#config']('coc', {
@@ -106,37 +134,7 @@ function M.init()
     },
   })
 
-  -- {{{3 coc-extension list
-  vim.g.coc_global_extensions = {
-    'coc-browser',
-    'coc-clangd',
-    'coc-css',
-    'coc-cssmodules',
-    'coc-eslint',
-    'coc-explorer',
-    'coc-git',
-    'coc-go',
-    'coc-highlight',
-    'coc-json',
-    'coc-lists',
-    'coc-markdownlint',
-    'coc-pairs',
-    'coc-prettier',
-    'coc-protobuf',
-    'coc-rust-analyzer',
-    'coc-sh',
-    'coc-snippets',
-    'coc-sumneko-lua',
-    'coc-tabnine',
-    'coc-tsserver',
-    'coc-vetur', -- Vue.js
-    'coc-vimlsp',
-    'coc-vimtex',
-    'coc-yaml',
-    'coc-yank'
-  }
-
-  -- {{{3 coc-explorer
+  -- {{{4 coc-explorer
   function _G.CocExplorerInited(bufnr)
     vim.fn.setbufvar(bufnr, '&number', 1)
     vim.fn.setbufvar(bufnr, '&relativenumber', 1)
@@ -265,10 +263,19 @@ function M.mappings()
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
-  }, { mode = 'x' })
+    x = { '<Plug>(coc-convert-snippet)', 'convert selected code to snippet' }, -- coc-snippets
+  }, { mode = 'x', prefix = '<Leader>' })
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
+  }, { mode = 'v', prefix = '<Leader>' })
+  -- coc-snippets
+  wk.register({
+    ['<C-j>'] = { '<Plug>(coc-snippets-select)', 'select text for visual placeholder' },
   }, { mode = 'v' })
+  wk.register({
+    ['<C-l>'] = { '<Plug>(coc-snippets-expand)', 'expand snippet' },
+    ['<C-j>'] = { '<Plug>(coc-snippets-expand-jump)', 'expand snippet and jump' },
+  }, { mode = 'i' })
 
   -- `:Format` format current buffer
   vim.cmd([[command! -nargs=0 Format :call CocAction('format')]])
