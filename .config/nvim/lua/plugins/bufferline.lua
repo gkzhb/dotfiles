@@ -3,6 +3,9 @@ local M = {}
 function M.init()
   require('bufferline').setup({
     options = {
+      numbers = function(opts)
+        return string.format('%s', opts.id)
+      end,
       show_tab_indicators = true,
       always_show_bufferline = true,
       show_close_icon = false,
