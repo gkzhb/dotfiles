@@ -54,4 +54,9 @@ yabai -m rule --add app='Preferences' manage=off
 # Make Chrome Picture in Picture mode windows appear topmost and on all spaces
 yabai -m rule --add app='^Google Chrome$' title='^Picture in Picture$' manage=off topmost=on sticky=on
 
+LOCAL_CONFIG="$HOME/.yabairc.local"
+if test -f "$LOCAL_CONFIG"; then
+    source "$LOCAL_CONFIG"
+fi
+
 echo "yabai configuration loaded.."
