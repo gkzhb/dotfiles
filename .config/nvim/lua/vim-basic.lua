@@ -25,6 +25,7 @@ vim.opt.cursorline = true
 -- line number
 vim.opt.nu = true
 vim.opt.rnu = true
+vim.wo.signcolumn = 'auto'
 -- enable syntax
 vim.cmd([[ syntax enable ]])
 
@@ -66,5 +67,4 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 
 vim.opt.updatetime = 300 -- CursorHold delay
-vim.wo.signcolumn = 'number'
 vim.opt.shortmess:append({ c = true })
