@@ -74,13 +74,14 @@ function M.setMappings()
 
   map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
   map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
-  -- show highlight
+  -- highlight related
   wk.register({
     h = {
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
       ss = { '<cmd>lua SynStack()<CR>', 'get SynStack' },
       t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight' },
+      r = { '<cmd>write | edit | TSBufEnable highlight<CR>', 'refresh treesitter highlight' },
     }
   }, { prefix = '<leader>' })
   -- project actions
