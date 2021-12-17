@@ -77,23 +77,25 @@
 # ############################################################### #
 
 # focus window
-alt - h : yabai -m window --focus west; or yabai -m display --focus west
-alt - j : yabai -m window --focus south; or yabai -m display --focus south
-alt - k : yabai -m window --focus north; or yabai -m display --focus north
-alt - l : yabai -m window --focus east; or yabai -m display --focus east
+alt - h : yabai -m window --focus west || yabai -m display --focus west
+alt - j : yabai -m window --focus south || yabai -m display --focus south
+alt - k : yabai -m window --focus north || yabai -m display --focus north
+alt - l : yabai -m window --focus east || yabai -m display --focus east
 
 
-alt - tab : yabai -m display --focus next; or yabai -m display --focus first
-shift + alt - tab : yabai -m display --focus prev; or yabai -m display --focus last
+alt - tab : yabai -m display --focus next || yabai -m display --focus first
+shift + alt - tab : yabai -m display --focus prev || yabai -m display --focus last
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus next || yabai -m window --focus stack.first || yabai -m window --focus first
+alt - p : yabai -m window --focus stack.prev || yabai -m window --focus prev || yabai -m window --focus stack.last || yabai -m window --focus last
 
 # swap managed window
 # shift + alt - h : yabai -m window --swap north
 
 # move managed window
-shift + alt - h : yabai -m window --swap west; or yabai -m window --display west && yabai -m display --focus west # yabai -m window --warp west
-shift + alt - j : yabai -m window --swap south; or yabai -m window --display south && yabai -m display --focus south # yabai -m window --warp south
-shift + alt - k : yabai -m window --swap north; or yabai -m window --display north && yabai -m display --focus north # yabai -m window --warp north
-shift + alt - l : yabai -m window --swap east; or yabai -m window --display east && yabai -m display --focus east # yabai -m window --warp east
+shift + alt - h : yabai -m window --swap west || yabai -m window --display west && yabai -m display --focus west # yabai -m window --warp west
+shift + alt - j : yabai -m window --swap south || yabai -m window --display south && yabai -m display --focus south # yabai -m window --warp south
+shift + alt - k : yabai -m window --swap north || yabai -m window --display north && yabai -m display --focus north # yabai -m window --warp north
+shift + alt - l : yabai -m window --swap east || yabai -m window --display east && yabai -m display --focus east # yabai -m window --warp east
 
 # balance size of windows
 # shift + alt - 0 : yabai -m space --balance
@@ -112,10 +114,10 @@ shift + alt - l : yabai -m window --swap east; or yabai -m window --display east
 
 # fast focus desktop
 # cmd + alt - x : yabai -m space --focus recent
-cmd + alt - 1 : yabai -m space --focus 1
-cmd + alt - 2 : yabai -m space --focus 2
-cmd + alt - 3 : yabai -m space --focus 3
-cmd + alt - 4 : yabai -m space --focus 4
+# cmd + alt - 1 : yabai -m space --focus 1
+# cmd + alt - 2 : yabai -m space --focus 2
+# cmd + alt - 3 : yabai -m space --focus 3
+# cmd + alt - 4 : yabai -m space --focus 4
 
 # send window to desktop and follow focus
 # shift + cmd - z : yabai -m window --space next; yabai -m space --focus next
@@ -144,15 +146,18 @@ shift + alt - p : yabai -m window --space  prev
 # shift + ctrl - s : yabai -m window --move rel:0:20
 
 # increase window size
-shift + cmd - l : yabai -m window --resize left:-20:0
-shift + cmd - j : yabai -m window --resize top:0:-20
+shift + cmd - l : yabai -m window --resize left:-20:0 || yabai -m window --resize right:20:0
+shift + cmd - j : yabai -m window --resize top:0:-20 || yabai -m window --resize bottom:0:20
 
 # decrease window size
-shift + cmd - k : yabai -m window --resize bottom:0:-20
-shift + cmd - h : yabai -m window --resize top:0:20
+shift + cmd - k : yabai -m window --resize bottom:0:-20 || yabai -m window --resize top:0:20;
+shift + cmd - h : yabai -m window --resize left:20:0 || yabai -m window --resize right:-20:0
 
 # set insertion point in focused container
 # ctrl + alt - h : yabai -m window --insert west
+
+# close focused window
+alt - q : yabai -m window --close
 
 # toggle window zoom
 alt - d : yabai -m window --toggle zoom-parent
@@ -161,15 +166,17 @@ alt - f : yabai -m window --toggle zoom-fullscreen
 # toggle window split type
 alt - v : yabai -m window --toggle split
 
+# stack to next window
+alt - s : yabai -m window --stack next
+
 # float / unfloat window and center on screen
 shift + alt - space : yabai -m window --toggle float;\
           yabai -m window --grid 4:4:1:1:2:2
 
 # toggle sticky(+float), topmost, picture-in-picture
-alt - p : yabai -m window --toggle sticky;\
+alt - m : yabai -m window --toggle sticky;\
           yabai -m window --toggle topmost;\
           yabai -m window --toggle pip
-
 
 # Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
