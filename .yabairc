@@ -54,14 +54,13 @@ yabai -m rule --add app='Preferences' manage=off
 # Make Chrome Picture in Picture mode windows appear topmost and on all spaces
 yabai -m rule --add app='^Google Chrome$' title='^Picture in Picture$' manage=off topmost=on sticky=on
 
-# yabai-spaces 
+# update yabai-spaces in status bar
 yabai -m signal --add event=space_changed action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=window_focused action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=display_added action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=display_removed action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=display_changed action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=display_moved action="open -gj 'swiftbar://refreshplugin?name=yabai'"
-
 
 LOCAL_CONFIG="$HOME/.yabairc.local"
 if test -f "$LOCAL_CONFIG"; then
