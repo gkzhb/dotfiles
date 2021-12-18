@@ -1,5 +1,12 @@
 #!/usr/bin/env lua
 
+local colors= {
+  red = 31,
+  white = 0,
+}
+local function makeColor(colorNumber)
+  return string.format('\27[%dm', tostring(colorNumber))
+end
 local function getCmdOutput(cmd)
   local openPop = assert(io.popen(cmd))
   local output = openPop:read('*all')
@@ -7,7 +14,7 @@ local function getCmdOutput(cmd)
   return output
 end
 
-local visibleSpaceCsv = getCmdOutput('yabai -m query --spaces  | jq -r \'map(select((.visible == 1) or (.windows | length > 0)))[] | [.index, .label, .display, .visible] | @csv\'')
+local visibleSpaceCsv = getCmdOutput('yabai -m query --spaces  | jq -r \'map(select((."has-focus" == true) or (.windows | length > 0)))[] | [.index, .label, .display, ."has-focus"] | @csv\'')
 -- print(visibleSpaceCsv)
 local display = tonumber(getCmdOutput('yabai -m query --displays --display | jq ".index"'))
 -- print(display)
@@ -34,11 +41,11 @@ local function getDisplayName(item, display)
   else
     ret = item[1]
   end
-  if item[4] == '1' then
-    ret = '*' .. ret .. '*'
+  if item[4] == 'true' then
     if display == tonumber(item[3]) then
       ret = '' .. ret .. ''
     end
+    ret = makeColor(colors.red) .. ret .. makeColor(colors.white)
   end
   return ret
 end
@@ -51,7 +58,7 @@ for _, item in pairs(spaceInfo) do
   end
   str = str .. ' ' .. getDisplayName(item, display)
 end
-str = str .. '  | font="Hack Nerd Font Mono"'
+str = str .. '  | font="FiraCode Nerd Font" ansi=true'
 print(str)
 print('---')
 print('yabai spaces')
