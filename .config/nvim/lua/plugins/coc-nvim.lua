@@ -117,6 +117,7 @@ function M.init()
   -- {{{4 coc sumneko lua
   vim.fn['coc#config']('sumneko-lua', {
     enableNvimLuaDev = true,
+    checkUpdate = false,
   })
   vim.fn['coc#config']('Lua', {
     completion = {

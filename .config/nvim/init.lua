@@ -25,6 +25,11 @@ pcall(require, 'packer_compiled') -- load packer lua cache
 -- {{{1 Keyboard Mappings/Bindings & Shortcuts
 pcall(mappings.setMappings)
 
+-- {{{1 file type
+vim.cmd([[
+  autocmd BufNewFile,BufRead *.mdx :set filetype=markdown
+]])
+-- }}}
 -- {{{1 Load Local Configuration
 -- load local vim config file `.config/nvim/customize.vim`
 local customizeFile = vim.fn.expand(vim.fn.stdpath('config') .. '/customize.lua')
