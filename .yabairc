@@ -55,6 +55,7 @@ yabai -m rule --add app='Preferences' manage=off
 yabai -m rule --add app='^Google Chrome$' title='^Picture in Picture$' manage=off topmost=on sticky=on
 
 yabai -m rule --add app='^choose$' manage=off
+yabai -m rule --add app='^Feishu$' title='^图片$' manage=off
 
 # update yabai-spaces in status bar
 yabai -m signal --add event=space_changed action="open -gj 'swiftbar://refreshplugin?name=yabai'"

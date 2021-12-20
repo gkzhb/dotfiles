@@ -14,6 +14,7 @@ function rename_space
     yabai -m space --label "$argv"
   end
   # persist the space label info
-  yabai -m query --spaces | jq -r '.[] | select(.label | length > 0) | [.index, .label] | @csv' | xargs echo > $YABAI_LABEL_PATH
+  set csv_content (yabai -m query --spaces | jq -r '.[] | select(.label | length > 0) | [.index, .label] | @csv' | string split0)
+  echo $csv_content > $YABAI_LABEL_PATH
 end
 rename_space (echo '»' | choose -m)
