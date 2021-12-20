@@ -64,6 +64,9 @@ yabai -m signal --add event=display_removed action="open -gj 'swiftbar://refresh
 yabai -m signal --add event=display_changed action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 yabai -m signal --add event=display_moved action="open -gj 'swiftbar://refreshplugin?name=yabai'"
 
+# restore space labels
+$HOME/scripts/yabai/restore-space-labels.fish
+
 LOCAL_CONFIG="$HOME/.yabairc.local"
 if test -f "$LOCAL_CONFIG"; then
     source "$LOCAL_CONFIG"
