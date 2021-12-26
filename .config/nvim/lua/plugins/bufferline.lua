@@ -16,9 +16,22 @@ function M.init()
     },
     highlights = {
       tab_selected = {
-          guifg = colors.white,
-          guibg = colors.bg0,
-          gui = 'bold',
+        guifg = colors.white,
+        guibg = colors.bg0,
+        gui = 'bold',
+      },
+      buffer_selected = {
+        guifg = colors.white,
+        guibg = colors.bg0,
+        gui = "bold,italic"
+      },
+      separator_selected = {
+        guifg = colors.white,
+        guibg = colors.bg0,
+      },
+      indicator_selected = {
+        guifg = colors.white,
+        guibg = colors.bg0,
       },
     }
   })
