@@ -1,6 +1,8 @@
 local M = {}
 
 function M.init()
+  local colors = require('onedarkpro').get_colors('onedark')
+
   require('bufferline').setup({
     options = {
       numbers = function(opts)
@@ -11,6 +13,13 @@ function M.init()
       show_close_icon = false,
       show_buffer_close_icons = false,
       diagnostics = 'coc',
+    },
+    highlights = {
+      tab_selected = {
+          guifg = colors.white,
+          guibg = colors.bg0,
+          gui = 'bold',
+      },
     }
   })
 end

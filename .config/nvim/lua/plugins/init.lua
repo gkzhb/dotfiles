@@ -62,7 +62,8 @@ return require('packer').startup({function()
   -- status line and tab line
   use {
     'akinsho/bufferline.nvim',
-    config = require('plugins.bufferline').init
+    config = require('plugins.bufferline').init,
+    after = 'onedarkpro.nvim'
   }
   use {
     'windwp/windline.nvim',
@@ -84,6 +85,10 @@ return require('packer').startup({function()
   use {
     'https://gitlab.com/yorickpeterse/nvim-pqf.git',
     config = require('plugins.pqf').init
+  }
+  use {
+    'mbbill/undotree',
+    cmd = { 'UndotreeToggle' },
   }
   -- {{{2 movement
   use {
