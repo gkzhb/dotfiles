@@ -82,12 +82,12 @@ function M.setMappings()
       c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>' , 'edit project config' },
     },
     q = { '<cmd>Wquit<CR>', 'close current window' },
-    w = { '<cmd>call win#Win()<CR>', 'win mode'}, -- vim-win
     z = { 'MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 
   require('plugins.fugitive').mappings()
   require('plugins.coc-nvim').mappings()
+  require('plugins.vim-win').mappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
 

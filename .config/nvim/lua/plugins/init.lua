@@ -99,7 +99,10 @@ return require('packer').startup({function()
     't9md/vim-choosewin',
     config = require('plugins.choosewin').init
   }
-  use 'dstein64/vim-win'
+  use {
+    'dstein64/vim-win',
+    config = require('plugins.vim-win').init
+  }
   use 'ggandor/lightspeed.nvim'
   use 'szw/vim-maximizer'
   -- {{{2 edit
