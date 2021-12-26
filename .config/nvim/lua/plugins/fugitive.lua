@@ -24,4 +24,16 @@ function M.init()
   ]])
 end
 
+function M.mappings()
+  local wk = require('which-key')
+  wk.register({
+    g = {
+      name = 'git related',
+      s = { '<cmd>G<CR>', 'git status' },
+      b = { '<cmd>G blame<CR>', 'git blame' },
+      ['<Space>'] = { '<cmd>G<Space>', 'git command', silent = false },
+    }
+  }, { prefix = '<leader>' })
+end
+
 return M

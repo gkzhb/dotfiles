@@ -27,6 +27,14 @@ function _G.SynStack()
   end
 end
 
+-- switch current active buffer to buffer number c
+function _G.SwitchBuffer(c)
+  if c > 0 and vim.fn.bufnr(c) > -1 then
+    return utils.esc(':<C-U>' .. c .. 'b<CR>')
+  end
+  return ''
+end
+
 function M.init()
   -- leader key
   vim.g.mapleader=' '
@@ -37,68 +45,52 @@ end
 
 function M.setMappings()
   local wk = require('which-key')
-  -- TODO: register map with which-key.nvim and add comments for mappings
 
-  -- fugitive
-  map('n', '<leader>g', ':G<CR>')
-  map('n', '<leader>g<Space>', ':G<Space>', { silent = false })
-
-  -- choosewin
-  map('n', '-', '<Plug>(choosewin)', { noremap = false, silent = true })
-
-  -- lf
-  map('n', '<leader>d', ':Lf<CR>')
-
-  -- maximizer
-  map('n', '<leader>z', ':MaximizerToggle<CR>')
-
-  -- buffer actions
-  map('n', '<C-N>', ':bnext<CR>')
-  map('n', '<C-P>', ':bprev<CR>')
-  -- [n]gb switch to buffer [n]
-  map('n', 'gb', 'v:lua.SwitchBuffer(v:count)', { expr = true })
-
-  -- tab actions
-  map('n', '<leader>tn', '<cmd>tabnew<CR>')
-  -- map('n', '<leader>tr', ':<C-u>TablineTabRename ')
-  -- tabline.nvim
-  -- map('n', 'gt', '<cmd>TablineBufferNext<CR>')
-  -- map('n', 'gT', '<cmd>TablineBufferPrevious<CR>')
+  wk.register({
+    ['-'] = { '<Plug>(choosewin)', 'choose win', noremap = false, silent = true }, -- choosewin
+    -- buffer actions
+    ['<C-N>'] = { ':bnext<CR>', 'next buffer' },
+    ['<C-P>'] = { ':bprev<CR>', 'previous buffer' },
+    -- [n]gb switch to buffer [n]
+    gb = { 'v:lua.SwitchBuffer(v:count)', 'switch to buffer [n]', expr = true }
+  })
   
   -- quick actions
-  map('n', '<leader>w', ':w<CR>')
-  map('n', '<leader>q', ':Wquit<CR>')
-  map('n', '<leader>cp', ':set invpaste<CR>')
-  map('n', '<leader>ci', ':set list!<CR>')
-  map('n', '<leader>ch', ':noh<CR>')
-
-  map('n', '<leader>ct4', ':call v:lua.SetTab(4)<CR>')
-  map('n', '<leader>ct2', ':call v:lua.SetTab(2)<CR>')
-  -- highlight related
   wk.register({
-    h = {
+    c = {
+      name = 'config',
+      i = { '<cmd>set list!<CR>', 'toggle showing space chars' },
+      h = { '<cmd>noh<CR>', 'hide search highlight' },
+      p = { '<cmd>set invpaste', 'toggle paste mode' },
+      t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size 4' },
+      t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size 2' },
+    },
+    d = { '<cmd>Lf<CR>', 'open lf' }, -- lf
+    h = { -- highlight related
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
       ss = { '<cmd>lua SynStack()<CR>', 'get SynStack' },
       t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight' },
       r = { '<cmd>write | edit | TSBufEnable highlight<CR>', 'refresh treesitter highlight' },
-    }
+    },
+    t = {
+      name = 'tab actions',
+      n = { '<cmd>tabnew<CR>', 'new tabpage' },
+    },
+    p = { -- nvim-projectconfig
+      name = 'project related',
+      c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>' , 'edit project config' },
+    },
+    q = { '<cmd>Wquit<CR>', 'close current window' },
+    w = { '<cmd>call win#Win()<CR>', 'win mode'}, -- vim-win
+    z = { 'MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
-  -- project actions
-  map('n', '<leader>pc', '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>')
 
+  require('plugins.fugitive').mappings()
   require('plugins.coc-nvim').mappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
 
-end
-
--- switch current active buffer to buffer number c
-function _G.SwitchBuffer(c)
-  if c > 0 and vim.fn.bufnr(c) > -1 then
-    return utils.esc(':<C-U>' .. c .. 'b<CR>')
-  end
-  return ''
 end
 
 return M
