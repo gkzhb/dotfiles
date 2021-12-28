@@ -71,6 +71,7 @@ function M.init()
       TSProperty = { fg = '${cyan}' },
       NormalFloat = { bg = '${bg0}', fg = '${white}'},
       CocFadeOut = { bg = '${bg0}' },
+      Search = { bg = '${gray}', style = 'NONE' },
     },
   })
   onedarkpro.load()
