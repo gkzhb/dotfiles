@@ -1,0 +1,20 @@
+.ignore
+# Node
+node_modules/
+
+# IDE
+.idea/
+
+# log
+*.log
+log/
+
+# Mac
+.DS_Store
+
+# Vim
+*~
+.vimspector.json
+
+# nvm
+.nvmrc

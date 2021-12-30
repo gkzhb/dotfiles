@@ -1,0 +1,55 @@
+# reference to [[https://github.com/jessfraz/dotfiles/blob/master/.gitconfig|dotfiles/.gitconfig at master · jessfraz/dotfiles]]
+[core]
+  editor = nvim
+[pull]
+  rebase = true
+[include]
+  path = ~/.gitconfig.local
+[alias]
+  co = checkout
+  br = branch
+  ci = commit
+  st = status -sb
+
+  # Show verbose output about tags, branches or remotes
+  ltg = tag -l
+  lbr = branch -a
+  lrv = remote -v
+
+  # Show the diff between the latest commit and the current state
+  ds = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+  # `git di $number` shows the diff between the state `$number` revisions ago and the current state
+  di = !"d() { git diff --patch-with-stat HEAD~$1; }; git diff-index --quiet HEAD -- || clear; d"
+  d = diff
+  lcg = config --global -l # show all git global configs
+
+  # Pull in remote changes for the current repository and all its submodules
+  p = !"git pull; git submodule foreach git pull origin master"
+
+  # Clone a repository including all submodules
+  c = clone --recursive
+
+  # show all aliases, from trevor bramble https://twitter.com/TrevorBramble/status/774292970681937920
+  lal=!git config -l | grep ^alias | cut -c 7- | sort
+
+  last = log -1 HEAD --stat # show last commit
+  lg = lg1 # show log graph
+  lg1 = lg1-specific --all
+  lg2 = lg2-specific --all
+  lg3 = lg3-specific --all
+
+  # one line per commit
+  lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+  # two lines per commit
+  lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  # three lines per commit
+  lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+
+# neovim as difftool: [[https://oozou.com/til/use-neovim-as-a-git-difftool-57|Use Neovim as a git difftool | OOZOU]]
+[difftool]
+  prompt = true
+[diff]
+  tool = nvimdiff
+[difftool "nvimdiff"]
+  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
