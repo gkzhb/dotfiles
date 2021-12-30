@@ -82,7 +82,7 @@ function M.setMappings()
       c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>' , 'edit project config' },
     },
     q = { '<cmd>Wquit<CR>', 'close current window' },
-    z = { 'MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
+    z = { '<cmd>MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 
   require('plugins.fugitive').mappings()
