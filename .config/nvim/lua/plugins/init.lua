@@ -1,6 +1,7 @@
 -- vim: set fdm=marker:
 -- {{{1 Packer managed plugins
-return require('packer').startup({function()
+return require('packer').startup({function(use)
+  local cfg = _G.getLocalConfig()
   -- Packer itself
   use 'wbthomason/packer.nvim'
 
@@ -150,7 +151,7 @@ return require('packer').startup({function()
   -- treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdateSync',
+    run = cfg.performantMode and ':TSUpdateSync' or ':TSUpdate',
     config = require('plugins.nvim-treesitter').init
   }
   use {

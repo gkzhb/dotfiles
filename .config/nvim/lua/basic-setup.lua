@@ -68,3 +68,17 @@ vim.opt.splitright = true
 
 vim.opt.updatetime = 300 -- CursorHold delay
 vim.opt.shortmess:append({ c = true })
+-- }}}
+
+-- {{{1 check and install packer
+local utils = require('utils')
+local packer = utils.loadModuleSafely('utils.packer')
+if packer and not packer.checkPackerExist() then
+  packer.installPacker()
+end
+-- }}}
+--
+-- {{{1 load 'impatient' to cache lua
+-- use 'pcall' to avoid crash when 'impatient' is not installed by packer
+pcall(require, 'impatient')
+-- }}}

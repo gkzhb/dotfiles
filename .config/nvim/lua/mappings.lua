@@ -1,6 +1,5 @@
 local M = {}
 local utils = require('utils')
-local map = utils.map
 
 function _G.SetTab(size)
   vim.opt.tabstop = size
@@ -61,7 +60,7 @@ function M.setMappings()
       name = 'config',
       i = { '<cmd>set list!<CR>', 'toggle showing space chars' },
       h = { '<cmd>noh<CR>', 'hide search highlight' },
-      p = { '<cmd>set invpaste', 'toggle paste mode' },
+      p = { '<cmd>set invpaste<CR>', 'toggle paste mode' },
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size 2' },
     },
