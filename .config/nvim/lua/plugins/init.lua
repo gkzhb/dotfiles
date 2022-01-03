@@ -9,7 +9,6 @@ return require('packer').startup({function(use)
   use 'kyazdani42/nvim-web-devicons'
   use 'nvim-lua/plenary.nvim'
   use 'tami5/sqlite.lua'
-  use 'voldikss/vim-floaterm'
   use {
     'norcalli/nvim-terminal.lua',
     config = function() require('terminal').setup() end
@@ -72,9 +71,8 @@ return require('packer').startup({function(use)
   }
   -- file explorer
   use {
-    'ptzz/lf.vim',
-    requires = { 'vim-floaterm' },
-    setup = require('plugins.lf').setup
+    'is0n/fm-nvim',
+    config = function() require('fm-nvim').setup({}) end,
   }
 
   -- pretty list
@@ -165,6 +163,10 @@ return require('packer').startup({function(use)
     'nvim-treesitter/playground'
   }
   use 'andymass/vim-matchup'  -- support tree-sitter
+  use {
+    'romgrk/nvim-treesitter-context',
+    config = function() require('treesitter-context').setup({}) end
+  }
 
   -- coc.nvim provides rename and highlight current symbol
   use { 'nvim-treesitter/nvim-treesitter-refactor' }

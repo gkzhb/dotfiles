@@ -13,9 +13,16 @@ end
 function M.mappings()
   local wk = require('which-key')
   wk.register({
-    [','] = {
-      '<cmd>lua require("notify").dismiss()<CR>',
-      'close all notifications'
+    n = {
+      name = 'notifications',
+      c = {
+        '<cmd>lua require("notify").dismiss()<CR>',
+        'close all notifications'
+      },
+      l = {
+        '<cmd>Notifications<CR>',
+        'list all notifications'
+      }
     }
   }, { prefix = '<leader>' })
 end

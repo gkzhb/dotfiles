@@ -44,7 +44,7 @@ function M.mappings()
       w = { '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', 'tmux win' },
       s = { '<cmd>lua require("telescope").extensions.sessions.sessions()<cr>', 'sessions' },
       r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
-      n = { '<cmd>lua require("telescope").extensions.notify.notify()'}
+      n = { '<cmd>lua require("telescope").extensions.notify.notify()<cr>', 'notification history' },
     },
   }, { prefix = '<leader>' })
 end
