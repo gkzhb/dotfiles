@@ -10,5 +10,13 @@ fish_vi_key_bindings
 
 # {{{1 alias
 # set v2ray proxy
-alias vproxy="set -gx all_proxy socks5://localhost:10880"
-alias unvproxy="set -e all_proxy"
+function vproxy
+  set -gx all_proxy socks5://localhost:10880
+  set -gx https_proxy http://localhost:10881
+  set -gx http_proxy http://localhost:10881
+end
+function unvproxy
+  set -e all_proxy
+  set -e https_proxy
+  set -e http_proxy
+end

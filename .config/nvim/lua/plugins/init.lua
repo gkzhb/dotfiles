@@ -59,6 +59,10 @@ return require('packer').startup({function(use)
     'scr1pt0r/crease.vim',
     config = require('plugins.crease').init
   }
+  -- vim mark enhancement
+  use { 'chentau/marks.nvim',
+    config = require('plugins.marks').init
+  }
   -- status line and tab line
   use {
     'akinsho/bufferline.nvim',
@@ -72,7 +76,7 @@ return require('packer').startup({function(use)
   -- file explorer
   use {
     'is0n/fm-nvim',
-    config = function() require('fm-nvim').setup({}) end,
+    config = require('plugins.fm-nvim').init,
   }
 
   -- pretty list
