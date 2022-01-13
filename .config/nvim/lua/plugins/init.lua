@@ -169,7 +169,7 @@ return require('packer').startup({function(use)
   use 'andymass/vim-matchup'  -- support tree-sitter
   use {
     'romgrk/nvim-treesitter-context',
-    config = function() require('treesitter-context').setup({}) end
+    -- config = function() require('treesitter-context').setup({}) end
   }
 
   -- coc.nvim provides rename and highlight current symbol
