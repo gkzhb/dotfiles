@@ -42,7 +42,7 @@ function M.mappings()
       t = { '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', 'current tabs' },
       y = { '<cmd>lua require("telescope").extensions.neoclip.default()<cr>', 'clipboard' },
       w = { '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', 'tmux win' },
-      s = { '<cmd>lua require("telescope").extensions.sessions.sessions()<cr>', 'sessions' },
+      s = { '<cmd>SessionManager load_session<cr>', 'sessions' },
       r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
       n = { '<cmd>lua require("telescope").extensions.notify.notify()<cr>', 'notification history' },
     },

@@ -24,6 +24,7 @@ end
 # {{{1 alias
 # tmux aliases
 alias t=tmux
+alias tn='tmux new'
 # {{{1 nvm
 # set node download mirror
 set -uU nvm_mirror http://npm.taobao.org/mirrors/node

@@ -194,6 +194,10 @@ return require('packer').startup({function(use)
     config = require('plugins.telescope').init
   }
   use {
+    'nvim-telescope/telescope-ui-select.nvim',
+    config = function() require('telescope').load_extension('ui-select') end
+  }
+  use {
     'nvim-telescope/telescope-fzf-native.nvim',
     run = 'make',
     after = 'telescope.nvim',
