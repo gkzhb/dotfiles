@@ -1,6 +1,9 @@
 # reference to [[https://github.com/jessfraz/dotfiles/blob/master/.gitconfig|dotfiles/.gitconfig at master · jessfraz/dotfiles]]
 [core]
   editor = nvim
+  # display UTF-8 encoded chars
+  # https://stackoverflow.com/questions/22827239/how-to-make-git-properly-display-utf-8-encoded-pathnames-in-the-console-window
+  quotepath = false
 [pull]
   rebase = true
 [include]
