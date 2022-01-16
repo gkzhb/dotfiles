@@ -119,21 +119,8 @@ function M.init()
     enableNvimLuaDev = true,
     checkUpdate = false,
   })
-  vim.fn['coc#config']('Lua', {
-    completion = {
-      -- keywordSnippet = "Disable"
-    },
-    diagnostics = {
-      -- disable = { 'lowercase-global', 'different-requires' }
-    },
-    workspace = {
-      checkThirdParty = false,
-      library = {}
-    },
-    telemetry = {
-      enable = false,
-    },
-  })
+  local luadev = require('lua-dev').setup({})
+  vim.fn['coc#config']('Lua', luadev.settings.Lua)
 
   -- {{{4 coc-explorer
   function _G.CocExplorerInited(bufnr)

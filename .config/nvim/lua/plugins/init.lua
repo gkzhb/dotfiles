@@ -185,15 +185,13 @@ return require('packer').startup({function(use)
   -- }}}
 
   -- neovim lua
-  use {
-    'folke/lua-dev.nvim',
-    config = require('plugins.lua-dev').init
-  }
+  use 'folke/lua-dev.nvim'
   -- lsp client
   use {
     'neoclide/coc.nvim',
     branch = 'release',
-    config = require('plugins.coc-nvim').init
+    config = require('plugins.coc-nvim').init,
+    after = 'lua-dev.nvim'
   }
 
   -- {{{2 search: telescope related
