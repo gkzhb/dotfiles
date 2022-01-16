@@ -150,7 +150,7 @@ return require('packer').startup({function(use)
   -- {{{2 language related
   use 'tpope/vim-commentary'
   use 'honza/vim-snippets' -- coc-snippets needs snippets
-  -- treesitter
+  -- {{{3 treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
     run = cfg.performantMode and ':TSUpdateSync' or ':TSUpdate',
@@ -166,14 +166,23 @@ return require('packer').startup({function(use)
   use {
     'nvim-treesitter/playground'
   }
-  use 'andymass/vim-matchup'  -- support tree-sitter
+  use { 'theHamsta/nvim-treesitter-pairs' }
+  -- incompatible with the lua treesitter parser
+  -- use 'andymass/vim-matchup'  -- support tree-sitter
   use {
     'romgrk/nvim-treesitter-context',
-    -- config = function() require('treesitter-context').setup({}) end
+    config = function() require('treesitter-context').setup({}) end
+  }
+
+  -- replace default lua treesitter
+  use {
+    'MunifTanjim/nvim-treesitter-lua',
+    config = function() require("nvim-treesitter-lua").setup() end
   }
 
   -- coc.nvim provides rename and highlight current symbol
   use { 'nvim-treesitter/nvim-treesitter-refactor' }
+  -- }}}
 
   -- neovim lua
   use {
