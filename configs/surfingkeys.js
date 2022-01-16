@@ -1,4 +1,5 @@
 // vim:fileencoding=utf-8:foldmethod=marker
+const { mapkey, cmap } = api;
 // {{{1 options
 settings.useNeovim = true
 
