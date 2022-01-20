@@ -25,8 +25,26 @@ end
 # tmux aliases
 alias t=tmux
 alias tn='tmux new'
+
 # {{{1 nvm
 # set node download mirror
 set -uU nvm_mirror http://npm.taobao.org/mirrors/node
 # set node default version
-set -uU nvm_default_version v12
+# set -uU nvm_default_version v12
+
+# {{{1 fzf
+function fzf --wraps=fzf --description="Use fzf-tmux if in tmux session"
+  if set --query TMUX
+    fzf-tmux $argv
+  else
+    command fzf $argv
+  end
+end
+
+# {{{1 z.lua
+alias zz='z -c' # child path
+alias zi='z -i' # interactive
+alias zf='z -I' # fzf
+alias zb='z -b' # cd ..
+alias zh='z -I -t .'
+

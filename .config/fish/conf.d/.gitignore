@@ -1,3 +1,7 @@
 *.local.fish
-nvm.fish
+
+# local plugins
 omf.fish
+# fisher plugins
+nvm.fish
+fzf.fish
