@@ -185,7 +185,10 @@ return require('packer').startup({function(use)
   -- }}}
 
   -- neovim lua
-  use 'folke/lua-dev.nvim'
+  use {
+    'gkzhb/lua-dev.nvim',
+    branch = 'fix/remove-lspconfig',
+  }
   -- lsp client
   use {
     'neoclide/coc.nvim',
