@@ -25,6 +25,8 @@ end
 # tmux aliases
 alias t=tmux
 alias tn='tmux new'
+# systemd
+alias s=systemctl
 
 # {{{1 nvm
 # set node download mirror
