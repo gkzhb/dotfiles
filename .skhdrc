@@ -85,8 +85,10 @@ alt - l : yabai -m window --focus east || yabai -m display --focus east
 
 alt - tab : yabai -m display --focus next || yabai -m display --focus first
 shift + alt - tab : yabai -m display --focus prev || yabai -m display --focus last
-alt - n : yabai -m window --focus stack.next || yabai -m window --focus next || yabai -m window --focus stack.first || yabai -m window --focus first
-alt - p : yabai -m window --focus stack.prev || yabai -m window --focus prev || yabai -m window --focus stack.last || yabai -m window --focus last
+# cycle focus through the windows
+# ref: https://github.com/koekeishiya/yabai/issues/113
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | reverse | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.first || yabai -m window --focus first
+alt - p : yabai -m window --focus stack.prev || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.last || yabai -m window --focus last
 
 # swap managed window
 # shift + alt - h : yabai -m window --swap north
