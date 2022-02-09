@@ -80,7 +80,8 @@ function M.setMappings()
       name = 'project related',
       c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>' , 'edit project config' },
     },
-    q = { '<cmd>Wquit<CR>', 'close current window' },
+    -- q = { '<cmd>Wquit<CR>', 'close current window' }, -- for windline float statusline
+    q = { '<cmd>q<CR>', 'close current window' },
     z = { '<cmd>MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 

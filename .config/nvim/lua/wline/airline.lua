@@ -278,13 +278,19 @@ local default = {
         basic.section_z,
     },
     inactive = {
-        { b_components.full_file_name, hl_list.Inactive },
-        { b_components.divider, hl_list.Inactive },
-        { b_components.line_col, hl_list.Inactive },
-        { b_components.progress, hl_list.Inactive },
+        basic.section_c,
+        -- { b_components.full_file_name, hl_list.Inactive },
+        basic.divider,
+        -- { b_components.divider, hl_list.Inactive },
+        {
+          hl_colors = airline_colors.c,
+          text = basic.section_z.text,
+        },
+        -- { b_components.line_col, hl_list.Inactive },
+        -- { b_components.progress, hl_list.Inactive },
     },
-    floatline_show_float = true,
-    floatline_show_both = true,
+    floatline_show_float = false,
+    -- floatline_show_both = true,
 }
 
 windline.setup({
@@ -325,9 +331,10 @@ windline.setup({
     },
 })
 
-floatline.setup({
-  floating_show_filetypes = {
-    'default',
-    'coc-explorer'
-  }
-})
+-- Disable floatline. It seems to caouse nvim freeze in some situations.
+-- floatline.setup({
+--   floating_show_filetypes = {
+--     'default',
+--     'coc-explorer'
+--   }
+-- })

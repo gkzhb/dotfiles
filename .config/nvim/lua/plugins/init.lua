@@ -73,8 +73,12 @@ return require('packer').startup({function(use)
     'windwp/windline.nvim',
     config = require('plugins.windline').init
   }
+  -- use {
+  --   'rebelot/heirline.nvim',
+  --   config = require('plugins.heirline').init
+  -- }
   -- file explorer
-  use {
+  use { -- used for lf
     'is0n/fm-nvim',
     config = require('plugins.fm-nvim').init,
   }
@@ -197,7 +201,11 @@ return require('packer').startup({function(use)
     after = 'lua-dev.nvim'
   }
 
-  -- {{{2 search: telescope related
+  -- {{{2 search
+  use { 'ibhagwan/fzf-lua',
+    requires = { 'nvim-web-devicons' }
+  }
+  -- {{{3 telescope related
   use {
     'nvim-telescope/telescope.nvim',
     requires = { 'plenary.nvim' },
