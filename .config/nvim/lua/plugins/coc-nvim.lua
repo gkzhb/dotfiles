@@ -45,6 +45,7 @@ function M.init()
   -- {{{4 codeLens
   vim.fn['coc#config']('codeLens', {
     enable = true,
+    position = 'eol',
   })
   -- {{{4 coc browser
   vim.fn['coc#config']('browser', {

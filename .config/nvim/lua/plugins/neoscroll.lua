@@ -27,13 +27,13 @@ function M.init()
     ['zz']    = {'zz', {'300'}},
     ['zb']    = {'zb', {'300'}},
   }
-  
+
 
   if _G.getLocalConfig().performantMode then
     vim.cmd([[
       autocmd BufEnter * lua NeoscrollEnablePerformantMode()
     ]])
-  else 
+  else
     require('neoscroll.config').set_mappings(t)
   end
 end

@@ -21,6 +21,18 @@ function unvproxy
   set -e http_proxy
 end
 
+# remove path for current fish shell process
+# from https://superuser.com/questions/776008/how-to-remove-a-path-from-path-variable-in-fish
+function remove_path
+  if set -l index (contains -i $argv[1] $PATH)
+    # set --erase --universal fish_user_paths[$index]
+    set --erase -g PATH[$index]
+    echo "Updated PATH: $PATH"
+  else
+    echo "$argv[1] not found in PATH: $PATH"
+  end
+end
+
 # {{{1 alias
 # tmux aliases
 alias t=tmux

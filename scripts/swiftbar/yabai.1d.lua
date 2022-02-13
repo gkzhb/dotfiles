@@ -14,7 +14,16 @@ local function getCmdOutput(cmd)
   return output
 end
 
-local visibleSpaceCsv = getCmdOutput('yabai -m query --spaces  | jq -r \'map(select((."has-focus" == true) or (.label | length > 0) or (.windows | length > 0)))[] | [.index, .label, .display, ."has-focus"] | @csv\'')
+local visibleSpaceCsv = getCmdOutput([[
+  yabai -m query --spaces  |
+  jq -r 'map(
+    select(
+      (."has-focus" == true) or (.label | length > 0) or (.windows | length > 0)
+    )
+  )[] |
+  [.index, .label, .display, ."has-focus"]|
+  @csv'
+]])
 -- print(visibleSpaceCsv)
 local display = tonumber(getCmdOutput('yabai -m query --displays --display | jq ".index"'))
 -- print(display)

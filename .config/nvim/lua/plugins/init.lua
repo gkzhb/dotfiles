@@ -25,10 +25,12 @@ return require('packer').startup({function(use)
     config = require('plugins.onedarkpro').init,
   }
   -- {{{2 display enhancement
-  use {
-    'karb94/neoscroll.nvim',
-    config = require('plugins.neoscroll').init
-  }
+  if not _G.getLocalConfig().performantMode then
+    use {
+      'karb94/neoscroll.nvim',
+      config = require('plugins.neoscroll').init
+    }
+  end
   use {
     'folke/which-key.nvim',
     config = require('plugins.which-key').init
@@ -173,10 +175,10 @@ return require('packer').startup({function(use)
   use { 'theHamsta/nvim-treesitter-pairs' }
   -- incompatible with the lua treesitter parser
   -- use 'andymass/vim-matchup'  -- support tree-sitter
-  use {
-    'romgrk/nvim-treesitter-context',
-    config = function() require('treesitter-context').setup({}) end
-  }
+  -- use {
+  --   'romgrk/nvim-treesitter-context',
+  --   config = function() require('treesitter-context').setup({}) end
+  -- }
 
   -- replace default lua treesitter
   use {
