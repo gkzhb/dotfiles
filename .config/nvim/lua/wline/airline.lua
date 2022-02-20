@@ -92,11 +92,21 @@ basic.section_a = {
 }
 
 local get_git_branch = git_comps.git_branch()
-local file_modified = function()
-    if vim.bo.modified then
+local file_modified = function(bufnr)
+    -- computed based on bufnr
+    local modified
+    local modifiable
+    if bufnr ~= nil then
+      modified = vim.api.nvim_buf_get_option(bufnr, 'modified')
+      modifiable = vim.api.nvim_buf_get_option(bufnr, 'modifiable')
+    else
+      modified = vim.bo.modified
+      modifiable = vim.bo.modifiable
+    end
+    if modified then
         return ' ' -- nf-oct-pencil
     end
-    if vim.bo.modifiable == false  then
+    if modifiable == false  then
         return ' ' -- nf-mdi-pencil_off
     end
 end
@@ -119,11 +129,11 @@ basic.section_b = {
 
 basic.section_c = {
     hl_colors = airline_colors.c,
-    text = function()
+    text = function(bufnr)
         return {
             { ' ', state.mode[2] },
             { b_components.cache_file_name('[No Name]', 'unique')},
-            { file_modified, '' },
+            { file_modified(bufnr), '' },
             { sep.right_filled, state.mode[2] .. 'Sep' },
         }
     end,
