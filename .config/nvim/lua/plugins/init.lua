@@ -128,6 +128,8 @@ return require('packer').startup({function(use)
     'lambdalisue/suda.vim',
     setup = require('plugins.suda').setup
   }
+  use 'tpope/vim-repeat'
+
   -- {{{2 git related
   use {
     'tpope/vim-fugitive', -- vim 中使用 git 的增强插件

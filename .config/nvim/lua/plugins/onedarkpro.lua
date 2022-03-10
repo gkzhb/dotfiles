@@ -67,6 +67,7 @@ function M.init()
       window_unfocussed_color = true,
     },
     hlgroups = {
+      Cursor = { fg = '${bg0}', bg = '${white}'},
       TSVariable = { fg = '${white}' },
       TSProperty = { fg = '${cyan}' },
       NormalFloat = { bg = '${bg0}', fg = '${white}'},

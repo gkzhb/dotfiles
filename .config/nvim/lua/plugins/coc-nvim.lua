@@ -120,8 +120,6 @@ function M.init()
     enableNvimLuaDev = true,
     checkUpdate = false,
   })
-  local luadev = require('lua-dev').setup({})
-  vim.fn['coc#config']('Lua', luadev.settings.Lua)
 
   -- {{{4 coc-explorer
   function _G.CocExplorerInited(bufnr)
