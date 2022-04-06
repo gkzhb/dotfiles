@@ -52,10 +52,12 @@ yabai -m config window_gap                   05
 yabai -m rule --add app='Preferences' manage=off
 
 # Make Chrome Picture in Picture mode windows appear topmost and on all spaces
-yabai -m rule --add app='^Google Chrome$' title='^Picture in Picture$' manage=off topmost=on sticky=on
+yabai -m rule --add app='^Google Chrome$' title='^Picture in Picture$' manage=off sticky=on
 
 yabai -m rule --add app='^choose$' manage=off
 yabai -m rule --add app='^Feishu$' title='^图片$' manage=off
+# record screen
+yabai -m rule --add app='^licecap$' manage=off
 
 # update yabai-spaces in status bar
 yabai -m signal --add event=space_changed action="open -gj 'swiftbar://refreshplugin?name=yabai'"
