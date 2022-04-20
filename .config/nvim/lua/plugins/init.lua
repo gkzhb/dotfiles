@@ -68,6 +68,7 @@ return require('packer').startup({function(use)
   -- status line and tab line
   use {
     'akinsho/bufferline.nvim',
+    branch = 'main',
     config = require('plugins.bufferline').init,
     after = 'onedarkpro.nvim'
   }
