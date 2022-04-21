@@ -193,17 +193,11 @@ return require('packer').startup({function(use)
   use { 'nvim-treesitter/nvim-treesitter-refactor' }
   -- }}}
 
-  -- neovim lua
-  use {
-    'gkzhb/lua-dev.nvim',
-    branch = 'fix/remove-lspconfig',
-  }
   -- lsp client
   use {
     'neoclide/coc.nvim',
     branch = 'release',
     config = require('plugins.coc-nvim').init,
-    after = 'lua-dev.nvim'
   }
 
   -- {{{2 search

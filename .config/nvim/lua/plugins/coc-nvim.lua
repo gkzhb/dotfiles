@@ -26,6 +26,7 @@ function M.init()
     'coc-sh',
     'coc-snippets',
     'coc-sumneko-lua',
+    'coc-stylua',
     'coc-tabnine',
     'coc-tsserver',
     'coc-vetur', -- Vue.js
@@ -211,6 +212,11 @@ function M.mappings()
     w = { '<plug>(coc-float-jump)', 'jump to coc float window' },
     -- GoTo code navigation.
     d = { '<Plug>(coc-definition)', 'goto code definition' },
+    ds = { '<cmd>call CocAction("jumpDefinition", "split")<CR>', 'code definition in split window' },
+    dv = { '<cmd>call CocAction("jumpDefinition", "vsplit")<CR>', 'code definition in vsplit window' },
+    dt = { '<cmd>call CocAction("jumpDefinition", "tabe")<CR>', 'code definition in new tab' },
+    dq = { '<cmd>call CocAction("jumpDefinition", "quickfix")<CR>', 'code definition in quickfix' },
+    dp = { '<cmd>call CocAction("jumpDefinition", "preview")<CR>', 'code definition in preview' },
     y = { '<Plug>(coc-type-definition)', 'goto type definition' },
     i = { '<Plug>(coc-implementation)', 'goto implementation' },
     r = { '<Plug>(coc-references)', 'goto references' }
