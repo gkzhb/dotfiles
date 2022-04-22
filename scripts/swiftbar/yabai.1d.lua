@@ -21,7 +21,7 @@ local visibleSpaceCsv = getCmdOutput([[
       (."has-focus" == true) or (.label | length > 0) or (.windows | length > 0)
     )
   )[] |
-  [.index, .label, .display, ."has-focus"]|
+  [.index, .label, .display, ."is-visible"]|
   @csv'
 ]])
 -- print(visibleSpaceCsv)
