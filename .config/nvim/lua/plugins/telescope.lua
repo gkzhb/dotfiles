@@ -45,7 +45,26 @@ function M.mappings()
         b = { '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', 'buffer\'s git commits' },
       },
 
-      c = { '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>', 'cheatsheet' },
+      -- telescope-coc.nvim
+      c = {
+        name = 'coc related',
+        a = { '<cmd>lua require("telescope").extensions.coc.code_actions()<cr>', 'cursor code actions' },
+        c = { '<cmd>lua require("telescope").extensions.coc.commands()<cr>', 'commands' },
+        cc = { '<cmd>lua require("telescope").extensions.coc.coc()<cr>', 'coc subcommands' },
+        d = { '<cmd>lua require("telescope").extensions.coc.definitions()<cr>', 'definitions' },
+        dd = { '<cmd>lua require("telescope").extensions.coc.diagnostics()<cr>', 'diagnostics' },
+        dw = { '<cmd>lua require("telescope").extensions.coc.workspace_diagnostics()<cr>', 'workspace diagnostics' },
+        i = { '<cmd>lua require("telescope").extensions.coc.implementations()<cr>', 'implementations' },
+        j = { '<cmd>lua require("telescope").extensions.coc.locations()<cr>', 'locations' },
+        l = { '<cmd>lua require("telescope").extensions.coc.links()<cr>', 'links' },
+        s = { '<cmd>lua require("telescope").extensions.coc.document_symbols()<cr>', 'document symbols' },
+        sw = { '<cmd>lua require("telescope").extensions.coc.workspace_symbols()<cr>', 'workspace symbols' },
+        r = { '<cmd>lua require("telescope").extensions.coc.references()<cr>', 'references' },
+        ru = { '<cmd>lua require("telescope").extensions.coc.references_used()<cr>', 'references(used)' },
+        rr = { '<cmd>lua require("telescope").extensions.coc.mru()<cr>', 'mru' },
+      },
+
+      e = { '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>', 'cheatsheet' },
       n = { '<cmd>lua require("telescope").extensions.notify.notify()<cr>', 'notification history' },
       p = { '<cmd>lua require("telescope").extensions.project.project{}<cr>', 'project' },
       r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
