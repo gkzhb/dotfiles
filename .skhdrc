@@ -77,8 +77,8 @@
 # }}}
 
 # {{{1 modes declare
-:: default
-:: resize
+:: default : set -Ux SKHD_MODE default; open -gj 'swiftbar://refreshplugin?name=yabai'
+:: resize : set -Ux SKHD_MODE resize; open -gj 'swiftbar://refreshplugin?name=yabai'
 
 # {{{1 default mode
 # {{{2 focus related
@@ -222,6 +222,6 @@ resize < shift - l : yabai -m window --resize right:-20:0
 # activate 'default' mode
 resize < alt - q ; default
 resize < escape ; default
-resize < return ; default
+# resize < return ; default
 
 # vim:fileencoding=utf-8:ft=conf:foldmethod=marker

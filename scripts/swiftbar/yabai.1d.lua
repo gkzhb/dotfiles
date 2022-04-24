@@ -60,6 +60,11 @@ local function getDisplayName(item, display)
 end
 local str = ''
 local currentDisplay = 0
+local skhdMode = getCmdOutput([[$HOME/scripts/yabai/skhd_mode.fish]]):sub(1, -2) -- remove new line at the end
+if skhdMode:len() > 0 and skhdMode ~= 'default' then
+  -- display current skhd mode
+  str = str .. skhdMode
+end
 for _, item in pairs(spaceInfo) do
   if currentDisplay ~= item[3] then
     str = str .. ' '
