@@ -1,3 +1,8 @@
+# NOTICE: I use fish shell as default shell.
+# Therefore, if you are not using fish shell, you need to modify something like
+# replacing logic operation `and`, `or` to those in bash shell
+
+# {{{1 SYNTAX EXPLANATION
  ################################################################ #
 # THE FOLLOWING IS AN EXPLANATION OF THE GRAMMAR THAT SKHD PARSES. #
 # FOR SIMPLE EXAMPLE MAPPINGS LOOK FURTHER DOWN THIS FILE..        #
@@ -69,30 +74,46 @@
 #               prepend '\' at the end of the previous line.
 #
 #               an EOL character signifies the end of the bind.
+# }}}
 
-# ############################################################### #
-# THE FOLLOWING SECTION CONTAIN SIMPLE MAPPINGS DEMONSTRATING HOW #
-# TO INTERACT WITH THE YABAI WM. THESE ARE SUPPOSED TO BE USED AS #
-# A REFERENCE ONLY, WHEN MAKING YOUR OWN CONFIGURATION..          #
-# ############################################################### #
+# {{{1 modes declare
+:: default
+:: resize
 
-# focus window
+# {{{1 default mode
+# {{{2 focus related
+# {{{3 focus windows
+# move focus to left, down, up, right
 alt - h : yabai -m window --focus west || yabai -m display --focus west
 alt - j : yabai -m window --focus south || yabai -m display --focus south
 alt - k : yabai -m window --focus north || yabai -m display --focus north
 alt - l : yabai -m window --focus east || yabai -m display --focus east
 
-
-alt - tab : yabai -m display --focus next || yabai -m display --focus first
-shift + alt - tab : yabai -m display --focus prev || yabai -m display --focus last
 # cycle focus through the windows
 # ref: https://github.com/koekeishiya/yabai/issues/113
+# stack related: https://github.com/koekeishiya/yabai/issues/203
+
+# focus next/previous stack window.
+# If failed, focus next/previous window
+# If still failed, focus first stack window or focus first window
 alt - n : yabai -m window --focus stack.next || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | reverse | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.first || yabai -m window --focus first
 alt - p : yabai -m window --focus stack.prev || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.last || yabai -m window --focus last
 
-# swap managed window
-# shift + alt - h : yabai -m window --swap north
+# {{{3 focus spaces
 
+# focus next display(circle when reached the last one)
+alt - tab : yabai -m display --focus next || yabai -m display --focus first
+# focus previous next display
+shift + alt - tab : yabai -m display --focus prev || yabai -m display --focus last
+
+# fast focus desktop(not work without disabling SIP)
+# alt - x : yabai -m space --focus recent
+# alt - 1 : yabai -m space --focus 1
+# alt - 2 : yabai -m space --focus 2
+# alt - 3 : yabai -m space --focus 3
+# alt - 4 : yabai -m space --focus 4
+
+# {{{2 move window
 # move managed window
 shift + alt - h : yabai -m window --swap west; or yabai -m window --display west && yabai -m display --focus west # yabai -m window --warp west
 shift + alt - j : yabai -m window --swap south; or yabai -m window --display south && yabai -m display --focus south # yabai -m window --warp south
@@ -100,7 +121,7 @@ shift + alt - k : yabai -m window --swap north; or yabai -m window --display nor
 shift + alt - l : yabai -m window --swap east; or yabai -m window --display east && yabai -m display --focus east # yabai -m window --warp east
 
 # balance size of windows
-# shift + alt - 0 : yabai -m space --balance
+shift + alt - 0 : yabai -m space --balance
 
 # make floating window fill screen
 # shift + alt - up     : yabai -m window --grid 1:1:0:0:1:1
@@ -114,15 +135,7 @@ shift + alt - l : yabai -m window --swap east; or yabai -m window --display east
 #                   yabai -m window --space "${index}" && \
 #                   yabai -m space --focus "${index}"
 
-# fast focus desktop
-# cmd + alt - x : yabai -m space --focus recent
-# cmd + alt - 1 : yabai -m space --focus 1
-# cmd + alt - 2 : yabai -m space --focus 2
-# cmd + alt - 3 : yabai -m space --focus 3
-# cmd + alt - 4 : yabai -m space --focus 4
-
-# send window to desktop and follow focus
-# shift + cmd - z : yabai -m window --space next; yabai -m space --focus next
+# send window to desktop
 shift + alt - 1 : yabai -m window --space 1 # ; yabai -m space --focus 1
 shift + alt - 2 : yabai -m window --space 2 # ; yabai -m space --focus 2
 shift + alt - 3 : yabai -m window --space 3 # ; yabai -m space --focus 3
@@ -146,18 +159,11 @@ shift + cmd - 0 : yabai -m window --space 20
 shift + alt - n : yabai -m window --space  next
 shift + alt - p : yabai -m window --space  prev
 
-# focus monitor(not working), set shortcuts in Mac OS Preferences
-# ctrl + alt - z  : yabai -m display --focus prev
-# ctrl + alt - 3  : yabai -m display --focus 3
-
-# send window to monitor and follow focus
-# ctrl + cmd - c  : yabai -m window --display next; yabai -m display --focus next
-# ctrl + cmd - 1  : yabai -m window --display 1; yabai -m display --focus 1
-
 # move floating window
 # shift + ctrl - a : yabai -m window --move rel:-20:0
 # shift + ctrl - s : yabai -m window --move rel:0:20
 
+# {{{3 resize window
 # increase window size
 shift + cmd - l : yabai -m window --resize left:-20:0 || yabai -m window --resize right:20:0
 shift + cmd - j : yabai -m window --resize top:0:-20 || yabai -m window --resize bottom:0:20
@@ -166,9 +172,10 @@ shift + cmd - j : yabai -m window --resize top:0:-20 || yabai -m window --resize
 shift + cmd - k : yabai -m window --resize bottom:0:-20 || yabai -m window --resize top:0:20;
 shift + cmd - h : yabai -m window --resize left:20:0 || yabai -m window --resize right:-20:0
 
-# set insertion point in focused container
+# set insertion point in focused container @TODO
 # ctrl + alt - h : yabai -m window --insert west
 
+# {{{3 window action
 # close focused window
 alt - q : yabai -m window --close
 
@@ -181,6 +188,8 @@ alt - v : yabai -m window --toggle split
 
 # stack to next window
 alt - s : yabai -m window --stack next
+# stack to previous window
+alt + shift - s : yabai -m window --stack prev
 
 # float / unfloat window and center on screen
 shift + alt - space : yabai -m window --toggle float;\
@@ -190,9 +199,29 @@ shift + alt - space : yabai -m window --toggle float;\
 alt - m : yabai -m window --toggle sticky;\
           yabai -m window --toggle topmost;\
           yabai -m window --toggle pip
-# shell actions {{{1
+# {{{2 shell actions
+# rename space
 ctrl + alt - r : $HOME/scripts/yabai/rename-space.fish
-# Start App {{{1
+# {{{3 Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
 alt - t : $HOME/scripts/yabai/open-kitty.sh
+# {{{1 resize mode
+# activate 'resize' mode
+alt - r ; resize
+
+# {{{2 actions in resize mode
+resize < h : yabai -m window --resize left:-20:0
+resize < shift - h : yabai -m window --resize left:20:0
+resize < j : yabai -m window --resize bottom:0:20
+resize < shift - j : yabai -m window --resize bottom:0:-20
+resize < k : yabai -m window --resize top:0:-20
+resize < shift - k : yabai -m window --resize top:0:20
+resize < l : yabai -m window --resize right:20:0
+resize < shift - l : yabai -m window --resize right:-20:0
+
+# activate 'default' mode
+resize < alt - q ; default
+resize < escape ; default
+resize < return ; default
+
 # vim:fileencoding=utf-8:ft=conf:foldmethod=marker
