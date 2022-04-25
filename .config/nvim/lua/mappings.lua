@@ -85,6 +85,7 @@ function M.setMappings()
     z = { '<cmd>MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 
+  require('plugins.legendary').mappings()
   require('plugins.fugitive').mappings()
   require('plugins.coc-nvim').mappings()
   require('plugins.vim-win').mappings()

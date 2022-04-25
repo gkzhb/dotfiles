@@ -32,8 +32,13 @@ return require('packer').startup({function(use)
     }
   end
   use {
+    'mrjones2014/legendary.nvim',
+    config = require('plugins.legendary').init
+  }
+  use {
     'folke/which-key.nvim',
-    config = require('plugins.which-key').init
+    config = require('plugins.which-key').init,
+    after = 'legendary.nvim'
   }
   -- greeter
   use {
