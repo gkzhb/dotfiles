@@ -40,6 +40,16 @@ return require('packer').startup({function(use)
     config = require('plugins.which-key').init,
     after = 'legendary.nvim'
   }
+  use({
+    "stevearc/dressing.nvim",
+    config = function()
+      require("dressing").setup({
+        select = {
+          enabled = false,
+        },
+      })
+    end,
+  })
   -- greeter
   use {
       'goolord/alpha-nvim',
