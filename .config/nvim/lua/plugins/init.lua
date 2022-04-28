@@ -106,10 +106,23 @@ return require('packer').startup({function(use)
     cmd = { 'UndotreeToggle' },
   }
   -- {{{2 movement
-  use {
-    'christoomey/vim-tmux-navigator',
-    config = require('plugins.tmux-navigator').init
-  }
+  use({
+    "aserowy/tmux.nvim",
+    config = function()
+      require("tmux").setup({
+        copy_sync = {
+          enable = true,
+        },
+        navigation = {
+          enable_default_keybindings = true,
+          persist_zoom = true,
+        },
+        resize = {
+          enable_default_keybindings = false,
+        },
+      })
+    end,
+  })
   use {
     't9md/vim-choosewin',
     config = require('plugins.choosewin').init
