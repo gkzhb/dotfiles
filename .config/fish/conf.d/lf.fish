@@ -1,4 +1,4 @@
-# Autocompletion for fish shell.
+# {{{1 Autocompletion for fish shell.
 complete -c lf -o command -r -d 'command to execute on client initialization'
 complete -c lf -o config -r -d 'path to the config file (instead of the usual paths)'
 complete -c lf -o cpuprofile -r -d 'path to the file to write the CPU profile'
@@ -12,7 +12,37 @@ complete -c lf -o single -d 'start a client without server'
 complete -c lf -o version -d 'show version'
 complete -c lf -o help -d 'show help'
 
-# file icons
+# {{{1 lfcd
+# https://github.com/gokcehan/lf/blob/master/etc/lfcd.fish
+# Change working dir in fish to last dir in lf on exit (adapted from ranger).
+#
+# You may put this file to a directory in $fish_function_path variable:
+#
+#     mkdir -p ~/.config/fish/functions
+#     ln -s "/path/to/lfcd.fish" ~/.config/fish/functions
+#
+# You may also like to assign a key to this command:
+#
+#     bind \co 'set old_tty (stty -g); stty sane; lfcd; stty $old_tty; commandline -f repaint'
+#
+# You may put this in a function called fish_user_key_bindings.
+function lfcd
+    set tmp (mktemp)
+    lf -last-dir-path=$tmp $argv
+    if test -f "$tmp"
+        set dir (cat $tmp)
+        rm -f $tmp
+        if test -d "$dir"
+            if test "$dir" != (pwd)
+                cd $dir
+            end
+        end
+    end
+end
+
+alias lc=lfcd
+
+# {{{1 file icons
 set -gx LF_ICONS "\
 tw=:\
 st=:\
@@ -174,4 +204,4 @@ ex=:\
 *.xspf=:\
 *.pdf=:\
 *.nix=:\
-"
+" vim:foldmethod=marker
