@@ -64,7 +64,7 @@ function M.setMappings()
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size 2' },
     },
-    d = { '<cmd>Lf<CR>', 'open lf' }, -- lf
+    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.expand("%:p"))<CR>', 'open lf' }, -- lf, select current buffer file
     h = { -- highlight related
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
