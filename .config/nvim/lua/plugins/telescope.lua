@@ -31,6 +31,7 @@ function M.mappings()
   wk.register({
     s = {
       name = 'telescope search',
+      a = { '<cmd>lua require("telescope.builtin").commands()<cr>', 'commands' },
       b = { '<cmd>lua require("telescope.builtin").buffers()<cr>', 'buffers' },
       f = { '<cmd>lua require("telescope.builtin").find_files()<cr>', 'files' },
       g = { '<cmd>lua require("telescope.builtin").live_grep()<cr>', 'grep content' },
@@ -44,6 +45,7 @@ function M.mappings()
         c = { '<cmd>lua require("telescope.builtin").git_commits()<cr>', 'git commits' },
         b = { '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', 'buffer\'s git commits' },
       },
+      z = { '<cmd>lua require("telescope.builtin").autocommands()<cr>', 'autocommands' },
 
       -- telescope-coc.nvim
       c = {
