@@ -219,7 +219,7 @@ function M.mappings()
     dp = { '<cmd>call CocAction("jumpDefinition", "preview")<CR>', 'code definition in preview' },
     y = { '<Plug>(coc-type-definition)', 'goto type definition' },
     i = { '<Plug>(coc-implementation)', 'goto implementation' },
-    r = { '<Plug>(coc-references)', 'goto references' }
+    r = { '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>', 'references' },
   }, { prefix = 'g' })
 
   -- current cursor reltead
@@ -242,17 +242,18 @@ function M.mappings()
   ]])
 
   wk.register({
-    -- Symbol renaming.
-    rn = { '<Plug>(coc-rename)', 'rename variable' },
-
-    f = { '<Plug>(coc-format-selected)', 'format selected code' },
-    cf = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
-    cd = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
+    name = 'coc related',
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
     -- Example: `<leader>aap` for current paragraph
     ac = { '<Plug>(coc-codeaction)', 'apply codeAction' },
     al = { '<Plug>(coc-codelens-action)', 'apply CodeLens Action' },
-  }, { prefix = '<Leader>' })
+    d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
+    f = { '<Plug>(coc-format-selected)', 'format selected code' },
+    fl = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
+    o = { '<cmd>call CocAction("showOutline")<cr>', 'show coc outline' },
+    -- Symbol renaming.
+    r = { '<Plug>(coc-rename)', 'rename variable' },
+  }, { prefix = '<Leader>l' })
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
@@ -320,7 +321,7 @@ function M.mappings()
     l = { '<cmd>CocListResume<CR>', 'last view' },
     o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
     s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
-  }, { prefix = '<leader>l'})
+  }, { prefix = '<leader>ll'})
 
 end
 

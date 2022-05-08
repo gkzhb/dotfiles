@@ -7,3 +7,10 @@ if command -v terminal-notifier > /dev/null
   alias sn=send_notification
 end
 
+# for Mac OS, use Quick Look from Finder.app
+if command -v qlmanage > /dev/null
+  function i -d 'preview file'
+    echo a
+    qlmanage -p $argv[1] >/dev/null 2>&1 &
+  end
+end

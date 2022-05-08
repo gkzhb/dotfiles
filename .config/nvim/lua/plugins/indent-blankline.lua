@@ -2,6 +2,8 @@ local M = {}
 
 function M.init()
   vim.g.indent_blankline_char_list = {'|', '¦', '┆', '┊'}
+  -- use indent_blankline in foldtext
+  vim.g.indent_blankline_show_foldtext = false
   require('indent_blankline').setup({
     char = '▏',
     filetype_exclude = {'help', 'terminal', 'dashboard', 'alpha'},

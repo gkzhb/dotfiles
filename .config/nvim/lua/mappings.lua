@@ -1,6 +1,14 @@
 local M = {}
 local utils = require('utils')
 
+function _G.ToggleShowSpace()
+  if vim.opt.listchars:get().space then
+    vim.opt.listchars:remove('space')
+  else
+    vim.opt.listchars:append('space:⋅')
+  end
+end
+
 function _G.SetTab(size)
   vim.opt.tabstop = size
   vim.opt.softtabstop = size
@@ -26,7 +34,7 @@ function _G.SynStack()
   end
 end
 
--- switch current active buffer to buffer number c
+--- switch current active buffer to buffer number c
 function _G.SwitchBuffer(c)
   if c > 0 and vim.fn.bufnr(c) > -1 then
     return utils.esc(':<C-U>' .. c .. 'b<CR>')
@@ -59,10 +67,11 @@ function M.setMappings()
     c = {
       name = 'config',
       i = { '<cmd>set list!<CR>', 'toggle showing space chars' },
-      h = { '<cmd>noh<CR>', 'hide search highlight' },
+      h = { '<cmd>noh<CR>', 'toggle search highlight' },
       p = { '<cmd>set invpaste<CR>', 'toggle paste mode' },
-      t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size 4' },
-      t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size 2' },
+      s = { '<cmd>call v:lua.ToggleShowSpace()<CR>)', 'toggle showing space char' },
+      t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
+      t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
     },
     d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.expand("%:p"))<CR>', 'open lf' }, -- lf, select current buffer file
     h = { -- highlight related

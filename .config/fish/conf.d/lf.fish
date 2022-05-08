@@ -203,5 +203,7 @@ ex=:\
 *.spx=:\
 *.xspf=:\
 *.pdf=:\
-*.nix=:\
-" vim:foldmethod=marker
+*.nix=\
+"
+
+# vim:foldmethod=marker

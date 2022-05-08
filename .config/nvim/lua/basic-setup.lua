@@ -14,8 +14,8 @@ vim.opt.listchars = {
   trail = '~',
   extends = '>',
   precedes = '<',
-  space = '⋅',
-  eol = '↴'
+  lead = '⋅',
+  eol = '↴',
 }
 vim.opt.laststatus = 2
 vim.opt.cmdheight = 1
@@ -29,7 +29,7 @@ vim.wo.signcolumn = 'auto'
 -- enable syntax
 vim.cmd([[ syntax enable ]])
 
----{{{2 tabpage
+-- {{{2 tabpage
 -- always show tabline
 vim.opt.showtabline = 2
 
@@ -77,7 +77,7 @@ if packer and not packer.checkPackerExist() then
   packer.installPacker()
 end
 -- }}}
---
+
 -- {{{1 load 'impatient' to cache lua
 -- use 'pcall' to avoid crash when 'impatient' is not installed by packer
 pcall(require, 'impatient')

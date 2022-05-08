@@ -1,7 +1,7 @@
 // vim:fileencoding=utf-8:foldmethod=marker
 const { mapkey, cmap, Clipboard, Front } = api;
 // {{{1 options
-settings.useNeovim = true
+settings.useNeovim = false
 
 // {{{1 key mappings
 // an example to create a new mapping `ctrl-y`
