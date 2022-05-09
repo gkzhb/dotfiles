@@ -37,6 +37,7 @@ end
 # tmux aliases
 alias t=tmux
 alias tn='tmux new'
+alias tsn='tmux display-message'
 # systemd
 alias s=systemctl
 

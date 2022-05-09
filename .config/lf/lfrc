@@ -146,10 +146,7 @@ cmd zj ${{
   set -f
   clear
   read -p "z jump to: " location
-  exec_cmd() {
-    ~/scripts/lf/z-echo.fish $location
-  }
-  target_path=$(exec_cmd)
+  target_path=$(~/scripts/lf/z-echo.fish $location)
   if [[ "" != "$target_path" ]]; then
     lf -remote "send $id cd \"$target_path\""
   fi
