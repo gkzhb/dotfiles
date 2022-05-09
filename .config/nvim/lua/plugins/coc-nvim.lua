@@ -202,11 +202,11 @@ function M.mappings()
   wk.register({
     g = { '<Plug>(coc-diagnostic-prev)', 'prev diagnostic' },
     e = { '<Plug>(coc-diagnostic-prev-error)', 'prev error' },
-  }, { prefix = '[' })
+  }, { mode = 'n', prefix = '[' })
   wk.register({
     g = { '<Plug>(coc-diagnostic-next)', 'next diagnostic' },
     e = { '<Plug>(coc-diagnostic-next-error)', 'next error' },
-  }, { prefix = ']' })
+  }, { mode = 'n', prefix = ']' })
   wk.register({
     name = 'goto somewhere',
     w = { '<plug>(coc-float-jump)', 'jump to coc float window' },
@@ -220,7 +220,7 @@ function M.mappings()
     y = { '<Plug>(coc-type-definition)', 'goto type definition' },
     i = { '<Plug>(coc-implementation)', 'goto implementation' },
     r = { '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>', 'references' },
-  }, { prefix = 'g' })
+  }, { mode = 'n', prefix = 'g' })
 
   -- current cursor reltead
   wk.register({
@@ -234,8 +234,7 @@ function M.mappings()
       k = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
       v = { '<cmd>call v:lua.CocAction("doHover")<CR>', 'get info' },
     },
-    cw = { '<Plug>(coc-float-hide)', 'close all coc float window' }
-  }, { prefix = '<Leader>' })
+  }, { mode = 'n', prefix = '<Leader>' })
   -- Highlight the symbol and its references when holding the cursor.
   vim.cmd([[
     autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -253,7 +252,8 @@ function M.mappings()
     o = { '<cmd>call CocAction("showOutline")<cr>', 'show coc outline' },
     -- Symbol renaming.
     r = { '<Plug>(coc-rename)', 'rename variable' },
-  }, { prefix = '<Leader>l' })
+    wc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
+  }, { mode = 'n', prefix = '<Leader>l' })
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
@@ -308,7 +308,7 @@ function M.mappings()
     e = { ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>', 'coc explorer' },
     y = { ':<C-u>CocList -A --normal yank<CR>', 'coc yank list' },
     b = { ':<C-u>CocList --normal buffers<CR>', 'coc buffer list' },
-  }, { prefix = '<Leader>' })
+  }, { mode = 'n', prefix = '<Leader>' })
 
   -- coc lists
   wk.register({
@@ -321,7 +321,7 @@ function M.mappings()
     l = { '<cmd>CocListResume<CR>', 'last view' },
     o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
     s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
-  }, { prefix = '<leader>ll'})
+  }, { mode = 'n', prefix = '<leader>ll'})
 
 end
 
