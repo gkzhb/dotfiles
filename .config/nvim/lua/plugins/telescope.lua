@@ -1,7 +1,33 @@
 local M = {}
 
 function M.init()
+  local telescope_actions = require("telescope.actions.set")
+  -- From https://github.com/David-Kunz/vim/blob/master/init.lua#L164
+  -- Fix treesitter not loaded when opening file from telescope
+  -- Related issues:
+  -- https://github.com/nvim-telescope/telescope.nvim/issues/559
+  -- https://github.com/nvim-telescope/telescope.nvim/issues/699
+  local fixfolds = {
+    hidden = true,
+    attach_mappings = function(_)
+      telescope_actions.select:enhance({
+        post = function()
+          vim.cmd(":normal! zx")
+        end,
+      })
+      return true
+    end,
+  }
+
   require('telescope').setup({
+    pickers = {
+      buffers = fixfolds,
+      find_files = fixfolds,
+      git_files = fixfolds,
+      grep_string = fixfolds,
+      live_grep = fixfolds,
+      oldfiles = fixfolds,
+    },
     defaults = {
       mappings = {
         i = {
