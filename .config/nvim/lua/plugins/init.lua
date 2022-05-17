@@ -294,6 +294,11 @@ return require('packer').startup({function(use)
     run = function() vim.fn['firenvim#install'](0) end,
     config = require('plugins.firenvim').init
   }
+  -- auto detect indent type and size
+  use {
+    'nmac427/guess-indent.nvim',
+    config = function() require('guess-indent').setup {} end,
+  }
   -- https://github.com/neovim/neovim/issues/12587
   use 'antoinemadec/FixCursorHold.nvim' -- TODO(remove this): temporarily fix CursorHold not triggerred
 end,

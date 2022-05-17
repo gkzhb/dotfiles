@@ -3,7 +3,10 @@ local M = {}
 function M.init()
   require('nvim-treesitter.configs').setup({
     ensure_installed = {
-      'bash', 'c', 'cpp', 'cmake', 'comment', 'css', 'dockerfile', 'fish', 'go', 'html', 'java', 'javascript', 'jsdoc', 'jsonc', 'latex', 'lua', 'php', 'python', 'query', 'rust', 'scss', 'toml', 'tsx', 'typescript', 'vim', 'vue', 'yaml'
+      'bash', 'c', 'cpp', 'cmake', 'comment', 'css', 'dockerfile', 'fish',
+      'go', 'html', 'java', 'javascript', 'jsdoc', 'jsonc', 'latex', 'lua',
+      'php', 'python', 'query', 'rust', 'scss', 'toml', 'tsx', 'typescript',
+      'vim', 'vue', 'yaml', 'markdown',
     }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     ignore_install = {  }, -- List of parsers to ignore installing
     highlight = {
