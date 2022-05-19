@@ -28,11 +28,11 @@ function get_neovim
   if test -n $nvim_path
     # nvim exists
     set nvim_local_version (nvim -v)[1] # get first line
-    set nvim_local_version (string split ' ' $nvim_local_version)[1]
+    set nvim_local_version (string split ' ' $nvim_local_version)[2]
   end
   if test $nvim_version != $nvim_local_version
     # latest neovim is not installed
-    echo $prefix'latest version '$nvim_version', current version '$nvim_version
+    echo $prefix'latest version '$nvim_version', current version '$nvim_local_version
     wget -q https://github.com/neovim/neovim/releases/download/$nvim_version/nvim.appimage -O /tmp/nvim
     mv /tmp/nvim $nvim_path
     if test $status -ne 0
@@ -44,6 +44,6 @@ function get_neovim
       echo $prefix'update fails'
     end
   else
-    echo neovim is latest $nvim_version
+    echo $prefix'latest '$nvim_version
   end
 end
