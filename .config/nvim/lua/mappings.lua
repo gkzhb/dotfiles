@@ -73,7 +73,9 @@ function M.setMappings()
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
     },
-    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.expand("%:p"))<CR>', 'open lf' }, -- lf, select current buffer file
+    -- @TODO: handle error if expanded string is not valid file path
+    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.expand("%:p"))<CR>', 'open lf with current buffer selected' }, -- lf, select current buffer file
+    D = { '<cmd>lua require("fm-nvim").Lf()<CR>', 'open lf' }, -- lf, open cwd
     h = { -- highlight related
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
