@@ -15,7 +15,6 @@ vim.opt.listchars = {
   extends = '>',
   precedes = '<',
   lead = '⋅',
-  eol = '↴',
 }
 vim.opt.laststatus = 2
 vim.opt.cmdheight = 1

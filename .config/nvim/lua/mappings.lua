@@ -4,8 +4,10 @@ local utils = require('utils')
 function _G.ToggleShowSpace()
   if vim.opt.listchars:get().space then
     vim.opt.listchars:remove('space')
+    vim.opt.listchars:remove('eol')
   else
     vim.opt.listchars:append('space:⋅')
+    vim.opt.listchars:append('eol:↴')
   end
 end
 
