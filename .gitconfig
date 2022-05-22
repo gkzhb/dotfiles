@@ -13,6 +13,7 @@
   br = branch
   ci = commit
   st = status -sb
+  r = remote
 
   # Show verbose output about tags, branches or remotes
   ltg = tag -l
