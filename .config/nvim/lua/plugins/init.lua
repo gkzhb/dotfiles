@@ -77,7 +77,7 @@ return require('packer').startup({function(use)
     config = require('plugins.crease').init
   }
   -- vim mark enhancement
-  use { 'chentau/marks.nvim',
+  use { 'chentoast/marks.nvim',
     config = require('plugins.marks').init
   }
   -- status line and tab line
@@ -143,6 +143,7 @@ return require('packer').startup({function(use)
   }
   use 'ggandor/lightspeed.nvim'
   use 'szw/vim-maximizer'
+  use 'tpope/vim-unimpaired' -- `[<char>`, `]<char>` related keymappings
   -- {{{2 edit
   -- use {
   --   'tpope/vim-surround',
@@ -158,6 +159,19 @@ return require('packer').startup({function(use)
     setup = require('plugins.suda').setup
   }
   use 'tpope/vim-repeat'
+  use {
+    'windwp/nvim-ts-autotag',
+    requires = { 'nvim-treesitter' }
+  }
+
+  use 'tpope/vim-commentary'
+  use 'honza/vim-snippets' -- coc-snippets needs snippets
+
+  use {
+    "danymat/neogen", -- generate documentation comment for class, function, type
+    config = function() require('neogen').setup({}) end,
+    requires = { 'nvim-treesitter' }
+  }
 
   -- {{{2 git related
   use {
@@ -181,12 +195,10 @@ return require('packer').startup({function(use)
     ft = {'fugitive'},
     config = require('plugins.fugitive').init
   }
-  use 'junegunn/gv.vim' -- git commit browser
-  use 'sodapopcan/vim-twiggy' -- git branch push/pull/rebase
+  -- two below are not working
+  -- use 'junegunn/gv.vim' -- git commit browser
+  -- use 'sodapopcan/vim-twiggy' -- git branch push/pull/rebase
 
-  -- {{{2 language related
-  use 'tpope/vim-commentary'
-  use 'honza/vim-snippets' -- coc-snippets needs snippets
   -- {{{3 treesitter
   use {
     'nvim-treesitter/nvim-treesitter',
@@ -206,10 +218,10 @@ return require('packer').startup({function(use)
   use { 'theHamsta/nvim-treesitter-pairs' }
   -- incompatible with the lua treesitter parser
   -- use 'andymass/vim-matchup'  -- support tree-sitter
-  use {
-    'romgrk/nvim-treesitter-context',
-    config = function() require('treesitter-context').setup({}) end
-  }
+  -- use { -- get errors in this plugin
+  --   'romgrk/nvim-treesitter-context',
+  --   config = function() require('treesitter-context').setup({}) end
+  -- }
 
   -- replace default lua treesitter
   use {

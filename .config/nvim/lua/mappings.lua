@@ -104,6 +104,14 @@ function M.setMappings()
   require('plugins.vim-win').mappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
+  wk.register({
+    ["/"] = { -- Neogen
+      name = "generate doc comment",
+      f = { "<cmd>Neogen func<CR>", "function doc comment" },
+      c = { "<cmd>Neogen class<CR>", "class doc comment" },
+      t = { "<cmd>Neogen type<CR>", "type doc comment" },
+    },
+  })
 
 end
 
