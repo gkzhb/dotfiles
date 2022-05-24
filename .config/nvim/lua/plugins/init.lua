@@ -9,7 +9,7 @@ return require('packer').startup({
     use('kyazdani42/nvim-web-devicons')
     use('nvim-lua/plenary.nvim')
     use('tami5/sqlite.lua')
-    use({
+    use({ -- hightlight terminal colors
       'norcalli/nvim-terminal.lua',
       config = function()
         require('terminal').setup()
@@ -346,5 +346,4 @@ return require('packer').startup({
     },
   },
 })
-
--- vim: set fdm=marker
+-- vim: set fdm=marker:

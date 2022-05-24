@@ -114,6 +114,23 @@ function M.setMappings()
       t = { '<cmd>Neogen type<CR>', 'type doc comment' },
     },
   }, { mode = 'n', prefix = '<Leader>' })
+  wk.register({ -- fzf-lua mappings
+    name = 'fzf search',
+    f = { '<cmd>lua require("fzf-lua").files()<CR>', 'find files' },
+    g = { '<cmd>lua require("fzf-lua").grep()<CR>', 'grep' },
+    gl = { '<cmd>lua require("fzf-lua").grep_last()<CR>', 'last grep' },
+    gb = { '<cmd>lua require("fzf-lua").lgrep_curbuf()<CR>', 'live grep current buffer' },
+    gp = { '<cmd>lua require("fzf-lua").live_grep()<CR>', 'live grep current project' },
+    l = { '<cmd>lua require("fzf-lua").resume()<CR>', 'resume last findings' },
+    a = { '<cmd>lua require("fzf-lua").command()<CR>', 'search commands' },
+    c = { '<cmd>lua require("fzf-lua").changes()<CR>', 'search changes' },
+    m = { '<cmd>lua require("fzf-lua").marks()<CR>', 'search marks' },
+    k = { '<cmd>lua require("fzf-lua").keymaps()<CR>', 'search keymaps' },
+    j = { '<cmd>lua require("fzf-lua").jumps()<CR>', 'search jumps' },
+    r = { '<cmd>lua require("fzf-lua").registers()<CR>', 'search registers' },
+    h = { '<cmd>lua require("fzf-lua").help_tags()<CR>', 'search help_tags' },
+    n = { ':FzfLua ', 'run fzf lua command', silent = false },
+  }, { mode = 'n', prefix = '<Leader>f' })
 end
 
 return M
