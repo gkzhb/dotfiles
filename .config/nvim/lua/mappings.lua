@@ -56,6 +56,9 @@ function M.setMappings()
   local wk = require('which-key')
 
   wk.register({
+    ["<C-q>"] = { utils.t("<C-\\><C-n>"), "quit terminal mode" },
+  }, { mode = "t" })
+  wk.register({
     ['-'] = { '<Plug>(choosewin)', 'choose win', noremap = false, silent = true }, -- choosewin
     -- buffer actions
     ['<C-N>'] = { ':bnext<CR>', 'next buffer' },
@@ -111,7 +114,7 @@ function M.setMappings()
       c = { "<cmd>Neogen class<CR>", "class doc comment" },
       t = { "<cmd>Neogen type<CR>", "type doc comment" },
     },
-  })
+  }, { mode = "n", prefix = "<Leader>" })
 
 end
 

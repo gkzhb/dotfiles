@@ -62,4 +62,8 @@ alias zi='z -i' # interactive
 alias zf='z -I' # fzf
 alias zb='z -b' # cd ..
 alias zh='z -I -t .'
-
+function j
+  cd $argv 2> /dev/null or zf $argv
+end
+complete -c j -k -w z
+complete -c j -k -w cd

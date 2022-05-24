@@ -68,6 +68,12 @@ cmd open-with ${{
 # cmd rename %[ -e $1 ] && printf "file exists" || mv $f $1
 # map r push :rename<space>
 
+cmd on-cd &{{
+  # update z.lua cd frequency
+  # env varialbes are found in fish shell(tried out)
+  # reference to https://github.com/skywind3000/z.lua/blob/master/ranger_zlua.py
+  [ -n "$ZLUA_SCRIPT" ] && $ZLUA_SCRIPT --add $PWD
+}}
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
 # cmd trash %set -f; mv $fx ~/.trash

@@ -52,6 +52,10 @@ function M.esc(cmd)
   return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
+function M.t(cmd)
+  return vim.api.nvim_replace_termcodes(cmd, true, true, true)
+end
+
 --- Load local lua config file in 'lua/local/' directory
 --- @param filename string filenamne without '.lua' extension
 --- @return any any exported module or false

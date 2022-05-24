@@ -153,12 +153,12 @@ function M.init()
     -- Integration with other plugins
 
     -- CocList
-    bMap(0, 'n', '<Leader>fg', ':call v:lua.CocExecCurDir("CocList -I grep")<CR>', {noremap = true})
-    bMap(0, 'n', '<Leader>fG', ':call v:lua.CocExecCurDir("CocList -I grep -regex")<CR>', {noremap = true})
-    bMap(0, 'n', '<C-p>', ':call v:lua.CocExecCurDir("CocList files")<CR>', {noremap = true})
+    bMap(0, "n", "<Leader>fg", ':call v:lua.CocExecCurDir("CocList -I grep")<CR>', { noremap = true })
+    bMap(0, "n", "<Leader>fG", ':call v:lua.CocExecCurDir("CocList -I grep -regex")<CR>', { noremap = true })
+    bMap(0, "n", "<C-p>", ':call v:lua.CocExecCurDir("CocList files")<CR>', { noremap = true })
 
     -- vim-floaterm
-    bMap(0, 'n', '<Leader>ft', ':call v:lua.CocExecCurDir("FloatermNew --wintype=floating")<CR>', {noremap = true})
+    bMap(0, "n", "<Leader>ft", ':call v:lua.CocExecCurDir("FloatermNew --wintype=floating")<CR>', { noremap = true })
   end
 
   vim.cmd([[
@@ -249,7 +249,7 @@ function M.mappings()
     d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     fl = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
-    o = { '<cmd>call CocAction("showOutline")<cr>', 'show coc outline' },
+    o = { '<cmd>call CocAction("showOutline")<cr>', 'show coc outline', noremap = true },
     -- Symbol renaming.
     r = { '<Plug>(coc-rename)', 'rename variable' },
     wc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
@@ -267,8 +267,8 @@ function M.mappings()
     ['<C-j>'] = { '<Plug>(coc-snippets-select)', 'select text for visual placeholder' },
   }, { mode = 'v' })
   wk.register({
-    ['<C-l>'] = { '<Plug>(coc-snippets-expand)', 'expand snippet' },
-    ['<C-j>'] = { '<Plug>(coc-snippets-expand-jump)', 'expand snippet and jump' },
+    ['<C-l>'] = { '<cmd>call v:lua.CocSnippetsExpand()<CR>', 'expand snippet' },
+    ['<C-j>'] = { '<cmd>call v:lua.CocSnippetsExpandJump()<CR>', 'expand snippet and jump' },
   }, { mode = 'i' })
 
   -- `:Format` format current buffer
@@ -331,11 +331,11 @@ function _G.CheckBackSpace()
 end
 
 function _G.CocTab()
-  if vim.fn.pumvisible() ~= 0 then
-    return utils.esc('<C-n>')
-  end
   if vim.fn['coc#expandableOrJumpable']() then
     return utils.esc('<C-r>=coc#rpc#request("doKeymap", ["snippets-expand-jump", ""])<CR>')
+  end
+  if vim.fn.pumvisible() ~= 0 then
+    return utils.esc('<C-n>')
   end
   if _G.CheckBackSpace() then
     return utils.esc('<TAB>')
@@ -388,4 +388,17 @@ function _G.CocShowDocumentation()
   vim.cmd('!' .. vim.o.keywordprg .. ' ' .. vim.fn.expand('<cword>'))
 end
 
+function _G.CocSnippetsExpand()
+  if not vim.fn['coc#expandable']() then
+    return
+  end
+  vim.fn["coc#rpc#request"]("doKeymap", { "snippets-expand", "" })
+end
+
+function _G.CocSnippetsExpandJump()
+  if not vim.fn['coc#expandableOrJumpable']() then
+    return
+  end
+  vim.fn["coc#rpc#request"]("doKeymap", { "snippets-expand-jump", "" })
+end
 return M
