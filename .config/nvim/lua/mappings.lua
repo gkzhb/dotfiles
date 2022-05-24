@@ -116,13 +116,14 @@ function M.setMappings()
   }, { mode = 'n', prefix = '<Leader>' })
   wk.register({ -- fzf-lua mappings
     name = 'fzf search',
+    b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
     f = { '<cmd>lua require("fzf-lua").files()<CR>', 'find files' },
     g = { '<cmd>lua require("fzf-lua").grep()<CR>', 'grep' },
     gl = { '<cmd>lua require("fzf-lua").grep_last()<CR>', 'last grep' },
     gb = { '<cmd>lua require("fzf-lua").lgrep_curbuf()<CR>', 'live grep current buffer' },
     gp = { '<cmd>lua require("fzf-lua").live_grep()<CR>', 'live grep current project' },
     l = { '<cmd>lua require("fzf-lua").resume()<CR>', 'resume last findings' },
-    a = { '<cmd>lua require("fzf-lua").command()<CR>', 'search commands' },
+    a = { '<cmd>lua require("fzf-lua").commands()<CR>', 'search commands' },
     c = { '<cmd>lua require("fzf-lua").changes()<CR>', 'search changes' },
     m = { '<cmd>lua require("fzf-lua").marks()<CR>', 'search marks' },
     k = { '<cmd>lua require("fzf-lua").keymaps()<CR>', 'search keymaps' },
@@ -130,6 +131,14 @@ function M.setMappings()
     r = { '<cmd>lua require("fzf-lua").registers()<CR>', 'search registers' },
     h = { '<cmd>lua require("fzf-lua").help_tags()<CR>', 'search help_tags' },
     n = { ':FzfLua ', 'run fzf lua command', silent = false },
+
+    v = {
+      name = 'git related',
+      c = { '<cmd>lua require("fzf-lua").git_commits()<CR>', 'commits' },
+      cb = { '<cmd>lua require("fzf-lua").git_bcommits()<CR>', 'bcommits' },
+      b = { '<cmd>lua require("fzf-lua").git_branches()<CR>', 'branches' },
+      f = { '<cmd>lua require("fzf-lua").git_files()<CR>', 'files' },
+    },
   }, { mode = 'n', prefix = '<Leader>f' })
 end
 
