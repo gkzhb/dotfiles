@@ -17,13 +17,13 @@ function M.mappings()
       name = 'notifications',
       c = {
         '<cmd>lua require("notify").dismiss()<CR>',
-        'close all notifications'
+        'close all notifications',
       },
       l = {
         '<cmd>Notifications<CR>',
-        'list all notifications'
-      }
-    }
+        'list all notifications',
+      },
+    },
   }, { prefix = '<leader>' })
 end
 

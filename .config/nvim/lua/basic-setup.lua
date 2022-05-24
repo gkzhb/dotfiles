@@ -55,7 +55,7 @@ vim.opt.foldlevelstart = 0
 vim.opt.foldlevel = 99
 
 -- {{{2 others
-vim.opt.history = 1000  -- save history
+vim.opt.history = 1000 -- save history
 vim.opt.undofile = true -- save undo history
 -- do not save empty windows in vim sessions
 vim.opt.ssop:remove('blank') -- sessionoptions

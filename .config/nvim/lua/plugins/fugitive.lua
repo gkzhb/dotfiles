@@ -7,9 +7,11 @@ function FugitiveAfterGit()
     return
   end
   local result = vim.fn.FugitiveResult()
-  if not vim.fn.filereadable(result.file or '')
-      or (result.args and result.args[0] or '') ~= 'commit'
-      or not result.exit_status then
+  if
+    not vim.fn.filereadable(result.file or '')
+    or (result.args and result.args[0] or '') ~= 'commit'
+    or not result.exit_status
+  then
     return
   end
   vim.cmd([[Gsplit -]])
@@ -32,7 +34,7 @@ function M.mappings()
       s = { '<cmd>G<CR>', 'git status' },
       b = { '<cmd>G blame<CR>', 'git blame' },
       ['<Space>'] = { ':G<Space>', 'git command', silent = false },
-    }
+    },
   }, { prefix = '<leader>' })
 end
 

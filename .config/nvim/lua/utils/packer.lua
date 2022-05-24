@@ -10,7 +10,7 @@ end
 
 --- Install packer with git
 function M.installPacker()
-  vim.api.nvim_echo({{'Installing packer.nvim', 'Type'}}, true, {})
+  vim.api.nvim_echo({ { 'Installing packer.nvim', 'Type' } }, true, {})
   local packerGitUrl = 'https://github.com/wbthomason/packer.nvim'
   local installPackerCmd = string.format('10split |term git clone --depth=1 %s %s', packerGitUrl, M.packerPath)
   vim.api.nvim_command(installPackerCmd)

@@ -1,7 +1,7 @@
 local M = {}
 
 function M.init()
-  local telescope_actions = require("telescope.actions.set")
+  local telescope_actions = require('telescope.actions.set')
   -- From https://github.com/David-Kunz/vim/blob/master/init.lua#L164
   -- Fix treesitter not loaded when opening file from telescope
   -- Related issues:
@@ -12,7 +12,7 @@ function M.init()
     attach_mappings = function(_)
       telescope_actions.select:enhance({
         post = function()
-          vim.cmd(":normal! zx")
+          vim.cmd(':normal! zx')
         end,
       })
       return true
@@ -69,7 +69,7 @@ function M.mappings()
       v = {
         name = 'git related',
         c = { '<cmd>lua require("telescope.builtin").git_commits()<cr>', 'git commits' },
-        b = { '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', 'buffer\'s git commits' },
+        b = { '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', "buffer's git commits" },
       },
       z = { '<cmd>lua require("telescope.builtin").autocommands()<cr>', 'autocommands' },
 
@@ -81,13 +81,19 @@ function M.mappings()
         cc = { '<cmd>lua require("telescope").extensions.coc.coc({})<cr>', 'coc subcommands' },
         d = { '<cmd>lua require("telescope").extensions.coc.definitions({})<cr>', 'definitions' },
         dd = { '<cmd>lua require("telescope").extensions.coc.diagnostics({})<cr>', 'diagnostics' },
-        dw = { '<cmd>lua require("telescope").extensions.coc.workspace_diagnostics({})<cr>', 'workspace diagnostics' },
+        dw = {
+          '<cmd>lua require("telescope").extensions.coc.workspace_diagnostics({})<cr>',
+          'workspace diagnostics',
+        },
         i = { '<cmd>lua require("telescope").extensions.coc.implementations({})<cr>', 'implementations' },
         j = { '<cmd>lua require("telescope").extensions.coc.locations({})<cr>', 'locations' },
         l = { '<cmd>lua require("telescope").extensions.coc.links({})<cr>', 'links' },
         s = { '<cmd>lua require("telescope").extensions.coc.document_symbols({})<cr>', 'document symbols' },
         sw = { '<cmd>lua require("telescope").extensions.coc.workspace_symbols({})<cr>', 'workspace symbols' },
-        rr = { '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>', 'references' },
+        rr = {
+          '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+          'references',
+        },
         ru = { '<cmd>lua require("telescope").extensions.coc.references_used({})<cr>', 'references(used)' },
         re = { '<cmd>lua require("telescope").extensions.coc.mru({})<cr>', 'mru' },
       },

@@ -41,7 +41,7 @@ _G.getLocalConfig = M.getLocalConfig
 --- @printError {string} no module exported from 'customize.lua'
 function M.loadHooks()
   local custObj = utils.loadLocal('customize') -- local config code
-  if type(custObj) ~= "table" and custObj ~= false then
+  if type(custObj) ~= 'table' and custObj ~= false then
     print('Invalid customize.lua config file, should export a module')
   end
   M.hooks = custObj
@@ -51,7 +51,7 @@ end
 --- @param name string name in HookNames
 --- @printError {string} hooks should be functions
 function M.runHook(name)
-  if type(M.hooks) == "table" and M.hooks[name] then
+  if type(M.hooks) == 'table' and M.hooks[name] then
     if type(M.hooks[name]) ~= 'function' then
       print('hook "' .. name .. '" should be a function')
     else

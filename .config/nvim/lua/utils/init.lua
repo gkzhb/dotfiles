@@ -36,16 +36,7 @@ _G.debugPrint = M.debugPrint
 --- @deprecated use which-key instead
 --- Add key mapping
 function M.map(type, key, value, opts)
-  vim.api.nvim_set_keymap(
-    type,
-    key,
-    value,
-    vim.tbl_extend(
-      'keep',
-      opts or {},
-      { noremap = true, silent = true }
-    )
-  )
+  vim.api.nvim_set_keymap(type, key, value, vim.tbl_extend('keep', opts or {}, { noremap = true, silent = true }))
 end
 
 function M.esc(cmd)

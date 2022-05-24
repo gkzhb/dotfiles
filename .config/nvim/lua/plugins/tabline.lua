@@ -6,7 +6,7 @@ function M.init()
       -- section_separators = { '%=', '%=' },
       show_tabs_always = true,
       show_bufnr = true,
-    }
+    },
   })
   vim.cmd([[
     hi link tabline_a_normal WLblack_green_a

@@ -1,36 +1,36 @@
 local M = {}
 
 function M.init()
-  require("nvim-treesitter.configs").setup({
+  require('nvim-treesitter.configs').setup({
     ensure_installed = {
-      "bash",
-      "c",
-      "cpp",
-      "cmake",
-      "comment",
-      "css",
-      "dockerfile",
-      "fish",
-      "go",
-      "html",
-      "java",
-      "javascript",
-      "jsdoc",
-      "jsonc",
-      "latex",
-      "lua",
-      "php",
-      "python",
-      "query",
-      "rust",
-      "scss",
-      "toml",
-      "tsx",
-      "typescript",
-      "vim",
-      "vue",
-      "yaml",
-      "markdown",
+      'bash',
+      'c',
+      'cpp',
+      'cmake',
+      'comment',
+      'css',
+      'dockerfile',
+      'fish',
+      'go',
+      'html',
+      'java',
+      'javascript',
+      'jsdoc',
+      'jsonc',
+      'latex',
+      'lua',
+      'php',
+      'python',
+      'query',
+      'rust',
+      'scss',
+      'toml',
+      'tsx',
+      'typescript',
+      'vim',
+      'vue',
+      'yaml',
+      'markdown',
     }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     ignore_install = {}, -- List of parsers to ignore installing
     highlight = {
@@ -51,16 +51,16 @@ function M.init()
       updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
       persist_queries = false, -- Whether the query persists across vim sessions
       keybindings = {
-        toggle_query_editor = "o",
-        toggle_hl_groups = "i",
-        toggle_injected_languages = "t",
-        toggle_anonymous_nodes = "a",
-        toggle_language_display = "I",
-        focus_language = "f",
-        unfocus_language = "F",
-        update = "R",
-        goto_node = "<cr>",
-        show_help = "?",
+        toggle_query_editor = 'o',
+        toggle_hl_groups = 'i',
+        toggle_injected_languages = 't',
+        toggle_anonymous_nodes = 'a',
+        toggle_language_display = 'I',
+        focus_language = 'f',
+        unfocus_language = 'F',
+        update = 'R',
+        goto_node = '<cr>',
+        show_help = '?',
       },
     },
     context_commentstring = {
@@ -75,28 +75,28 @@ function M.init()
         enable = true,
         set_jumps = true,
         goto_next_start = {
-          ["]m"] = "@function.outer",
-          ["]]"] = "@class.outer",
+          [']m'] = '@function.outer',
+          [']]'] = '@class.outer',
         },
         goto_next_end = {
-          ["]M"] = "@function.outer",
-          ["]["] = "@class.outer",
+          [']M'] = '@function.outer',
+          [']['] = '@class.outer',
         },
         goto_previous_start = {
-          ["[m"] = "@function.outer",
-          ["[["] = "@class.outer",
+          ['[m'] = '@function.outer',
+          ['[['] = '@class.outer',
         },
         goto_previous_end = {
-          ["[M"] = "@function.outer",
-          ["[]"] = "@class.outer",
+          ['[M'] = '@function.outer',
+          ['[]'] = '@class.outer',
         },
       },
     },
     pairs = {
       enable = true,
-      disable = { "lua" },
+      disable = { 'lua' },
       keymaps = {
-        goto_partner = "%",
+        goto_partner = '%',
       },
     },
     -- matchup = { -- vim-matchup
@@ -112,8 +112,8 @@ function M.init()
     },
   })
 
-  vim.opt.foldmethod = "expr"
-  vim.wo.foldexpr = "luaeval(\"require'nvim-treesitter.fold'.get_fold_indic(vim.v.lnum)\")"
+  vim.opt.foldmethod = 'expr'
+  vim.wo.foldexpr = 'luaeval("require\'nvim-treesitter.fold\'.get_fold_indic(vim.v.lnum)")'
 end
 
 return M

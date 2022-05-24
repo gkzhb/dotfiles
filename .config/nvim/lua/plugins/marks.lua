@@ -5,7 +5,7 @@ function M.init()
     mappings = {
       annotate = 'm/',
       preview = 'm;',
-    }
+    },
   })
 end
 

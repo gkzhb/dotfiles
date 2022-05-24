@@ -23,7 +23,7 @@ function M.init()
       buffer_selected = {
         guifg = colors.white,
         guibg = colors.bg0,
-        gui = "bold,italic"
+        gui = 'bold,italic',
       },
       separator_selected = {
         guifg = colors.white,
@@ -33,7 +33,7 @@ function M.init()
         guifg = colors.white,
         guibg = colors.bg0,
       },
-    }
+    },
   })
 end
 

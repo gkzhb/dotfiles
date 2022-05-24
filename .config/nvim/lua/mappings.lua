@@ -18,8 +18,8 @@ function _G.SetTab(size)
 end
 
 function _G.SynGroup()
-    local s = vim.fn.synID(vim.fn.line('.'), vim.fn.col('.'), 1)
-    print(vim.fn.synIDattr(s, 'name') .. ' -> ' .. vim.fn.synIDattr(vim.fn.synIDtrans(s), 'name'))
+  local s = vim.fn.synID(vim.fn.line('.'), vim.fn.col('.'), 1)
+  print(vim.fn.synIDattr(s, 'name') .. ' -> ' .. vim.fn.synIDattr(vim.fn.synIDtrans(s), 'name'))
 end
 
 function _G.SynStack()
@@ -46,27 +46,27 @@ end
 
 function M.init()
   -- leader key
-  vim.g.mapleader=' '
-  vim.g.maplocalleader=' '
-  vim.opt.ttimeout=true
-  vim.opt.tm=500
+  vim.g.mapleader = ' '
+  vim.g.maplocalleader = ' '
+  vim.opt.ttimeout = true
+  vim.opt.tm = 500
 end
 
 function M.setMappings()
   local wk = require('which-key')
 
   wk.register({
-    ["<C-q>"] = { utils.t("<C-\\><C-n>"), "quit terminal mode" },
-  }, { mode = "t" })
+    ['<C-q>'] = { utils.t('<C-\\><C-n>'), 'quit terminal mode' },
+  }, { mode = 't' })
   wk.register({
     ['-'] = { '<Plug>(choosewin)', 'choose win', noremap = false, silent = true }, -- choosewin
     -- buffer actions
     ['<C-N>'] = { ':bnext<CR>', 'next buffer' },
     ['<C-P>'] = { ':bprev<CR>', 'previous buffer' },
     -- [n]gb switch to buffer [n]
-    gb = { 'v:lua.SwitchBuffer(v:count)', 'switch to buffer [n]', expr = true }
+    gb = { 'v:lua.SwitchBuffer(v:count)', 'switch to buffer [n]', expr = true },
   })
-  
+
   -- quick actions
   wk.register({
     c = {
@@ -78,8 +78,7 @@ function M.setMappings()
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
     },
-    -- @TODO: handle error if expanded string is not valid file path
-    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.expand("%:p"))<CR>', 'open lf with current buffer selected' }, -- lf, select current buffer file
+    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.glob("%:p"))<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
     D = { '<cmd>lua require("fm-nvim").Lf()<CR>', 'open lf' }, -- lf, open cwd
     h = { -- highlight related
       name = 'show highlight',
@@ -94,7 +93,7 @@ function M.setMappings()
     },
     p = { -- nvim-projectconfig
       name = 'project related',
-      c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>' , 'edit project config' },
+      c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>', 'edit project config' },
     },
     -- q = { '<cmd>Wquit<CR>', 'close current window' }, -- for windline float statusline
     q = { '<cmd>q<CR>', 'close current window' },
@@ -108,14 +107,13 @@ function M.setMappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
   wk.register({
-    ["/"] = { -- Neogen
-      name = "generate doc comment",
-      f = { "<cmd>Neogen func<CR>", "function doc comment" },
-      c = { "<cmd>Neogen class<CR>", "class doc comment" },
-      t = { "<cmd>Neogen type<CR>", "type doc comment" },
+    ['/'] = { -- Neogen
+      name = 'generate doc comment',
+      f = { '<cmd>Neogen func<CR>', 'function doc comment' },
+      c = { '<cmd>Neogen class<CR>', 'class doc comment' },
+      t = { '<cmd>Neogen type<CR>', 'type doc comment' },
     },
-  }, { mode = "n", prefix = "<Leader>" })
-
+  }, { mode = 'n', prefix = '<Leader>' })
 end
 
 return M

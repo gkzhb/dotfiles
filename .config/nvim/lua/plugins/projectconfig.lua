@@ -6,12 +6,18 @@ function M.init()
   local projectConfig = {
     { -- neovim config
       path = vim.fn.expand(vim.fn.stdpath('config')),
-      config = require('projects.nvim-config').init
+      config = require('projects.nvim-config').init,
     },
   }
   if localProjectConfig then
     -- merge localProjectConfig into projectConfig
-    localProjectConfig = table.move(localProjectConfig.config, 1, #localProjectConfig.config, #projectConfig + 1, projectConfig)
+    localProjectConfig = table.move(
+      localProjectConfig.config,
+      1,
+      #localProjectConfig.config,
+      #projectConfig + 1,
+      projectConfig
+    )
   end
   require('nvim-projectconfig').load_project_config({
     project_config = projectConfig,
