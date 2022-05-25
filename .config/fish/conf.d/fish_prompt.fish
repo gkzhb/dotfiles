@@ -107,7 +107,7 @@ function __lf_prompt
 end
 
 function _get_tmux_window
-  tmux lsw | grep active | sed 's/\*.*$//g;s/: / /1' | awk '{ print $2 "-" $1 }' -
+  tmux lsw | grep active | sed 's/\*.*$//g;s/: / /1' | awk '{ print " " $1 ":" $2 }' -
 end
 
 function _get_screen_window

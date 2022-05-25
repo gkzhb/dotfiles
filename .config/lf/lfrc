@@ -1,10 +1,11 @@
 # {{{1 set options
 # enable file icons
 set icons
-# set previewer $HOME/scripts/utils/scope.sh
 # interpreter for shell commands
-set shell bash
+set shell fish
 
+# file previewer
+set previewer ~/scripts/lf/lf_preview
 # set '-eu' options for shell commands
 # These options are used to have safer shell commands. Option '-e' is used to
 # exit on error and option '-u' is used to give error for unset variables.
@@ -12,14 +13,14 @@ set shell bash
 # $fx variables contain names with '*' or '?' characters. However, this option
 # is used selectively within individual commands as it can be limiting at
 # times.
-set shellopts '-eu'
+# set shellopts '-eu'
 
 # set internal field separator (IFS) to "\n" for shell commands
 # This is useful to automatically split file names in $fs and $fx properly
 # since default file separator used in these variables (i.e. 'filesep' option)
 # is newline. You need to consider the values of these options and create your
 # commands accordingly.
-set ifs "\n"
+# set ifs "\n"
 
 # show relative line number
 set relativenumber
@@ -33,22 +34,22 @@ set scrolloff 10
 # This relies on rifle.py from ranger
 # Open
 cmd open ${{
-  set -f
-  if [[ "" != $(command -v open) ]]; then
+  if test -n (command -v open)
     # use 'open' command for mac OS
     open $fx
   else
-    rifle -p 0 $fx
-  fi
+    # rifle -p 0 $fx
+  end
 }}
 # TODO: config rifle and use it
 # https://www.reddit.com/r/ranger/comments/k6kkwr/how_to_open_a_file_with_another_app_without/
 cmd open-with ${{
-  set -f
   # rifle -l $fx
-  read -p "Open with: " method
+  read -p "echo Open with: " method
   # rifle -p $method $fx
-  $method $fx
+  if test -n $method
+    $method $fx
+  end
 }}
 # map r open-with
 
@@ -72,19 +73,20 @@ cmd on-cd &{{
   # update z.lua cd frequency
   # env varialbes are found in fish shell(tried out)
   # reference to https://github.com/skywind3000/z.lua/blob/master/ranger_zlua.py
-  [ -n "$ZLUA_SCRIPT" ] && $ZLUA_SCRIPT --add $PWD
+  test -n "$ZLUA_SCRIPT" and $ZLUA_SCRIPT --add $PWD
 }}
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
 # cmd trash %set -f; mv $fx ~/.trash
-cmd trash %trash-put $fx && echo "File $fx deleted."
+cmd trash %trash-put $fx and echo "File $fx deleted."
 
 cmd delete ${{
-  set -f
   printf "$fx\n"
-  printf "delete?[y/n]"
+  printf "delete?[y/n] "
   read ans
-  [ $ans = "y" ] && trash-put $fx
+  if test $ans = "y"
+    trash-put $fx
+  end
 }}
 
 # define a custom 'delete' command
@@ -98,69 +100,69 @@ cmd delete ${{
 
 # extract the current file with the right command
 # (xkcd link: https://xkcd.com/1168/)
-cmd extract ${{
-  set -f
-  case $f in
-    *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
-    *.tar.gz|*.tgz) tar xzvf $f;;
-    *.tar.xz|*.txz) tar xJvf $f;;
-    *.zip) unzip $f;;
-    *.rar) unrar x $f;;
-    *.7z) 7z x $f;;
-  esac
-}}
+# cmd extract ${{
+#   set -f
+#   case $f in
+#     *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
+#     *.tar.gz|*.tgz) tar xzvf $f;;
+#     *.tar.xz|*.txz) tar xJvf $f;;
+#     *.zip) unzip $f;;
+#     *.rar) unrar x $f;;
+#     *.7z) 7z x $f;;
+#   esac
+# }}
 
 # compress current file or selected files with tar and gunzip
-cmd tar ${{
-  set -f
-  mkdir $1
-  cp -r $fx $1
-  tar czf $1.tar.gz $1
-  rm -rf $1
-}}
+# cmd tar ${{
+#   set -f
+#   mkdir $1
+#   cp -r $fx $1
+#   tar czf $1.tar.gz $1
+#   rm -rf $1
+# }}
 
 # compress current file or selected files with zip
-cmd zip ${{
-  set -f
-  mkdir $1
-  cp -r $fx $1
-  zip -r $1.zip $1
-  rm -rf $1
-}}
+# cmd zip ${{
+#   set -f
+#   mkdir $1
+#   cp -r $fx $1
+#   zip -r $1.zip $1
+#   rm -rf $1
+# }}
 
-cmd bulk-rename ${{
-  old="$(mktemp)"
-  new="$(mktemp)"
-  [ -n "$fs" ] && fs="$(ls)"
-  printf '%s\n' "$fs" >"$old"
-  printf '%s\n' "$fs" >"$new"
-  $EDITOR "$new"
-  [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
-  paste "$old" "$new" | while IFS= read -r names; do
-    src="$(printf '%s' "$names" | cut -f1)"
-    dst="$(printf '%s' "$names" | cut -f2)"
-    if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
-        continue
-    fi
-    mv -- "$src" "$dst"
-  done
-  rm -- "$old" "$new"
-  lf -remote "send $id unselect"
-}}
+# cmd bulk-rename ${{
+#   old="$(mktemp)"
+#   new="$(mktemp)"
+#   [ -n "$fs" ] && fs="$(ls)"
+#   printf '%s\n' "$fs" >"$old"
+#   printf '%s\n' "$fs" >"$new"
+#   $EDITOR "$new"
+#   [ "$(wc -l < "$new")" -ne "$(wc -l < "$old")" ] && exit
+#   paste "$old" "$new" | while IFS= read -r names; do
+#     src="$(printf '%s' "$names" | cut -f1)"
+#     dst="$(printf '%s' "$names" | cut -f2)"
+#     if [ "$src" = "$dst" ] || [ -e "$dst" ]; then
+#         continue
+#     fi
+#     mv -- "$src" "$dst"
+#   done
+#   rm -- "$old" "$new"
+#   lf -remote "send $id unselect"
+# }}
 
 cmd zj ${{
-  set -f
   clear
-  read -p "z jump to: " location
-  target_path=$(~/scripts/lf/z-echo.fish $location)
-  if [[ "" != "$target_path" ]]; then
+  read -p "echo 'z.lua jumps to: '" location
+  set -l target_path ""
+  if test -n $location
+    set target_path (~/scripts/lf/z-echo.fish $location)
+  end
+  if test -n "$target_path"
     lf -remote "send $id cd \"$target_path\""
-  fi
+  end
 }}
 # use fzf to search z.lua jump targets
 map a zj
-
-cmd test-env !fish -c "env > ~/test-fish.env"
 
 # {{{1 mappings
 # use enter for shell commands

@@ -100,6 +100,12 @@ return require('packer').startup({
       'is0n/fm-nvim',
       config = require('plugins.fm-nvim').init,
     })
+  use({
+    'kyazdani42/nvim-tree.lua',
+    config = function()
+      require('nvim-tree').setup({})
+    end,
+  })
 
     -- pretty list
     use({
