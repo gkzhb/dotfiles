@@ -9,3 +9,6 @@ nvim -i NONE -esn -u NONE \
 # 1. execute lua file print output to buffer(after the first line)
 # 2. delete the first two lines, they are empty lines
 # 3. print current buffer to stdout and quit vim
+
+# Bugs:
+# not working for colors

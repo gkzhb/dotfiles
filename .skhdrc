@@ -77,8 +77,8 @@
 # }}}
 
 # {{{1 modes declare
-:: default : set -Ux SKHD_MODE default; open -gj 'swiftbar://refreshplugin?name=yabai'
-:: resize : set -Ux SKHD_MODE resize; open -gj 'swiftbar://refreshplugin?name=yabai'
+:: default : set -Ux SKHD_MODE default; sn 'skhd: default mode'; open -gj 'swiftbar://refreshplugin?name=yabai'
+:: resize : set -Ux SKHD_MODE resize; sn 'skhd: resize mode'; open -gj 'swiftbar://refreshplugin?name=yabai'
 
 # {{{1 default mode
 # {{{2 focus related
