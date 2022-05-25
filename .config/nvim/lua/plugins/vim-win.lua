@@ -2,7 +2,7 @@ local M = {}
 
 function M.init()
   vim.g.win_ext_command_map = {
-    q = 'Wquit',
+    q = 'q',
     w = 'w',
     x = 'Win#exit',
   }

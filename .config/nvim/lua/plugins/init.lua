@@ -338,9 +338,7 @@ return require('packer').startup({
     use({ -- enhance terminal UX
       'akinsho/toggleterm.nvim',
       tag = 'v1.*',
-      config = function()
-        require('toggleterm').setup({})
-      end,
+      config = require('plugins.toggleterm').init,
     })
     -- https://github.com/neovim/neovim/issues/12587
     use('antoinemadec/FixCursorHold.nvim') -- TODO(remove this): temporarily fix CursorHold not triggerred
