@@ -17,8 +17,9 @@ end
 if string match -rq ^text $file_type
   if test -n (command -v bat)
     bat --color=always -p -r :$h $file
+  else
+    cat $file
   end
-  cat $file
   exit 1
 end
 

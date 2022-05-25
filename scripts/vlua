@@ -1,0 +1,3 @@
+#!/usr/bin/env fish
+# use nvim as lua runtime
+nvim -Es -u NONE -c "luafile $argv[1]" -c "q"
