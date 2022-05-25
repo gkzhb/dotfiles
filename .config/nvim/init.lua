@@ -21,6 +21,7 @@ pcall(require, 'packer_compiled') -- load packer lua cache
 if mappings then
   utils.callFunctionSafely(mappings.setMappings)
 end
+utils.loadModuleSafely('autocommands')
 
 -- {{{1 file type
 vim.cmd([[

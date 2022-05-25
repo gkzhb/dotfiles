@@ -4,7 +4,7 @@ function M.init()
   require('toggleterm').setup({})
 end
 
-function M.mapping()
+function M.mappings()
   local wk = require('which-key')
   wk.register({
     t = { '<cmd>exe v:count1 . "ToggleTerm"<CR>', 'toggle term [n]' },

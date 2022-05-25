@@ -83,6 +83,11 @@ function M.setMappings()
       s = { '<cmd>call v:lua.ToggleShowSpace()<CR>)', 'toggle showing space char' },
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
+      c = {
+        name = 'packer related',
+        c = { '<cmd>PackerCompile<CR>', 'packer compile' },
+        s = { '<cmd>PackerSync<CR>', 'packer sync plugins' },
+      },
     },
     d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.glob("%:p"))<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
     D = { '<cmd>lua require("fm-nvim").Lf()<CR>', 'open lf' }, -- lf, open cwd
@@ -112,6 +117,7 @@ function M.setMappings()
   require('plugins.vim-win').mappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
+  require('plugins.toggleterm').mappings()
   wk.register({
     ['/'] = { -- Neogen
       name = 'generate doc comment',
