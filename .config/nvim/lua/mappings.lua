@@ -52,12 +52,34 @@ function M.init()
   vim.opt.tm = 500
 end
 
+function _G.set_terminal_keymaps()
+  local opts = {noremap = true}
+  vim.api.nvim_buf_set_keymap(0, 't', '<esc>', [[<C-\><C-n>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 't', 'jk', [[<C-\><C-n>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 't', '<C-h>', [[<C-\><C-n>:lua require("tmux").move_left()<CR>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 't', '<C-j>', [[<C-\><C-n>:lua require("tmux").move_bottom()<CR>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 't', '<C-k>', [[<C-\><C-n>:lua require("tmux").move_top()<CR>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 't', '<C-l>', [[<C-\><C-n>:lua require("tmux").move_right()<CR>]], opts)
+  vim.api.nvim_buf_set_keymap(0, 'n', '<CR>', "i", opts)
+end
+
 function M.setMappings()
   local wk = require('which-key')
 
+  -- terminal optimize from
+  -- https://www.reddit.com/r/neovim/comments/ohdptb/how_do_you_switch_terminal_buffers_but_keep_the/
+  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+  vim.cmd([[
+    augroup TerminalBehavior
+      autocmd!
+      autocmd TermOpen * startinsert
+      autocmd WinEnter term://* startinsert
+    augroup END
+  ]])
   wk.register({
     ['<C-q>'] = { utils.t('<C-\\><C-n>'), 'quit terminal mode' },
-  }, { mode = 't' })
+  }, { mode = 't', noremap = true })
+
   wk.register({
     ['-'] = { '<Plug>(choosewin)', 'choose win', noremap = false, silent = true }, -- choosewin
     -- buffer actions
