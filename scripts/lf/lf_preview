@@ -1,0 +1,25 @@
+#!/usr/bin/env fish
+set file $argv[1]
+set w $argv[2]
+set h $argv[3]
+set x $argv[4]
+set y $argv[5]
+
+set file_type (file -Lb --mime-type $file)
+if string match -rq ^image $file_type && test -n (command -v viu)
+  viu -s -b -w $w $file
+  set -l last $status
+  if test $last -eq 0
+    exit 1
+  end
+end
+
+if string match -rq ^text $file_type
+  if test -n (command -v bat)
+    bat --color=always -p -r :$h $file
+  end
+  cat $file
+  exit 1
+end
+
+echo $file_type
