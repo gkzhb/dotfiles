@@ -5,8 +5,20 @@ set h $argv[3]
 set x $argv[4]
 set y $argv[5]
 
+# argv1: file path
+# argv2: height
+function preview_with_bat
+  set -l file $argv[1]
+  set -l h $argv[2]
+  if test -n (command -v bat)
+    bat --color=always -p -r :$h $file
+  else
+    cat $file
+  end
+end
+
 set file_type (file -Lb --mime-type $file)
-if string match -rq ^image $file_type && test -n (command -v viu)
+if string match -rq ^image $file_type; and test -n (command -v viu)
   viu -s -b -w $w $file
   set -l last $status
   if test $last -eq 0
@@ -14,12 +26,8 @@ if string match -rq ^image $file_type && test -n (command -v viu)
   end
 end
 
-if string match -rq ^text $file_type
-  if test -n (command -v bat)
-    bat --color=always -p -r :$h $file
-  else
-    cat $file
-  end
+if string match -rq ^text $file_type; or string match -rq ^application\/json $file_type
+  preview_with_bat $file $h
   exit 1
 end
 
