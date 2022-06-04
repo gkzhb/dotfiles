@@ -18,7 +18,7 @@ local visibleSpaceCsv = getCmdOutput([[
   yabai -m query --spaces  |
   jq -r 'map(
     select(
-      (."has-focus" == true) or (.label | length > 0) or (.windows | length > 0)
+      (."is-visible" == true) or (.label | length > 0) or (.windows | length > 0)
     )
   )[] |
   [.index, .label, .display, ."is-visible"]|
