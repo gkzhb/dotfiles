@@ -100,12 +100,12 @@ return require('packer').startup({
       'is0n/fm-nvim',
       config = require('plugins.fm-nvim').init,
     })
-  use({
-    'kyazdani42/nvim-tree.lua',
-    config = function()
-      require('nvim-tree').setup({})
-    end,
-  })
+    use({
+      'kyazdani42/nvim-tree.lua',
+      config = function()
+        require('nvim-tree').setup({})
+      end,
+    })
 
     -- pretty list
     use({
@@ -151,10 +151,9 @@ return require('packer').startup({
     use('szw/vim-maximizer')
     use('tpope/vim-unimpaired') -- `[<char>`, `]<char>` related keymappings
     -- {{{2 edit
-    -- use {
-    --   'tpope/vim-surround',
-    --   keys = {'c', 'd', 'y'}
-    -- }
+    use({
+      'tpope/vim-surround',
+    })
     use({
       'windwp/nvim-projectconfig',
       config = require('plugins.projectconfig').init,

@@ -315,7 +315,6 @@ function M.mappings()
   wk.register({
     e = { ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>', 'coc explorer' },
     y = { ':<C-u>CocList -A --normal yank<CR>', 'coc yank list' },
-    b = { ':<C-u>CocList --normal buffers<CR>', 'coc buffer list' },
   }, { mode = 'n', prefix = '<Leader>' })
 
   -- coc lists
