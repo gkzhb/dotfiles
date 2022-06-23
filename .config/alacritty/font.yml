@@ -19,11 +19,13 @@ font:
   # The italic font face
   # italic:
   # family: Iosevka
-  # style: "Light Italic"
+  style: Normal
     # style: "Light Oblique"
     # family: "Fira Code"
     # family: "Source Code Pro"
     # style: "Medium Italic"
+  normal:
+    family: "Hack Nerd Font"
 
   # Point size of the font
   size: 14.0
