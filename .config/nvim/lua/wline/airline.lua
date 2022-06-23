@@ -12,6 +12,14 @@ local lsp_comps = require('windline.components.lsp')
 local git_comps = require('windline.components.git')
 
 local utils = require('wline.utils')
+local seps = {
+  left_circle = '', -- nf-ple-left_half_circle_thick
+  left_circle_thin = '', -- nf-ple-left_half_circle_thin
+  right_circle = '', -- nf-ple-right_half_circle_thick
+  right_circle_thin = '', -- nf-ple-right_half_circle_thin
+}
+seps.left = seps.left_circle
+seps.right = seps.right_circle
 
 local hl_list = {
   Black = { 'white', 'black' },
@@ -69,7 +77,7 @@ local width_breakpoint = 100
 
 local paste_mode = function()
   if vim.o.paste then
-    return ' ' -- nf-mdi-content_paste
+    return '  ' -- nf-mdi-content_paste
   end
 end
 
@@ -78,15 +86,15 @@ basic.section_a = {
   text = function(_, _, width)
     if width > width_breakpoint then
       return {
-        { ' ' .. state.mode[1] .. ' ', state.mode[2] },
+        { ' ' .. state.mode[1], state.mode[2] },
         { paste_mode, state.mode[2] },
-        { sep.right_filled, state.mode[2] .. 'Sep' },
+        { seps.right, state.mode[2] .. 'Sep' },
       }
     end
     return {
       { ' ' .. state.mode[1]:sub(1, 1) .. ' ', state.mode[2] },
       { paste_mode, state.mode[2] },
-      { sep.right_filled, state.mode[2] .. 'Sep' },
+      { seps.right, state.mode[2] .. 'Sep' },
     }
   end,
 }
@@ -119,10 +127,10 @@ basic.section_b = {
       return {
         { ' ' .. branch_name, state.mode[2] },
         { ' ', '' },
-        { sep.right_filled, state.mode[2] .. 'Sep' },
+        { seps.right, state.mode[2] .. 'Sep' },
       }
     end
-    return { { sep.right_filled, state.mode[2] .. 'Sep' } }
+    return { { seps.right, state.mode[2] .. 'Sep' } }
   end,
 }
 
@@ -133,7 +141,7 @@ basic.section_c = {
       { ' ', state.mode[2] },
       { b_components.cache_file_name('[No Name]', 'unique') },
       { file_modified(bufnr), '' },
-      { sep.right_filled, state.mode[2] .. 'Sep' },
+      { seps.right, state.mode[2] .. 'Sep' },
     }
   end,
 }
@@ -143,7 +151,7 @@ basic.section_x = {
   text = function(_, _, width)
     if width > width_breakpoint then
       return {
-        { sep.left_filled, state.mode[2] .. 'Sep' },
+        { seps.left, state.mode[2] .. 'Sep' },
         { ' ', state.mode[2] },
         { b_components.file_encoding() },
         { ' ' },
@@ -152,7 +160,7 @@ basic.section_x = {
       }
     end
     return {
-      { sep.left_filled, state.mode[2] .. 'Sep' },
+      { seps.left, state.mode[2] .. 'Sep' },
     }
   end,
 }
@@ -162,13 +170,13 @@ basic.section_y = {
   text = function(_, _, width)
     if width > width_breakpoint then
       return {
-        { sep.left_filled, state.mode[2] .. 'Sep' },
+        { seps.left, state.mode[2] .. 'Sep' },
         { ' ', state.mode[2] },
         { b_components.cache_file_type({ icon = true }), state.mode[2] },
         { ' ' },
       }
     end
-    return { { sep.left_filled, state.mode[2] .. 'Sep' } }
+    return { { seps.left, state.mode[2] .. 'Sep' } }
   end,
 }
 
@@ -177,7 +185,7 @@ basic.section_z = {
   text = function(_, _, width)
     if width > width_breakpoint then
       return {
-        { sep.left_filled, state.mode[2] .. 'Sep' },
+        { seps.left, state.mode[2] .. 'Sep' },
         { '', state.mode[2] },
         { b_components.progress_lua },
         { ' ' },
@@ -185,7 +193,7 @@ basic.section_z = {
       }
     end
     return {
-      { sep.left_filled, state.mode[2] .. 'Sep' },
+      { seps.left, state.mode[2] .. 'Sep' },
       { ' ', state.mode[2] },
       { b_components.line_col_lua, state.mode[2] },
     }
@@ -339,11 +347,3 @@ windline.setup({
     explorer,
   },
 })
-
--- Disable floatline. It seems to caouse nvim freeze in some situations.
--- floatline.setup({
---   floating_show_filetypes = {
---     'default',
---     'coc-explorer'
---   }
--- })
