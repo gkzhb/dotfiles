@@ -187,8 +187,7 @@ map D delete
 
 map b clear
 # create file or directory
-map c push $touch<space>
-map C push $mkdir<space>-p<space>
+map c push $mk<space> # mk function defined in fish shell config
 
 # preview
 # set previewer ~/scripts/scope-lf-wrapper.sh
