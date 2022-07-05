@@ -87,25 +87,25 @@ cmd on-cd &{{
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
 # cmd trash %set -f; mv $fx ~/.trash
-cmd trash %trash-put $fx and echo "File $fx deleted."
+cmd trash %{{
+  set -l fx (string split \n $fx)
+  trash-put $fx; and echo "File(s) $fx moved to trash."
+}}
 
 cmd delete ${{
   printf "$fx\n"
-  printf "delete?[y/n] "
+  printf "Delete above files? [y/n] "
   read ans
   if test $ans = "y"
-    trash-put $fx
+    set -l fx (string split \n $fx)
+    if test -n (command -v trash-put)
+      trash-put $fx
+    else
+      rm -rf $fx
+    end
+    echo "File $fx deleted."
   end
 }}
-
-# define a custom 'delete' command
-# cmd delete ${{
-#     set -f
-#     printf "$fx\n"
-#     printf "delete?[y/n]"
-#     read ans
-#     [ $ans = "y" ] && rm -rf $fx
-# }}
 
 # extract the current file with the right command
 # (xkcd link: https://xkcd.com/1168/)
@@ -122,22 +122,22 @@ cmd delete ${{
 # }}
 
 # compress current file or selected files with tar and gunzip
-# cmd tar ${{
-#   set -f
-#   mkdir $1
-#   cp -r $fx $1
-#   tar czf $1.tar.gz $1
-#   rm -rf $1
-# }}
+cmd tar ${{
+  set -l fx (string split \n $fx)
+  mkdir $argv[1]
+  cp -r $fx $argv[1]
+  tar czf $argv[1].tar.gz $argv[1]
+  rm -rf $argv[1]
+}}
 
 # compress current file or selected files with zip
-# cmd zip ${{
-#   set -f
-#   mkdir $1
-#   cp -r $fx $1
-#   zip -r $1.zip $1
-#   rm -rf $1
-# }}
+cmd zip ${{
+  set -l fx (string split \n $fx)
+  mkdir $argv[1]
+  cp -r $fx $argv[1]
+  zip -r $argv[1].zip $argv[1]
+  rm -rf $argv[1]
+}}
 
 # cmd bulk-rename ${{
 #   old="$(mktemp)"
@@ -161,13 +161,16 @@ cmd delete ${{
 
 cmd zj ${{
   clear
-  read -p "echo 'z.lua jumps to: '" location
+  read -p "printf 'z.lua jumps to: '" location
   set -l target_path ""
   if test -n $location
     set target_path (~/scripts/lf/z-echo.fish $location)
   end
-  if test -n "$target_path"
+  if string length -q $target_path
     lf -remote "send $id cd \"$target_path\""
+  else
+    printf "Can't find related path from z.lua.\n"
+    read -p "printf '[Enter] to quit '"
   end
 }}
 # use fzf to search z.lua jump targets

@@ -31,4 +31,26 @@ if string match -rq ^text $file_type; or string match -rq ^application\/json $fi
   exit 1
 end
 
-echo $file_type
+function echo_file_type
+  set_color -o blue # add bold and blue text
+  printf 'File Type: '
+  set_color white
+  printf "$file_type\n"
+  set_color normal
+end
+
+switch $file_type
+  case application/zip
+    if test -n (command -v unzip)
+      echo_file_type
+      unzip -Z -1 $file # preview file list
+      exit 1
+    end
+  case application/gzip
+    echo $file_type
+    tar -tf $file # preview file list
+    exit 1
+  case '*'
+end
+
+echo_file_type
