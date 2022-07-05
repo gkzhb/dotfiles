@@ -34,11 +34,20 @@ set scrolloff 10
 # This relies on rifle.py from ranger
 # Open
 cmd open ${{
-  if test -n (command -v open)
-    # use 'open' command for mac OS
-    open $fx
+  set file_info (file -Lb --mime $fx)
+  set binary_info (string match -r charset=\.+ $file_info)
+  # whether this file type is binary
+  if string match -r binary $binary_info
+    # binary file, open with GUI softwares
+    if test -n (command -v open)
+      # use 'open' command for mac OS
+      open $fx
+    else
+      # rifle -p 0 $fx
+    end
   else
-    # rifle -p 0 $fx
+    # text file
+    $EDITOR $fx
   end
 }}
 # TODO: config rifle and use it
