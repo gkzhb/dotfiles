@@ -92,22 +92,25 @@ function M.init()
         },
       },
     },
-    pairs = {
-      enable = true,
-      disable = { 'lua' },
-      keymaps = {
-        goto_partner = '%',
-      },
-    },
-    -- matchup = { -- vim-matchup
-    --   enable = false,
-    --   disable = { 'lua' } -- use non-default treesitter parser for lua
+    -- pairs = { -- nvim-treesitter-pairs
+    --   enable = true,
+    --   disable = { 'lua' },
+    --   keymaps = {
+    --     goto_partner = '%',
+    --   },
     -- },
+    matchup = { -- vim-matchup
+      enable = false,
+      disable = { 'lua' } -- use non-default treesitter parser for lua
+    },
     refactor = {
       highlight_definitions = { enable = false },
       highlight_current_scope = { enable = false },
     },
     autotag = { -- windwp/nvim-ts-autotag
+      enable = true,
+    },
+    rainbow = { -- nvim-ts-rainbow
       enable = true,
     },
   })

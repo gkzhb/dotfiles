@@ -126,7 +126,6 @@ basic.section_b = {
     if width > width_breakpoint and #branch_name > 1 then
       return {
         { ' ' .. branch_name, state.mode[2] },
-        { ' ', '' },
         { seps.right, state.mode[2] .. 'Sep' },
       }
     end
@@ -152,8 +151,7 @@ basic.section_x = {
     if width > width_breakpoint then
       return {
         { seps.left, state.mode[2] .. 'Sep' },
-        { ' ', state.mode[2] },
-        { b_components.file_encoding() },
+        { b_components.file_encoding(), state.mode[2] },
         { ' ' },
         { b_components.file_format({ icon = true }) },
         { ' ' },
@@ -171,7 +169,6 @@ basic.section_y = {
     if width > width_breakpoint then
       return {
         { seps.left, state.mode[2] .. 'Sep' },
-        { ' ', state.mode[2] },
         { b_components.cache_file_type({ icon = true }), state.mode[2] },
         { ' ' },
       }

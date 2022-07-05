@@ -107,6 +107,8 @@ return require('packer').startup({
       end,
     })
 
+    use({ 'p00f/nvim-ts-rainbow' })
+
     -- pretty list
     use({
       'folke/trouble.nvim',
@@ -222,9 +224,10 @@ return require('packer').startup({
     use({
       'nvim-treesitter/playground',
     })
-    use({ 'theHamsta/nvim-treesitter-pairs' })
+    -- do not support matchparen highlight paried
+    -- use({ 'theHamsta/nvim-treesitter-pairs' })
     -- incompatible with the lua treesitter parser
-    -- use 'andymass/vim-matchup'  -- support tree-sitter
+    use 'andymass/vim-matchup'  -- support tree-sitter
     -- use { -- get errors in this plugin
     --   'romgrk/nvim-treesitter-context',
     --   config = function() require('treesitter-context').setup({}) end
