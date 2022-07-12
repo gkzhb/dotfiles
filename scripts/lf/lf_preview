@@ -26,17 +26,13 @@ if string match -rq ^image $file_type; and test -n (command -v viu)
   end
 end
 
-if string match -rq ^text $file_type; or string match -rq ^application\/json $file_type
-  preview_with_bat $file $h
-  exit 1
-end
-
 function echo_file_type
   set_color -o blue # add bold and blue text
   printf 'File Type: '
   set_color white
-  printf "$file_type\n"
+  printf $file_type
   set_color normal
+  printf '\n'
 end
 
 switch $file_type
@@ -50,7 +46,19 @@ switch $file_type
     echo $file_type
     tar -tf $file # preview file list
     exit 1
+  case application/json
+    preview_with_bat $file $h
+    exit 1
+  case inode/x-empty
+    set_color -o blue # add bold and blue text
+    printf 'Empty file\n'
+    exit 1
   case '*'
+end
+
+if string match -rq ^text $file_type
+  preview_with_bat $file $h
+  exit 1
 end
 
 echo_file_type

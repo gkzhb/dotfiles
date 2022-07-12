@@ -37,7 +37,7 @@ cmd open ${{
   set file_info (file -Lb --mime $fx)
   set binary_info (string match -r charset=\.+ $file_info)
   # whether this file type is binary
-  if string match -r binary $binary_info
+  if string match -qr -- binary $binary_info
     # binary file, open with GUI softwares
     if test -n (command -v open)
       # use 'open' command for mac OS

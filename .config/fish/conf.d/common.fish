@@ -61,6 +61,8 @@ alias s=systemctl
 set -uU nvm_mirror http://npm.taobao.org/mirrors/node
 # set node default version
 # set -uU nvm_default_version v12
+# {{{1 npm registry
+alias npmjs='npm --registry https://registry.npmjs.org/'
 
 # {{{1 fzf
 function fzf --wraps=fzf --description="Use fzf-tmux if in tmux session"

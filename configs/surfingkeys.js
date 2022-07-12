@@ -12,8 +12,6 @@ settings.useNeovim = false;
 // an example to replace `T` with `gt`, click `Default mappings` to see how `T` works.
 // map('gt', 'T');
 
-// an example to remove mapkey `Ctrl-i`
-// unmap('<ctrl-i>');
 const linkRefMap = {
   d: (url, title) => `[[${url}|${title}]]`, // dokuwiki link
   m: (url, title) => `[${title}](${url})`, // markdown link
