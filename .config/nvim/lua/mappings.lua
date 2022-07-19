@@ -36,14 +36,6 @@ function _G.SynStack()
   end
 end
 
---- switch current active buffer to buffer number c
-function _G.SwitchBuffer(c)
-  if c > 0 and vim.fn.bufnr(c) > -1 then
-    return utils.esc(':<C-U>' .. c .. 'b<CR>')
-  end
-  return ''
-end
-
 function M.init()
   -- leader key
   vim.g.mapleader = ' '
@@ -69,8 +61,6 @@ function M.setMappings()
     -- buffer actions
     ['<C-N>'] = { ':bnext<CR>', 'next buffer' },
     ['<C-P>'] = { ':bprev<CR>', 'previous buffer' },
-    -- [n]gb switch to buffer [n]
-    gb = { 'v:lua.SwitchBuffer(v:count)', 'switch to buffer [n]', expr = true },
   }, { mode = 'n' })
 
   -- quick actions

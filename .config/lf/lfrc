@@ -35,10 +35,11 @@ set scrolloff 10
 # Open
 cmd open ${{
   set file_info (file -Lb --mime $fx)
+  set empty_file (string match -qr inode/x-empty $file_info; and echo 1; or echo 0)
   set binary_info (string match -r charset=\.+ $file_info)
   # whether this file type is binary
-  if string match -qr -- binary $binary_info
-    # binary file, open with GUI softwares
+  if string match -qr -- binary $binary_info; and test $empty_file = 0
+    # binary file and not empty, open with GUI softwares
     if test -n (command -v open)
       # use 'open' command for mac OS
       open $fx
@@ -50,7 +51,6 @@ cmd open ${{
     $EDITOR $fx
   end
 }}
-# TODO: config rifle and use it
 # https://www.reddit.com/r/ranger/comments/k6kkwr/how_to_open_a_file_with_another_app_without/
 cmd open-with ${{
   # rifle -l $fx
@@ -94,8 +94,7 @@ cmd trash %{{
 
 cmd delete ${{
   printf "$fx\n"
-  printf "Delete above files? [y/n] "
-  read ans
+  read -p "printf \"Delete above files? [y/n] \"" ans
   if test $ans = "y"
     set -l fx (string split \n $fx)
     if test -n (command -v trash-put)
@@ -103,7 +102,7 @@ cmd delete ${{
     else
       rm -rf $fx
     end
-    echo "File $fx deleted."
+    echo "File(s) $fx deleted."
   end
 }}
 

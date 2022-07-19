@@ -2,9 +2,23 @@ local M = {}
 
 function M.init()
   vim.g.win_ext_command_map = {
-    q = 'q',
     w = 'w',
     x = 'Win#exit',
+    c = 'wincmd c',
+    C = 'close!',
+    q = 'quit',
+    Q = 'quit!',
+    ['!'] = 'qall!',
+    V = 'wincmd v',
+    S = 'wincmd s',
+    n = 'bnext',
+    N = 'bnext!',
+    p = 'bprevious',
+    P = 'bprevious!',
+    ['<C-N>'] = 'tabnext', -- not working now
+    ['<C-P>'] = 'tabprevious', -- not working now
+    ['='] = 'wincmd =',
+    t = 'tabnew',
   }
 end
 

@@ -182,7 +182,7 @@ function M.init()
     augroup mycocgroup
       autocmd!
       " Setup formatexpr specified filetype(s).
-      autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+      autocmd FileType typescriptreact,typescript,go,rust,json,lua,javascript,javascriptreact setl formatexpr=CocAction('formatSelected')
       " Update signature help on jump placeholder.
       autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     augroup end

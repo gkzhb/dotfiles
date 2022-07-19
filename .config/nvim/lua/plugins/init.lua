@@ -87,6 +87,8 @@ return require('packer').startup({
       config = require('plugins.bufferline').init,
       after = 'onedarkpro.nvim',
     })
+    -- improve bufferline.nvim, separate buffers to tabpages
+    use { 'tiagovla/scope.nvim', config = function() require("scope").setup() end }
     use({
       'windwp/windline.nvim',
       config = require('plugins.windline').init,
