@@ -130,8 +130,10 @@ return require('packer').startup({
       'aserowy/tmux.nvim',
       config = function()
         require('tmux').setup({
-          copy_sync = {
+          copy_sync = { -- sync vim register with tmux clipboard and OS clipboard
             enable = true,
+            redirect_to_clipboard = true,
+            sync_clipboard = false, -- sync system clipboard with tmux is not working on Mac OS
           },
           navigation = {
             enable_default_keybindings = true,
