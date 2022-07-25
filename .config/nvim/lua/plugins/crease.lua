@@ -25,7 +25,7 @@ end
 function M.init()
   vim.g.crease_foldtext = {
     default = '%{v:lua.CreaseIndent()}%{v:lua.CreaseFoldContent()} ···  %=  %{v:lua.CreaseLineInfo()}%f%f%f%f',
-    marker = '%{v:lua.CreaseHashtagIndent()} %{v:lua.CreaseFoldContent()}  %=  %{v:lua.CreaseLineInfo()}%f%f%f%f',
+    marker = '%{v:lua.CreaseIndent()}%{v:lua.CreaseHashtagIndent()} %{v:lua.CreaseFoldContent()}  %=  %{v:lua.CreaseLineInfo()}%f%f%f%f',
   }
 end
 return M
