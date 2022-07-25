@@ -49,10 +49,6 @@ function mk --description="Create file or directory"
 end
 
 # {{{1 alias
-# tmux aliases
-alias t=tmux
-alias tn='tmux new'
-alias tsn='tmux display-message'
 # systemd
 alias s=systemctl
 
