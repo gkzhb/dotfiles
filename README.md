@@ -33,22 +33,39 @@ Finally, run two bash scripts: `script/dotfiles/install.sh` and `script/dotfiles
 
 Dependencies required by Neovim plugins:
 
-* [gokcehan/lf: Terminal file manager](https://github.com/gokcehan/lf)
-  * [andreafrancia/trash-cli: Command line interface to the freedesktop.org trashcan.](https://github.com/andreafrancia/trash-cli)
 * [sharkdp/fd: A simple, fast and user-friendly alternative to 'find'](https://github.com/sharkdp/fd)
 * [BurntSushi/ripgrep: ripgrep recursively searches directories for a regex pattern while respecting your gitignore](https://github.com/BurntSushi/ripgrep)
 * [Git](https://github.com/git/git) to install [packer.nvim](https://github.com/wbthomason/packer.nvim)
 * [nodejs/node: Node.js JavaScript runtime](https://github.com/nodejs/node) for coc.nvim
 
+Suggested:
+
+* [skywind3000/z.lua: A new cd command that helps you navigate faster by learning your habits.](https://github.com/skywind3000/z.lua)
+  * Requires Lua
+* [andreafrancia/trash-cli: Command line interface to the freedesktop.org trashcan.](https://github.com/andreafrancia/trash-cli): used in lf
+* [junegunn/fzf: A command-line fuzzy finder](https://github.com/junegunn/fzf):
+very useful cli tool to select item from a list
+* **[gokcehan/lf: Terminal file manager](https://github.com/gokcehan/lf)**(highly
+recommended): used in shell and also in Neovim
+  * PS: [my `lfrc` config](./.config/lf/lfrc) is based on fish shell.
+  * My lf config integrates with z.lua
+    * `a` key to jump with z.lua and fzf
+    * all navigations to directories will be recorded in z.lua's cd database so
+    you can forget `cd` command and use `lc`(alias for `lfcd`) to navigate
+    between directories
+
 ## Kitty
 
-[Kitty](https://github.com/kovidgoyal/kitty) is a terminal. The config file is `.config/kitty/kitty.yml`.
+[Kitty](https://github.com/kovidgoyal/kitty) is a terminal. Use it on Mac OS and
+Linux.  
+[Config file](./.config/kitty/kitty.yml).
 
 I use the onedark color theme as the color palette of my terminal.
 
 ## Alacritty
 
-Alacritty is another terminal, simple and fast. Config file: `.config/alacritty/alacritty.yml`.
+Alacritty is another terminal, simple and fast. I use it on Windows.  
+[Config file](./.config/alacritty/alacritty.yml).
 
 ## tmux
 
@@ -57,9 +74,9 @@ as plugin manager.
 
 ## Neovim
 
-See `.config/nvim/init.lua`. Use [packer.nvim](https://github.com/wbthomason/packer.nvim)
+See [init.lua](./.config/nvim/init.lua). Use [packer.nvim](https://github.com/wbthomason/packer.nvim)
 as plugin manager.
 
-Use [onedark.nvim](https://github.com/navarasu/onedark.nvim) color theme and
+Use [OneDarkPro.nvim](https://github.com/olimorris/onedarkpro.nvim) color theme and
 [coc.nvim](https://github.com/neoclide/coc.nvim) as the autocomplete tool which
 is also LSP client. Also I add plenty of coc extensions in the config file.
