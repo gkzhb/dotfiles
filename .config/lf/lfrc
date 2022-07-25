@@ -162,10 +162,10 @@ cmd zj ${{
   clear
   read -p "printf 'z.lua jumps to: '" location
   set -l target_path ""
-  if test -n $location
+  if test -n "$location"
     set target_path (~/scripts/lf/z-echo.fish $location)
   end
-  if string length -q $target_path
+  if test -n "$target_path"
     lf -remote "send $id cd \"$target_path\""
   else
     printf "Can't find related path from z.lua.\n"
