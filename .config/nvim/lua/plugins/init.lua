@@ -188,7 +188,7 @@ return require('packer').startup({
 
     -- {{{2 git related
     use({
-      'tpope/vim-fugitive', -- vim 中使用 git 的增强插件
+      'tpope/vim-fugitive', -- git enhancement in vim
       cmd = {
         'G',
         'Git',

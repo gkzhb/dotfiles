@@ -54,7 +54,7 @@ recommended): used in shell and also in Neovim
     you can forget `cd` command and use `lc`(alias for `lfcd`) to navigate
     between directories
 
-## Kitty
+### Kitty
 
 [Kitty](https://github.com/kovidgoyal/kitty) is a terminal. Use it on Mac OS and
 Linux.  
@@ -62,17 +62,17 @@ Linux.
 
 I use the onedark color theme as the color palette of my terminal.
 
-## Alacritty
+### Alacritty
 
 Alacritty is another terminal, simple and fast. I use it on Windows.  
 [Config file](./.config/alacritty/alacritty.yml).
 
-## tmux
+### tmux
 
 See `.tmux.conf` and color theme file `.tmux/onedark.conf`. Use [tpm](https://github.com/tmux-plugins/tpm)
 as plugin manager.
 
-## Neovim
+### Neovim
 
 See [init.lua](./.config/nvim/init.lua). Use [packer.nvim](https://github.com/wbthomason/packer.nvim)
 as plugin manager.
@@ -80,3 +80,9 @@ as plugin manager.
 Use [OneDarkPro.nvim](https://github.com/olimorris/onedarkpro.nvim) color theme and
 [coc.nvim](https://github.com/neoclide/coc.nvim) as the autocomplete tool which
 is also LSP client. Also I add plenty of coc extensions in the config file.
+
+## More about this dotfiles repository
+
+* [How to store dotfiles | Atlassian Git Tutorial](https://www.atlassian.com/git/tutorials/dotfiles)
+* [使用裸 Git 仓库备份 \*nix 系统用户配置文件 - ZHB's Blog](https://blog.gkzhb.top/post/2021-3-dotfiles/)
+
