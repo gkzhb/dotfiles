@@ -357,7 +357,7 @@ function _G.CocSTab()
 end
 
 function _G.CocEnterConfirm()
-  if vim.fn.pumvisible() ~= 0 then
+  if vim.fn['coc#pum#visible']() ~= 0 then
     return vim.fn['coc#_select_confirm']()
   end
   return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
