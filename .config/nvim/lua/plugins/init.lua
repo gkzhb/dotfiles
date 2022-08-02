@@ -88,7 +88,12 @@ return require('packer').startup({
       after = 'onedarkpro.nvim',
     })
     -- improve bufferline.nvim, separate buffers to tabpages
-    use { 'tiagovla/scope.nvim', config = function() require("scope").setup() end }
+    use({
+      'tiagovla/scope.nvim',
+      config = function()
+        require('scope').setup()
+      end,
+    })
     use({
       'windwp/windline.nvim',
       config = require('plugins.windline').init,
@@ -231,7 +236,7 @@ return require('packer').startup({
     -- do not support matchparen highlight paried
     -- use({ 'theHamsta/nvim-treesitter-pairs' })
     -- incompatible with the lua treesitter parser
-    use 'andymass/vim-matchup'  -- support tree-sitter
+    use({ 'andymass/vim-matchup', config = require('plugins.matchup').init }) -- support tree-sitter
     -- use { -- get errors in this plugin
     --   'romgrk/nvim-treesitter-context',
     --   config = function() require('treesitter-context').setup({}) end

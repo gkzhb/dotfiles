@@ -100,8 +100,7 @@ function M.init()
     --   },
     -- },
     matchup = { -- vim-matchup
-      enable = false,
-      disable = { 'lua' } -- use non-default treesitter parser for lua
+      enable = true,
     },
     refactor = {
       highlight_definitions = { enable = false },
