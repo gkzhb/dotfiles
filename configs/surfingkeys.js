@@ -12,8 +12,61 @@ settings.useNeovim = false;
 // an example to replace `T` with `gt`, click `Default mappings` to see how `T` works.
 // map('gt', 'T');
 
+const interWikis = `arch https://wiki.archlinux.org/index.php/
+aur https://aur.archlinux.org/packages/
+play https://play.google.com/store/apps/details?id=
+chrome https://chrome.google.com/webstore/detail/
+manjaro https://wiki.manjaro.org/index.php?title=
+wpzh https://zh.wikipedia.org/zh/
+age https://www.agemys.cc/detail/
+bimi https://www.bimiacg4.net/bangumi/bi/
+so https://stackoverflow.com/questions/
+gh https://github.com/`;
+
+const interWikiUrlPrefix = interWikis
+  .split("\n")
+  .map((item) => item.split(" "));
+const ageTitleRegex1 = /《(.*)》/;
+const ageTitleRegex2 = /\s*BDRIP.*$/;
+const customizationMap = {
+  age: (url, title) => {
+    let result = ageTitleRegex1.exec(title);
+    if (result && result[1]) {
+      return { url, title: result[1] };
+    }
+    result = ageTitleRegex2.exec(title);
+    if (result) {
+      return { url, title: title.slice(0, result.index) };
+    }
+    return { url, title };
+  },
+};
+/** match ' - [website name]'(may include Chinese characters) title suffix */
+const websiteSuffixRegex = /(\s*-\s*[\w\u4e00-\u9fa5\s]+)$/;
 const linkRefMap = {
-  d: (url, title) => `[[${url}|${title}]]`, // dokuwiki link
+  d: (url, title) => {
+    const matchedPrefix = interWikiUrlPrefix.find(
+      (item) => url.indexOf(item[1]) === 0
+    );
+    if (matchedPrefix) {
+      const remainUrl = url.slice(
+        matchedPrefix[1].length
+      );
+      if (matchedPrefix[0] in customizationMap) {
+        const result = customizationMap[matchedPrefix[0]](
+          remainUrl,
+          title
+        );
+        return `[[${result.url}|${result.title}]]`;
+      }
+      const suffixResult = websiteSuffixRegex.exec(title);
+      if (suffixResult) {
+        return `[[${matchedPrefix[0]}>${remainUrl}|${title.slice(0, suffixResult.index)}]]`
+      }
+      return `[[${matchedPrefix[0]}>${remainUrl}|${title}]]`;
+    }
+    return `[[${url}|${title}]]`;
+  }, // dokuwiki link
   m: (url, title) => `[${title}](${url})`, // markdown link
   p: (url, title) => {
     // copy URL path
@@ -26,7 +79,7 @@ mapkey("yr", "copy link as ref", (key) => {
   let url = window.location.href;
   const title = document.title;
   if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
-    url = window.location.search.substr(3);
+    url = window.location.search.slice(3);
   }
   if (key in linkRefMap) {
     Clipboard.write(linkRefMap[key](url, title));

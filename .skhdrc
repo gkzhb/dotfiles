@@ -79,6 +79,7 @@
 # {{{1 modes declare
 :: default : set -Ux SKHD_MODE default; sn 'skhd: default mode'; open -gj 'swiftbar://refreshplugin?name=yabai'
 :: resize : set -Ux SKHD_MODE resize; sn 'skhd: resize mode'; open -gj 'swiftbar://refreshplugin?name=yabai'
+:: openapp : set -Ux SKHD_MODE openapp; sn 'skhd: open-app mode'; open -gj 'swiftbar://refreshplugin?name=yabai'
 
 # {{{1 default mode
 # {{{2 focus related
@@ -205,6 +206,11 @@ ctrl + alt - r : $HOME/scripts/yabai/rename-space.fish
 # {{{3 Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
 alt - t : $HOME/scripts/yabai/open-kitty.sh
+# {{{1 open-app mode
+alt - w ; openapp
+openapp < e: emacsclient -n -c -a ""
+openapp < alt - q ; default
+openapp < escape ; default
 # {{{1 resize mode
 # activate 'resize' mode
 alt - r ; resize

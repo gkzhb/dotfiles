@@ -7,15 +7,13 @@ cd "$dir"
 if hash tmux 2>/dev/null;
 then
   # install tpm
-	mkdir -p ~/.tmux/plugins
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-	tmux source ~/.tmux.conf
+  mkdir -p ~/.tmux/plugins
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  tmux source ~/.tmux.conf
 fi
 
-# neovim exists?
-if hash nvim 2>/dev/null;
+if hash fish 2>/dev/null;
 then
-  # install vim-plug
-	curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  # install fisher and its plugins
+  curl -sL https://git.io/fisher | source && fisher install "$(cat $HOME/.config/fish/fish_plugins)"
 fi

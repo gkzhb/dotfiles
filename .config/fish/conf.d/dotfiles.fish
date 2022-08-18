@@ -1,3 +1,3 @@
 alias cfg='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dv='env GIT_DIR=$HOME/.dotfiles nvim'
-set -gx PATH $HOME/scripts $PATH
+fish_add_path $HOME/scripts

@@ -50,7 +50,10 @@ end
 
 # {{{1 alias
 # systemd
-alias s=systemctl
+if test -n (command -v systemctl)
+  alias s=systemctl
+end
+alias g=git
 
 # {{{1 nvm
 # set node download mirror
