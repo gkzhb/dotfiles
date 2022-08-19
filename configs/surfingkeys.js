@@ -43,6 +43,8 @@ const customizationMap = {
 };
 /** match ' - [website name]'(may include Chinese characters) title suffix */
 const websiteSuffixRegex = /(\s*-\s*[\w\u4e00-\u9fa5\s]+)$/;
+/** remove invisible chars in lark document title */
+const invisibleChars = /[\u2000-\u206f\ufeff]/g;
 const linkRefMap = {
   d: (url, title) => {
     const matchedPrefix = interWikiUrlPrefix.find(
@@ -77,7 +79,7 @@ const linkRefMap = {
 };
 mapkey("yr", "copy link as ref", (key) => {
   let url = window.location.href;
-  const title = document.title;
+  const title = document.title.replaceAll(invisibleChars, '');
   if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
     url = window.location.search.slice(3);
   }
