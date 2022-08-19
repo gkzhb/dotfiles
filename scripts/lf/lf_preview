@@ -10,7 +10,7 @@ set y $argv[5]
 function preview_with_bat
   set -l file $argv[1]
   set -l h $argv[2]
-  if test -n (command -v bat)
+  if type -q bat
     bat --color=always -p -r :$h $file
   else
     cat $file
@@ -18,7 +18,7 @@ function preview_with_bat
 end
 
 set file_type (file -Lb --mime-type $file)
-if string match -rq ^image $file_type; and test -n (command -v viu)
+if string match -rq ^image $file_type; and type -q viu
   viu -s -b -w $w $file
   set -l last $status
   if test $last -eq 0
@@ -37,7 +37,7 @@ end
 
 switch $file_type
   case application/zip
-    if test -n (command -v unzip)
+    if type -q unzip
       echo_file_type
       unzip -Z -1 $file # preview file list
       exit 1

@@ -40,7 +40,7 @@ cmd open ${{
   # whether this file type is binary
   if string match -qr -- binary $binary_info; and test $empty_file = 0
     # binary file and not empty, open with GUI softwares
-    if test -n (command -v open)
+    if type -q open
       # use 'open' command for mac OS
       open $fx
     else
@@ -97,7 +97,7 @@ cmd delete ${{
   read -p "printf \"Delete above files? [y/n] \"" ans
   if test $ans = "y"
     set -l fx (string split \n $fx)
-    if test -n (command -v trash-put)
+    if type -q trash-put
       trash-put $fx
     else
       rm -rf $fx
