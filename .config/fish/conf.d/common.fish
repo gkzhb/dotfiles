@@ -50,8 +50,8 @@ end
 
 # {{{1 alias
 # systemd
-if test -n (command -v systemctl)
-  alias s=systemctl
+if  type -q systemctl
+  alias s="sudo systemctl"
 end
 alias g=git
 
