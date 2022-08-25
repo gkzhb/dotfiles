@@ -4,7 +4,7 @@ dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 cd "$dir"
 
 # tmux exists?
-if hash tmux 2>/dev/null;
+if hash tmux 3>/dev/null;
 then
   # install tpm
   mkdir -p ~/.tmux/plugins
@@ -16,4 +16,10 @@ if hash fish 2>/dev/null;
 then
   # install fisher and its plugins
   curl -sL https://git.io/fisher | source && fisher install "$(cat $HOME/.config/fish/fish_plugins)"
+fi
+
+if hash emacs 2>/dev/null;
+then
+  # clone doom emacs
+  git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
 fi
