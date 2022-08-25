@@ -12,7 +12,17 @@ settings.useNeovim = false;
 // an example to replace `T` with `gt`, click `Default mappings` to see how `T` works.
 // map('gt', 'T');
 
-const interWikis = `arch https://wiki.archlinux.org/index.php/
+const interWikis = `wp https://en.wikipedia.org/wiki/
+wpmeta https://meta.wikipedia.org/wiki/
+doku https://www.dokuwiki.org/
+rfc https://tools.ietf.org/html/rfc
+man http://man.cx/
+amazon https://www.amazon.com/dp/
+paypal https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=
+phpfn https://secure.php.net/
+google.de https://www.google.de/search?q=
+go https://www.google.com/search?q=
+arch https://wiki.archlinux.org/index.php/
 aur https://aur.archlinux.org/packages/
 play https://play.google.com/store/apps/details?id=
 chrome https://chrome.google.com/webstore/detail/
@@ -75,6 +85,7 @@ const linkRefMap = {
     const urlObj = new URL(url);
     return urlObj.pathname.slice(1);
   },
+  o: (url, title) => `[[${url}][${title}]]`, // orgmode
   default: (url, title) => `${title} ${url}`, // default format
 };
 mapkey("yr", "copy link as ref", (key) => {
