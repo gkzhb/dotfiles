@@ -36,17 +36,14 @@ gh https://github.com/`;
 const interWikiUrlPrefix = interWikis
   .split("\n")
   .map((item) => item.split(" "));
-const ageTitleRegex1 = /《(.*)》/;
-const ageTitleRegex2 = /\s*BDRIP.*$/;
+const ageTitleRegexList = [/^《(.*)》/, /^(.*)\s*BDRIP.*$/, /^(.*\S+)\s*720P\/1080P.*$/];
 const customizationMap = {
   age: (url, title) => {
-    let result = ageTitleRegex1.exec(title);
-    if (result && result[1]) {
-      return { url, title: result[1] };
-    }
-    result = ageTitleRegex2.exec(title);
-    if (result) {
-      return { url, title: title.slice(0, result.index) };
+    for (const regex of ageTitleRegexList) {
+      const result = regex.exec(title);
+      if (result && result[1]) {
+        return { url, title: result[1] };
+      }
     }
     return { url, title };
   },
@@ -69,7 +66,7 @@ const linkRefMap = {
           remainUrl,
           title
         );
-        return `[[${result.url}|${result.title}]]`;
+        return `[[${matchedPrefix[0]}>${result.url}|${result.title}]]`;
       }
       const suffixResult = websiteSuffixRegex.exec(title);
       if (suffixResult) {
