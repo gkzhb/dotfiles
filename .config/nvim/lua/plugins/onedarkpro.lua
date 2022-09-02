@@ -64,9 +64,9 @@ function M.init()
       terminal_colors = false,
       transparency = true,
       cursorline = true,
-      window_unfocussed_color = true,
+      window_unfocused_color = true,
     },
-    hlgroups = {
+    highlights = {
       Cursor = { fg = '${bg0}', bg = '${white}' },
       TSVariable = { fg = '${white}' },
       TSProperty = { fg = '${cyan}' },

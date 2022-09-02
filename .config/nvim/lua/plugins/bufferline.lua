@@ -16,22 +16,27 @@ function M.init()
     },
     highlights = {
       tab_selected = {
-        guifg = colors.white,
-        guibg = colors.bg0,
-        gui = 'bold',
+        fg = colors.white,
+        bg = colors.bg0,
+        bold = true,
       },
       buffer_selected = {
-        guifg = colors.white,
-        guibg = colors.bg0,
-        gui = 'bold,italic',
+        fg = colors.white,
+        bg = colors.bg0,
+        bold = true,
+        italic = true,
+      },
+      numbers_selected = {
+        fg = colors.white,
+        bg = colors.bg0,
       },
       separator_selected = {
-        guifg = colors.white,
-        guibg = colors.bg0,
+        fg = colors.white,
+        bg = colors.bg0,
       },
       indicator_selected = {
-        guifg = colors.white,
-        guibg = colors.bg0,
+        fg = colors.white,
+        bg = colors.bg0,
       },
     },
   })
