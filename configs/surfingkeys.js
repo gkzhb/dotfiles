@@ -97,6 +97,15 @@ mapkey("yr", "copy link as ref", (key) => {
     Clipboard.write(linkRefMap.default(url, title));
   }
 });
+
+/** url regex to disable surfingkeys */
+const disabledRegexUrls = [
+  // BrainTool extension web page
+  /braintool\.org\/versions\/.*\/app/,
+];
+// disable surfingkeys on regex matched url
+settings.blocklistPattern = new RegExp(disabledRegexUrls.map(item => item.source).join('|'));
+
 mapkey(
   "q",
   "close extension imcompatible alert",
