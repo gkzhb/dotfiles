@@ -37,6 +37,7 @@ function M.init()
           ['q'] = require('telescope.actions').close,
         },
       },
+      dynamic_preview_title = true,
     },
     extensions = {
       fzf = {

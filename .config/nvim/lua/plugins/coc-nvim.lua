@@ -16,6 +16,7 @@ function M.init()
     'coc-git',
     'coc-go',
     'coc-highlight',
+    'coc-jedi',
     'coc-json',
     'coc-lists',
     'coc-markdownlint',

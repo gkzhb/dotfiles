@@ -68,6 +68,7 @@ vim.opt.splitright = true
 vim.opt.updatetime = 300 -- CursorHold delay
 vim.opt.shortmess:append({ c = true })
 vim.g.loaded_matchparen = 1 -- do not load vim built-in matchparen plugin
+vim.opt.mouse = ''
 -- }}}
 
 -- {{{1 check and install packer
