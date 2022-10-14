@@ -348,7 +348,7 @@ return require('packer').startup({
     })
     use({ -- enhance terminal UX
       'akinsho/toggleterm.nvim',
-      tag = 'v1.*',
+      tag = '*',
       config = require('plugins.toggleterm').init,
     })
     -- https://github.com/neovim/neovim/issues/12587
