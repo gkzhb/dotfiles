@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env fish
 
 # the scripting-addition must be loaded manually if
 # you are running yabai on macOS Big Sur. Uncomment
@@ -76,10 +76,10 @@ yabai -m signal --add event=display_moved action="open -gj 'swiftbar://refreshpl
 $HOME/scripts/yabai/restore-space-labels.fish
 
 # {{{1 load local config
-LOCAL_CONFIG="$HOME/.yabairc.local"
-if test -f "$LOCAL_CONFIG"; then
-    source "$LOCAL_CONFIG"
-fi
+set -l LOCAL_CONFIG $HOME/.yabairc.local
+if test -f $LOCAL_CONFIG
+    source $LOCAL_CONFIG
+end
 
 echo "yabai configuration loaded.."
 # vim: set fdm=marker:
