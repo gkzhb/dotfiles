@@ -42,6 +42,7 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 
+(setq centaur-tabs-buffer-show-groups t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -78,3 +79,5 @@
   :custom
   (default-input-method "rime")
   (rime-show-candidate 'posframe))
+(when (eq system-type 'darwin)
+  (setq rime-librime-root "~/.emacs.d/librime/dist"))
