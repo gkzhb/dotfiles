@@ -28,7 +28,7 @@ play https://play.google.com/store/apps/details?id=
 chrome https://chrome.google.com/webstore/detail/
 manjaro https://wiki.manjaro.org/index.php?title=
 wpzh https://zh.wikipedia.org/zh/
-age https://www.agemys.cc/detail/
+age https://www.agemys.net/detail/
 bimi https://www.bimiacg4.net/bangumi/bi/
 so https://stackoverflow.com/questions/
 gh https://github.com/`;
@@ -152,6 +152,13 @@ addSearchAlias(
     return rsp.result.tag.map((el) => el.value);
   }
 );
+// search with my dokuwiki
+addSearchAlias(
+  "wd",
+  "dokuwiki",
+  "https://wiki.gkzhb.top/?do=search&id=home&q=",
+  "swd",
+);
 // search with zhihu
 addSearchAlias(
   "zh",
@@ -185,6 +192,9 @@ mapkey("oss", "#8Open Search with alias stackoverflow", () => {
 });
 mapkey("oswp", "#8Open Search with alias wikipedia", () => {
   Front.openOmnibar({ type: "SearchEngine", extra: "e" });
+});
+mapkey("oswd", "#8Open Search with alias dokuwiki", () => {
+  Front.openOmnibar({ type: "SearchEngine", extra: "wd" });
 });
 mapkey("osy", "#8Open Search with alias youtube", () => {
   Front.openOmnibar({ type: "SearchEngine", extra: "y" });
