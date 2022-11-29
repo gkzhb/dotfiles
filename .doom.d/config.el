@@ -75,9 +75,17 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+;; disable mouse click to move cursor position, from https://emacs.stackexchange.com/questions/48563/prevent-mouse-click-from-changing-cursor-position-while-in-insert-mode
+(defun mouse-set-point (event))
+
+;; log TODO state change into LOGBOOK drawer
+(setq org-log-into_drawer "LOGBOOK")
+
 (use-package! rime
   :custom
   (default-input-method "rime")
-  (rime-show-candidate 'posframe))
+  (rime-show-candidate 'posframe)
+  (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
 (when (eq system-type 'darwin)
   (setq rime-librime-root "~/.emacs.d/librime/dist"))
