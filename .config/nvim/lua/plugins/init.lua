@@ -26,6 +26,7 @@ return require('packer').startup({
       'olimorris/onedarkpro.nvim',
       config = require('plugins.onedarkpro').init,
     })
+  use({ 'Mofiqul/vscode.nvim', config = require('plugins.vscode').init })
     -- {{{2 display enhancement
     if not _G.getLocalConfig().performantMode then
       use({

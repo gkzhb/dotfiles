@@ -75,7 +75,7 @@ function M.init()
       Search = { bg = '${gray}', style = 'NONE' },
     },
   })
-  onedarkpro.load()
+  -- onedarkpro.load()
 end
 
 return M
