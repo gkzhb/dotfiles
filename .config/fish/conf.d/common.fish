@@ -11,8 +11,8 @@ fish_vi_key_bindings
 # {{{1 functions
 # set v2ray proxy
 function vproxy
-  if test -e VPROXY_HOST
-    set VPROXY_HOST localhost
+  if test -z "$VPROXY_HOST"
+    set -gx VPROXY_HOST localhost
   end
   set -gx all_proxy socks5://$VPROXY_HOST:10880
   set -gx https_proxy http://$VPROXY_HOST:10881
