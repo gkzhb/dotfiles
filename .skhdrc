@@ -203,6 +203,8 @@ alt - m : yabai -m window --toggle sticky;\
 # {{{2 shell actions
 # rename space
 ctrl + alt - r : $HOME/scripts/yabai-spaces/rename-space.py
+# find window and focus selected
+alt - a : $HOME/scripts/yabai/find-window.fish
 # {{{3 Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
 alt - t : $HOME/scripts/yabai/open-kitty.sh
