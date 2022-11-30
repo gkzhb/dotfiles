@@ -77,9 +77,9 @@
 # }}}
 
 # {{{1 modes declare
-:: default : set -Ux SKHD_MODE default; sn 'skhd: default mode'; refresh_swiftbar yabai
-:: resize : set -Ux SKHD_MODE resize; sn 'skhd: resize mode'; refresh_swiftbar yabai
-:: openapp : set -Ux SKHD_MODE openapp; sn 'skhd: open-app mode'; refresh_swiftbar yabai
+:: default : skhd-mode.py default; sn 'skhd: default mode'; refresh_swiftbar yabai
+:: resize : skhd-mode.py resize; sn 'skhd: resize mode'; refresh_swiftbar yabai
+:: openapp : skhd-mode.py openapp; sn 'skhd: open-app mode'; refresh_swiftbar yabai
 
 # {{{1 default mode
 # {{{2 focus related
@@ -202,7 +202,7 @@ alt - m : yabai -m window --toggle sticky;\
           yabai -m window --toggle pip
 # {{{2 shell actions
 # rename space
-ctrl + alt - r : $HOME/scripts/yabai-spaces/rename-space.fish
+ctrl + alt - r : $HOME/scripts/yabai-spaces/rename-space.py
 # {{{3 Start App
 shift + alt - r : brew services restart yabai && brew services restart skhd
 alt - t : $HOME/scripts/yabai/open-kitty.sh

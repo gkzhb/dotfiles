@@ -81,8 +81,15 @@ Use [OneDarkPro.nvim](https://github.com/olimorris/onedarkpro.nvim) color theme 
 [coc.nvim](https://github.com/neoclide/coc.nvim) as the autocomplete tool which
 is also LSP client. Also I add plenty of coc extensions in the config file.
 
+### yabai & skhd (Mac OS only)
+
+[koekeishiya/yabai: A tiling window manager for macOS based on binary space partitioning](https://github.com/koekeishiya/yabai): [yabairc](./yabairc)
+
+[koekeishiya/skhd: Simple hotkey daemon for macOS](https://github.com/koekeishiya/skhd): [skhdrc](./skhdrc)
+
+I made a swiftbar plugin [gkzhb/yabai-spaces](https://github.com/gkzhb/yabai-spaces) to display yabai spaces and manage space labels which I put at `$HOME/scripts/yabai-spaces`.
+
 ## More about this dotfiles repository
 
 * [How to store dotfiles | Atlassian Git Tutorial](https://www.atlassian.com/git/tutorials/dotfiles)
 * [使用裸 Git 仓库备份 \*nix 系统用户配置文件 - ZHB's Blog](https://blog.gkzhb.top/post/2021-3-dotfiles/)
-
