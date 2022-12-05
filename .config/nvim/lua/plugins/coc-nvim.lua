@@ -20,7 +20,7 @@ function M.init()
     'coc-json',
     'coc-lists',
     'coc-markdownlint',
-    'coc-pairs',
+    -- 'coc-pairs',
     'coc-prettier',
     'coc-protobuf',
     'coc-rust-analyzer',

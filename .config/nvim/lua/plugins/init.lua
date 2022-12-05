@@ -243,6 +243,12 @@ return require('packer').startup({
     --   config = function() require('treesitter-context').setup({}) end
     -- }
 
+    -- auto pair while coding
+    use {
+      "windwp/nvim-autopairs",
+        config = function() require("nvim-autopairs").setup {} end
+    }
+
     -- replace default lua treesitter
     use({
       'MunifTanjim/nvim-treesitter-lua',
