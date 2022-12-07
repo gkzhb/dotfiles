@@ -89,3 +89,6 @@
   (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
 (when (eq system-type 'darwin)
   (setq rime-librime-root "~/.emacs.d/librime/dist"))
+
+; set unicode cjk font
+(setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
