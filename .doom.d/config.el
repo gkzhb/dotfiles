@@ -42,6 +42,21 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 
+;; setup org roam
+(use-package! org-roam
+  :custom
+  (org-roam-directory (file-truename "~/roam"))
+  (org-roam-index-file (file-truename "~/roam/index.org"))
+  (org-roam-dailies-directory "daily/")
+  (org-roam-dailies-capture-templates
+    '(("d" "default" entry
+      "* %?"
+      :target (file+head "%<%Y-%m-%d>.org"
+        "#+title: %<%Y-%m-%d>\n"))))
+  :config
+  (org-roam-setup)
+  (org-roam-db-autosync-mode))
+
 (setq centaur-tabs-buffer-show-groups t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -90,5 +105,5 @@
 (when (eq system-type 'darwin)
   (setq rime-librime-root "~/.emacs.d/librime/dist"))
 
-; set unicode cjk font
+;; set cjk font for unicode to fix ununified Chinese chars
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
