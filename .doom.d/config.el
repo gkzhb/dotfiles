@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+;; (setq user-full-name "John Doe"
+;;       user-mail-address "john@doe.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -36,7 +36,11 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'visual)
+(setq display-line-numbers-type 'relative)
+
+;; jump to line
+(map! :desc "Goto some line"
+  "g b" #'evil-avy-goto-line)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -102,8 +106,11 @@
   (default-input-method "rime")
   (rime-show-candidate 'posframe)
   (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
+
+(setq delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
-  (setq rime-librime-root "~/.emacs.d/librime/dist"))
+  (setq rime-librime-root "~/.emacs.d/librime/dist")
+  (setq trash-directory "~/.Trash"))
 
 ;; set cjk font for unicode to fix ununified Chinese chars
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
