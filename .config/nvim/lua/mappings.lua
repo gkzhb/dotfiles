@@ -65,6 +65,11 @@ function M.setMappings()
 
   -- quick actions
   wk.register({
+    b = {
+      name = 'buffer',
+      b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
+      s = { '<cmd>w<CR>', 'save buffer' },
+    },
     c = {
       name = 'config',
       i = { '<cmd>set list!<CR>', 'toggle showing space chars' },

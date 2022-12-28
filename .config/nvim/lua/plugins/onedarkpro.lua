@@ -64,7 +64,7 @@ function M.init()
       terminal_colors = false,
       transparency = true,
       cursorline = true,
-      window_unfocused_color = true,
+      highlight_inactive_windows = true,
     },
     highlights = {
       Cursor = { fg = '${bg0}', bg = '${white}' },
