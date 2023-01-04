@@ -1,7 +1,7 @@
 local M = {}
 
 function M.init()
-  local colors = require('onedarkpro').get_colors('onedark')
+  local colors = require('onedarkpro.helpers').get_colors('onedark')
 
   require('bufferline').setup({
     options = {

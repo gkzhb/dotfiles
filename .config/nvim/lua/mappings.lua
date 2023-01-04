@@ -47,6 +47,10 @@ end
 function M.setMappings()
   local wk = require('which-key')
 
+	-- remap <C-a> incremeting number
+	wk.register({
+		["<C-s>"] = { "<C-a>", "increment number" }, }, { mode = "n" })
+  vim.cmd([[vmap g<C-s> g<C-a>]])
   -- terminal mode mappings
   wk.register({
     ['<C-q>'] = { '<cmd>stopinsert<CR>', 'quit terminal mode' },
