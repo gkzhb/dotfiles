@@ -39,8 +39,8 @@
 (setq display-line-numbers-type 'relative)
 
 ;; jump to line
-(map! :desc "Goto some line"
-  "g b" #'evil-avy-goto-line)
+(map! :after evil-easymotion :map evilem-map :desc "Goto some line"
+  "b" #'evil-avy-goto-line)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -114,3 +114,6 @@
 
 ;; set cjk font for unicode to fix ununified Chinese chars
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
+
+(use-package! lsp-bridge)
+(global-lsp-bridge-mode)
