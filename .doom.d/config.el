@@ -109,7 +109,8 @@
 
 (setq delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
-  (setq rime-librime-root "~/.emacs.d/librime/dist")
+  ;; https://github.com/DogLooksGood/emacs-rime/issues/58 customize for doom ~/.emacs.d/librime/dist
+  (setq rime-librime-root (expand-file-name "librime/dist" doom-emacs-dir))
   (setq trash-directory "~/.Trash"))
 
 ;; set cjk font for unicode to fix ununified Chinese chars
