@@ -183,7 +183,7 @@ basic.section_z = {
     if width > width_breakpoint then
       return {
         { seps.left, state.mode[2] .. 'Sep' },
-        { '', state.mode[2] },
+        { ' ', state.mode[2] },
         { b_components.progress_lua },
         { ' ' },
         { b_components.line_col_lua },
