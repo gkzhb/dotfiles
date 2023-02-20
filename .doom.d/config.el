@@ -36,7 +36,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+;; (setq display-line-numbers-type 'relative)
 
 ;; jump to line
 (map! :after evil-easymotion :map evilem-map :desc "Goto some line"
@@ -45,6 +45,7 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
+(setq org-agenda-files (list org-directory "~/org/byte/"))
 
 ;; setup org roam
 (use-package! org-roam
@@ -59,7 +60,7 @@
         "#+title: %<%Y-%m-%d>\n"))))
   :config
   (org-roam-setup)
-  (org-roam-db-autosync-mode))
+  (org-roam-db-autosync-enable))
 
 (setq centaur-tabs-buffer-show-groups t)
 
@@ -115,6 +116,16 @@
 
 ;; set cjk font for unicode to fix ununified Chinese chars
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
+
+
+(use-package! org-pandoc-import :after org :config
+  (org-pandoc-import-backend dokuwiki))
+
+(defun my-current-buffer-as-dokuwiki-to-org ()
+  (org-pandoc-import-convert nil nil "dokuwiki" (buffer-file-name) nil org-pandoc-import-dokuwiki-args org-pandoc-import-dokuwiki-filters nil nil))
+
+(map! :leader :desc "Convert to OrgMode from DokuWiki" :n "n i d"
+  #'my-current-buffer-as-dokuwiki-to-org)
 
 (use-package! lsp-bridge)
 (global-lsp-bridge-mode)
