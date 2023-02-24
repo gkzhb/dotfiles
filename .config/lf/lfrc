@@ -83,6 +83,16 @@ cmd on-cd &{{
   # env varialbes are found in fish shell(tried out)
   # reference to https://github.com/skywind3000/z.lua/blob/master/ranger_zlua.py
   test -n "$ZLUA_SCRIPT" and $ZLUA_SCRIPT --add $PWD
+
+  # Configure __fish_git_prompt
+  set -g __fish_git_prompt_show_informative_status true
+  # render issue for colorhints
+  # set -g __fish_git_prompt_showcolorhints true
+  # add git branch info to lf prompt
+  set -l git (__fish_git_prompt)
+  set -l fmt "\033[32;1m%u@%h\033[0m:\033[34;1m%w\033[0m\033[33;1m$git\033[0m"
+  # update lf prompt
+  lf -remote "send $id set promptfmt \"$fmt\""
 }}
 # move current file or selected files to trash folder
 # (also see 'man mv' for backup/overwrite options)
