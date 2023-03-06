@@ -86,11 +86,10 @@ cmd on-cd &{{
 
   # Configure __fish_git_prompt
   set -g __fish_git_prompt_show_informative_status true
-  # render issue for colorhints
-  # set -g __fish_git_prompt_showcolorhints true
+  set -g __fish_git_prompt_showcolorhints true
   # add git branch info to lf prompt
   set -l git (__fish_git_prompt)
-  set -l fmt "\033[32;1m%u@%h\033[0m:\033[34;1m%w\033[0m\033[33;1m$git\033[0m"
+  set -l fmt "\033[32;1m%u@%h\033[0m:\033[34;1m%d\033[0m\033[1m%f\033[0m$git\033[0m"
   # update lf prompt
   lf -remote "send $id set promptfmt \"$fmt\""
 }}
