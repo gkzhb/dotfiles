@@ -40,8 +40,13 @@
 ;; Use `:pin' to specify a particular commit to install.
 ;(package! builtin-package :pin "1a2b3c4d5e")
 
+(package! request)
+(package! wallabag
+  :recipe (:host github
+           :repo "chenyanming/wallabag.el"
+           :files ("*.el" "*.alist" "*.css")))
 (package! rime)
-(package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge"))
+(package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
 (package! org-pandoc-import
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"

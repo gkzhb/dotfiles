@@ -60,7 +60,7 @@
         "#+title: %<%Y-%m-%d>\n"))))
   :config
   (org-roam-setup)
-  (org-roam-db-autosync-enable))
+  (org-roam-db-autosync-mode))
 
 (setq centaur-tabs-buffer-show-groups t)
 
@@ -101,6 +101,13 @@
 
 ;; log TODO state change into LOGBOOK drawer
 (setq org-log-into_drawer "LOGBOOK")
+
+; (use-package! wallabag
+;   :defer-incrementally t
+;   :custom
+;   (wallabag-host "https://wallabag")
+;   (wallabag-username "gkzhb")
+;   (wallabag-password ""))
 
 (use-package! rime
   :custom
