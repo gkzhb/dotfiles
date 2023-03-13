@@ -122,7 +122,7 @@ shift + alt - k : yabai -m window --swap north; or yabai -m window --display nor
 shift + alt - l : yabai -m window --swap east; or yabai -m window --display east && yabai -m display --focus east # yabai -m window --warp east
 
 # balance size of windows
-shift + alt - 0 : yabai -m space --balance
+shift + alt - b : yabai -m space --balance
 
 # make floating window fill screen
 # shift + alt - up     : yabai -m window --grid 1:1:0:0:1:1
