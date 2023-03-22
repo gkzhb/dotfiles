@@ -121,6 +121,12 @@
   (setq rime-librime-root (expand-file-name "librime/dist" doom-emacs-dir))
   (setq trash-directory "~/.Trash"))
 
+;; https://emacs.stackexchange.com/questions/47782/is-there-a-way-emacs-can-infer-is-running-on-wsl-windows-subsystem-for-linux
+(when (string-match "-[Mm]icrosoft" operating-system-release)
+  ;; WSL: WSL1 has "-Microsoft", WSL2 has "-microsoft-standard"
+  ;; https://discourse.doomemacs.org/t/keeping-font-size-everywhere/2799
+  (setq doom-font (font-spec :family "Source Code Pro" :size 20.0))
+  )
 ;; set cjk font for unicode to fix ununified Chinese chars
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
 
