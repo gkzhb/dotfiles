@@ -41,6 +41,13 @@ vim.opt.fileencoding = 'utf-8'
 vim.opt.hidden = true
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
+if vim.fn.has('nvim-0.9') then
+  -- linematch: new feature since nvim 0.9
+  vim.opt.diffopt = { algorithm = 'patience', linematch = 300 }
+else
+  vim.opt.diffopt = { algorithm = 'patience' }
+end
+
 -- {{{2 indent
 vim.cmd([[ filetype plugin indent on]])
 vim.opt.tabstop = 2
