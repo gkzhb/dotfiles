@@ -1,5 +1,4 @@
 local windline = require('windline')
-local floatline = require('wlfloatline')
 local helper = require('windline.helpers')
 local sep = helper.separators
 local b_components = require('windline.components.basic')

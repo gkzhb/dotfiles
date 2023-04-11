@@ -249,14 +249,6 @@ return require('packer').startup({
         config = function() require("nvim-autopairs").setup {} end
     }
 
-    -- replace default lua treesitter
-    use({
-      'MunifTanjim/nvim-treesitter-lua',
-      config = function()
-        require('nvim-treesitter-lua').setup()
-      end,
-    })
-
     -- coc.nvim provides rename and highlight current symbol
     use({ 'nvim-treesitter/nvim-treesitter-refactor' })
     -- }}}
