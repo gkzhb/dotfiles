@@ -192,6 +192,21 @@ return require('packer').startup({
       requires = { 'nvim-treesitter' },
     })
 
+    use({ -- convert string between different naming cases
+      'johmsalas/text-case.nvim',
+      config = function()
+        require('textcase').setup({})
+      end,
+    })
+
+  use({ -- enhanced vim word motion (support to distinguish words in camel case string)
+    'chaoren/vim-wordmotion',
+    config = function()
+      -- do not replace default vim word motions, add prefix 'c' instead
+      vim.g.wordmotion_prefix = 'c'
+    end,
+  })
+
     -- {{{2 git related
     use({
       'tpope/vim-fugitive', -- git enhancement in vim
