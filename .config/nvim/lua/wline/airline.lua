@@ -230,9 +230,9 @@ basic.git = {
     if buf_git_status then
       return {
         { ' ', '' },
-        { utils.format({ format = ' %s', value = string.match(buf_git_status, '+(%d+)') }), 'green' },
-        { utils.format({ format = '  %s', value = string.match(buf_git_status, '-(%d+)') }), 'red' },
-        { utils.format({ format = ' 柳%s', value = string.match(buf_git_status, '~(%d+)') }), 'blue' },
+        { utils.format({ format = ' %s', value = string.match(buf_git_status, '+(%d+)') }), 'green' },
+        { utils.format({ format = '  %s', value = string.match(buf_git_status, '-(%d+)') }), 'red' },
+        { utils.format({ format = '  %s', value = string.match(buf_git_status, '~(%d+)') }), 'blue' },
         { ' ', '' },
       }
     end
