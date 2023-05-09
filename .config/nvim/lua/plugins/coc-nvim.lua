@@ -11,6 +11,7 @@ function M.init()
     'coc-clangd',
     'coc-css',
     'coc-cssmodules',
+    'coc-deno',
     'coc-eslint',
     'coc-explorer',
     'coc-git',
