@@ -25,7 +25,7 @@ font:
     # family: "Source Code Pro"
     # style: "Medium Italic"
   normal:
-    family: "Hack Nerd Font"
+    family: "FiraCode Nerd Font"
 
   # Point size of the font
   size: 14.0
