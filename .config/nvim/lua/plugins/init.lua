@@ -203,7 +203,7 @@ return require('packer').startup({
     'chaoren/vim-wordmotion',
     config = function()
       -- do not replace default vim word motions, add prefix 'c' instead
-      vim.g.wordmotion_prefix = 'c'
+      vim.g.wordmotion_prefix = 'X'
     end,
   })
 
