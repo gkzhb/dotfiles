@@ -45,7 +45,7 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-(setq org-agenda-files (list org-directory "~/org/byte/"))
+(setq org-agenda-files (list org-directory "~/org/byte/" "~/roam/"))
 
 ;; setup org roam
 (use-package! org-roam
@@ -61,6 +61,25 @@
   :config
   (org-roam-setup)
   (org-roam-db-autosync-mode))
+
+;; mimic +default/org-notes-search
+(defun +default/org-roam-search (query)
+  "Perform a text search on `org-roam-directory'."
+  (interactive
+   (list (if (doom-region-active-p)
+             (buffer-substring-no-properties
+              (doom-region-beginning)
+              (doom-region-end))
+           "")))
+  (+default/search-project-for-symbol-at-point
+   query org-roam-directory))
+
+;; TODO: remove this
+(defun my-org-roam-search ()
+  (+vertico/project-search nil nil org-roam-directory))
+
+(map! :leader :desc "Search Org Roam notes" :n "s n"
+  #'+default/org-roam-search)
 
 (setq centaur-tabs-buffer-show-groups t)
 
@@ -102,6 +121,38 @@
 ;; log TODO state change into LOGBOOK drawer
 (setq org-log-into_drawer "LOGBOOK")
 
+(defun convert-inter-wikis (inter-wikis)
+  (let (value)
+        (dolist (el (split-string inter-wikis "\n") value)
+                (push (split-string  el " ") value))))
+
+(setq my-org-abbrev-links "wp https://en.wikipedia.org/wiki/
+wpmeta https://meta.wikipedia.org/wiki/
+doku https://www.dokuwiki.org/
+rfc https://tools.ietf.org/html/rfc
+man http://man.cx/
+amazon https://www.amazon.com/dp/
+paypal https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&amp;business=
+phpfn https://secure.php.net/
+google.de https://www.google.de/search?q=
+go https://www.google.com/search?q=
+arch https://wiki.archlinux.org/index.php/
+aur https://aur.archlinux.org/packages/
+play https://play.google.com/store/apps/details?id=
+chrome https://chrome.google.com/webstore/detail/
+manjaro https://wiki.manjaro.org/index.php?title=
+wpzh https://zh.wikipedia.org/zh/
+age https://www.agemys.net/detail/
+bimi https://www.bimiacg4.net/bangumi/bi/
+so https://stackoverflow.com/questions/
+gh https://github.com/")
+
+(let (val)
+  (dolist (el (convert-inter-wikis my-org-abbrev-links) val)
+    (pushnew! org-link-abbrev-alist
+          (cons (nth 0 el) (nth 1 el)))
+    ))
+
 ; (use-package! wallabag
 ;   :defer-incrementally t
 ;   :custom
@@ -131,14 +182,27 @@
 (setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
 
 
-(use-package! org-pandoc-import :after org :config
+(setq org-pandoc-import-dokuwiki-extensions '("dokuwiki" "txt"))
+
+(use-package! org-pandoc-import :after org
+  :custom
+  (org-pandoc-import-global-args '("--wrap=none"))
+  :config
   (org-pandoc-import-backend dokuwiki))
 
+;; TODO: remove this
 (defun my-current-buffer-as-dokuwiki-to-org ()
-  (org-pandoc-import-convert nil nil "dokuwiki" (buffer-file-name) nil org-pandoc-import-dokuwiki-args org-pandoc-import-dokuwiki-filters nil nil))
+  (org-pandoc-import-convert nil nil "dokuwiki" (buffer-file-name) '("txt") org-pandoc-import-dokuwiki-args org-pandoc-import-dokuwiki-filters nil nil))
 
-(map! :leader :desc "Convert to OrgMode from DokuWiki" :n "n i d"
-  #'my-current-buffer-as-dokuwiki-to-org)
+;; @TODO fix bug
+;; (map! :leader :desc "Convert to OrgMode from DokuWiki" :n "n i d"
+;;   #'my-current-buffer-as-dokuwiki-to-org)
+(map! :leader :desc "Convert to OrgMode" :n "n i i"
+  #'org-pandoc-import-to-org)
 
-(use-package! lsp-bridge)
-(global-lsp-bridge-mode)
+(use-package! ox-pandoc :custom (org-pandoc-options '("--wrap=none")))
+
+
+(use-package! lsp-bridge
+  :config
+  (global-lsp-bridge-mode))
