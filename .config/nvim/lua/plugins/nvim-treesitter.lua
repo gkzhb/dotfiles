@@ -115,7 +115,7 @@ function M.init()
       enable = true,
     },
     rainbow = { -- nvim-ts-rainbow
-      enable = true,
+      enable = false,
       disable = { 'jsx', 'tsx' },
     },
   })

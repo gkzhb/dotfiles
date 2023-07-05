@@ -28,12 +28,12 @@ return require('packer').startup({
     })
   use({ 'Mofiqul/vscode.nvim', config = require('plugins.vscode').init })
     -- {{{2 display enhancement
-    if not _G.getLocalConfig().performantMode then
-      use({
-        'karb94/neoscroll.nvim',
-        config = require('plugins.neoscroll').init,
-      })
-    end
+    -- if not _G.getLocalConfig().performantMode then
+    --   use({
+    --     'karb94/neoscroll.nvim',
+    --     config = require('plugins.neoscroll').init,
+    --   })
+    -- end
     use({
       'mrjones2014/legendary.nvim',
       config = require('plugins.legendary').init,

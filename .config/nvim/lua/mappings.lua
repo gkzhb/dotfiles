@@ -97,9 +97,10 @@ function M.setMappings()
       t = { '<cmd>TSHighlightCapturesUnderCursor<CR>', 'get treesitter highlight' },
       r = { '<cmd>write | edit | TSBufEnable highlight<CR>', 'refresh treesitter highlight' },
     },
-    t = {
+    ['<tab>'] = {
       name = 'tab actions',
       n = { '<cmd>tabnew<CR>', 'new tabpage' },
+      d = { '<cmd>tabclose<CR>', 'delete this tabpage' },
     },
     p = { -- nvim-projectconfig
       name = 'project related',

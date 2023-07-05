@@ -15,6 +15,7 @@ log/
 # Vim
 *~
 .vimspector.json
+.vim/
 
 # nvm
 .nvmrc
