@@ -40,6 +40,8 @@
 ;; Use `:pin' to specify a particular commit to install.
 ;(package! builtin-package :pin "1a2b3c4d5e")
 
+;; resolve https://github.com/org-roam/org-roam/issues/2361
+(package! org :pin "ca873f7")
 (package! request)
 (package! wallabag
   :recipe (:host github
