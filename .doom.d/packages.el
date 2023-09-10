@@ -48,12 +48,15 @@
            :repo "chenyanming/wallabag.el"
            :files ("*.el" "*.alist" "*.css")))
 (package! rime)
+(package! format-all)
 (package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
 (package! org-pandoc-import
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
 (package! ox-pandoc)
+(package! org-download)
+(package! org-transclusion)
 
 ;; Doom's packages are pinned to a specific commit and updated from release to
 ;; release. The `unpin!' macro allows you to unpin single packages...

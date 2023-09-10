@@ -40,24 +40,27 @@
 
 ;; jump to line
 (map! :after evil-easymotion :map evilem-map :desc "Goto some line"
-  "b" #'evil-avy-goto-line)
+      "b" #'evil-avy-goto-line)
 
+(setq my-roam-dir (file-truename "~/roam/"))
+(setq my-roam-dailies-dir "journals/")
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
-(setq org-agenda-files (list org-directory "~/org/byte/" "~/roam/"))
+(setq org-agenda-files
+      (list org-directory my-roam-dir (file-name-concat my-roam-dir my-roam-dailies-dir)))
 
 ;; setup org roam
 (use-package! org-roam
   :custom
-  (org-roam-directory (file-truename "~/roam"))
-  (org-roam-index-file (file-truename "~/roam/index.org"))
-  (org-roam-dailies-directory "daily/")
+  (org-roam-directory my-roam-dir)
+  (org-roam-index-file (expand-file-name "index.org" my-roam-dir))
+  (org-roam-dailies-directory my-roam-dailies-dir)
   (org-roam-dailies-capture-templates
-    '(("d" "default" entry
+   '(("d" "default" entry
       "* %?"
       :target (file+head "%<%Y-%m-%d>.org"
-        "#+title: %<%Y-%m-%d>\n"))))
+                         "#+title: %<%Y-%m-%d>\n"))))
   :config
   (org-roam-setup)
   (org-roam-db-autosync-mode))
@@ -78,8 +81,8 @@
 (defun my-org-roam-search ()
   (+vertico/project-search nil nil org-roam-directory))
 
-(map! :leader :desc "Search Org Roam notes" :n "s n"
-  #'+default/org-roam-search)
+(map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
+      #'+default/org-roam-search)
 
 (setq centaur-tabs-buffer-show-groups t)
 
@@ -123,8 +126,8 @@
 
 (defun convert-inter-wikis (inter-wikis)
   (let (value)
-        (dolist (el (split-string inter-wikis "\n") value)
-                (push (split-string  el " ") value))))
+    (dolist (el (split-string inter-wikis "\n") value)
+      (push (split-string  el " ") value))))
 
 (setq my-org-abbrev-links "wp https://en.wikipedia.org/wiki/
 wpmeta https://meta.wikipedia.org/wiki/
@@ -150,7 +153,7 @@ gh https://github.com/")
 (let (val)
   (dolist (el (convert-inter-wikis my-org-abbrev-links) val)
     (pushnew! org-link-abbrev-alist
-          (cons (nth 0 el) (nth 1 el)))
+              (cons (nth 0 el) (nth 1 el)))
     ))
 
 ; (use-package! wallabag
@@ -165,6 +168,12 @@ gh https://github.com/")
   (default-input-method "rime")
   (rime-show-candidate 'posframe)
   (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
+(use-package! format-all
+  :config
+  (map!
+   :leader
+   :prefix "b"
+   :desc "Format current buffer" "f" #'format-all-buffer) )
 
 (setq delete-by-moving-to-trash t)
 (when (eq system-type 'darwin)
@@ -185,23 +194,44 @@ gh https://github.com/")
 (setq org-pandoc-import-dokuwiki-extensions '("dokuwiki" "txt"))
 
 (use-package! org-pandoc-import :after org
-  :custom
-  (org-pandoc-import-global-args '("--wrap=none"))
-  :config
-  (org-pandoc-import-backend dokuwiki))
+              :custom
+              (org-pandoc-import-global-args '("--wrap=none"))
+              :config
+              (org-pandoc-import-backend dokuwiki)
+              ;; @TODO fix bug
+              ;; (map! :leader :desc "Convert to OrgMode from DokuWiki" :n "n i d"
+              ;;   #'my-current-buffer-as-dokuwiki-to-org)
+              (map! :leader :desc "Convert to OrgMode" :n "n i i"
+                    #'org-pandoc-import-to-org)
+              )
 
 ;; TODO: remove this
 (defun my-current-buffer-as-dokuwiki-to-org ()
   (org-pandoc-import-convert nil nil "dokuwiki" (buffer-file-name) '("txt") org-pandoc-import-dokuwiki-args org-pandoc-import-dokuwiki-filters nil nil))
 
-;; @TODO fix bug
-;; (map! :leader :desc "Convert to OrgMode from DokuWiki" :n "n i d"
-;;   #'my-current-buffer-as-dokuwiki-to-org)
-(map! :leader :desc "Convert to OrgMode" :n "n i i"
-  #'org-pandoc-import-to-org)
 
 (use-package! ox-pandoc :custom (org-pandoc-options '("--wrap=none")))
 
+(use-package! org-download
+  :after org
+  :custom
+  (org-download-image-dir (expand-file-name "images" my-roam-dir))
+  :config
+  (org-download-enable)
+  (map!
+   :map org-mode-map :leader :prefix "m i"
+   :desc "paste image from clipboard" :n "p" #'org-download-clipboard
+   :desc "get image from kill-ring" :n "y" #'org-download-yank
+   :desc "delete image link and source file" :n "d" #'org-download-delete))
+
+(use-package! org-transclusion
+  :after org
+  :init
+  (map!
+   :map global-map "<f12>" #'org-transclusion-add
+   :leader
+   :prefix "n"
+   :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 
 (use-package! lsp-bridge
   :config
