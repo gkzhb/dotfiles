@@ -2,6 +2,20 @@ const { addSearchAlias, mapkey, unmap, cmap, Clipboard, Front } = api;
 // {{{1 options
 settings.useNeovim = false;
 
+// {{{1 org capture
+
+const captureCurrentPage = (key) => {
+  const protocol = "roam-ref";
+  const params = new URLSearchParams();
+  const template = key ?? "r";
+  params.append("title", document.title);
+  params.append("url", window.location.href);
+  params.append("ref", window.location.href);
+  params.append("template", template);
+  params.append("body", window.getSelection().toString());
+  return `org-protocol://${protocol}?${params.toString()}`;
+};
+
 // {{{1 key mappings
 // an example to create a new mapping `ctrl-y`
 
@@ -105,6 +119,13 @@ const disabledRegexUrls = [
 ];
 // disable surfingkeys on regex matched url
 settings.blocklistPattern = new RegExp(disabledRegexUrls.map(item => item.source).join('|'));
+
+mapkey("yx", "Org Capture", () => {
+  const key = "r";
+  let url = captureCurrentPage(key);
+  Front.showBanner(url);
+  window.location.href = url;
+});
 
 mapkey(
   "q",
