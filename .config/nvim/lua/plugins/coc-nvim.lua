@@ -222,7 +222,8 @@ function M.mappings()
     y = { '<Plug>(coc-type-definition)', 'goto type definition' },
     i = { '<Plug>(coc-implementation)', 'goto implementation' },
     r = {
-      '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+      '<Plug>(coc-references)',
+      -- '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
       'references',
     },
   }, { mode = 'n', prefix = 'g' })
