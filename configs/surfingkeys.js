@@ -4,16 +4,26 @@ settings.useNeovim = false;
 
 // {{{1 org capture
 
-const captureCurrentPage = (key) => {
-  const protocol = "roam-ref";
-  const params = new URLSearchParams();
-  const template = key ?? "r";
-  params.append("title", document.title);
-  params.append("url", window.location.href);
-  params.append("ref", window.location.href);
-  params.append("template", template);
-  params.append("body", window.getSelection().toString());
-  return `org-protocol://${protocol}?${params.toString()}`;
+const getOrgCaptureUrl = (protocol, params) => {
+  const urlParams = new URLSearchParams();
+  Object.entries(params).forEach(item => {
+    urlParams.append(item[0], item[1]);
+  });
+  return `org-protocol://${protocol}?${urlParams.toString()}`;
+}
+
+const captureCurrentPage = (key, protocol = "roam-ref") => {
+  const template = key ?? "d";
+  const title = document.title;
+  const url = window.location.href;
+  const body = window.getSelection().toString();
+  return getOrgCaptureUrl(protocol, {
+    title,
+    url,
+    ref: url,
+    template,
+    body,
+  });
 };
 
 // {{{1 key mappings
@@ -120,10 +130,19 @@ const disabledRegexUrls = [
 // disable surfingkeys on regex matched url
 settings.blocklistPattern = new RegExp(disabledRegexUrls.map(item => item.source).join('|'));
 
-mapkey("yx", "Org Capture", () => {
-  const key = "r";
-  let url = captureCurrentPage(key);
-  Front.showBanner(url);
+const captureOrg =
+  (template = "d") =>
+  () => {
+    const url = captureCurrentPage(template);
+    Front.showBanner('Page Captured!');
+    window.location.href = url;
+  };
+mapkey("yxd", "Org Capture Daily", captureOrg("d"));
+mapkey("yxr", "Org Capture Ref", captureOrg("r"));
+
+mapkey("yu", "Org Store Link", () => {
+  const url = captureCurrentPage(undefined, "store-link");
+  Front.showBanner("Page Link Stored");
   window.location.href = url;
 });
 
