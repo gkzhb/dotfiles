@@ -40,16 +40,9 @@
 ;; Use `:pin' to specify a particular commit to install.
 ;(package! builtin-package :pin "1a2b3c4d5e")
 
+(package! request)
 ;; resolve https://github.com/org-roam/org-roam/issues/2361
 (package! org :pin "ca873f7")
-(package! request)
-(package! wallabag
-  :recipe (:host github
-           :repo "chenyanming/wallabag.el"
-           :files ("*.el" "*.alist" "*.css")))
-(package! rime)
-(package! format-all)
-(package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
 (package! org-pandoc-import
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
@@ -57,6 +50,13 @@
 (package! ox-pandoc)
 (package! org-download)
 (package! org-transclusion)
+(package! format-all)
+(package! rime)
+(package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
+(package! wallabag
+  :recipe (:host github
+           :repo "chenyanming/wallabag.el"
+           :files ("*.el" "*.alist" "*.css")))
 
 ;; Doom's packages are pinned to a specific commit and updated from release to
 ;; release. The `unpin!' macro allows you to unpin single packages...

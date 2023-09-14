@@ -37,6 +37,12 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; (setq display-line-numbers-type 'relative)
+;;
+(setq display-line-numbers-type 'visual)
+
+(use-package! evil-snipe
+  :custom
+  (evil-snipe-scope 'buffer))
 
 ;; jump to line
 (map! :after evil-easymotion :map evilem-map :desc "Goto some line"
@@ -50,17 +56,33 @@
 (setq org-agenda-files
       (list org-directory my-roam-dir (file-name-concat my-roam-dir my-roam-dailies-dir)))
 
+(setq my-roam-dailies-file-path (file-name-concat my-roam-dailies-dir "%<%Y-%m-%d>.org"))
 ;; setup org roam
 (use-package! org-roam
   :custom
   (org-roam-directory my-roam-dir)
-  (org-roam-index-file (expand-file-name "index.org" my-roam-dir))
   (org-roam-dailies-directory my-roam-dailies-dir)
   (org-roam-dailies-capture-templates
    '(("d" "default" entry
       "* %?"
       :target (file+head "%<%Y-%m-%d>.org"
                          "#+title: %<%Y-%m-%d>\n"))))
+  (org-roam-capture-ref-templates
+   '(
+     ("r" "ref" plain "%?" :target
+      (file+head "${slug}.org" "#+title: ${title}")
+      :unnarrowed t)
+     ("d" "daily entry" entry "* [[${ref}][${title}]]
+:PROPERTIES:
+:CAPTURED: %U
+:ROAM_REFS: ${ref}
+:END:
+- tags ::  %?
+
+${body}
+" :target
+(file+head (lambda() my-roam-dailies-file-path) "#+title: %<%Y-%m-%d>
+" ))))
   :config
   (org-roam-setup)
   (org-roam-db-autosync-mode))
@@ -84,7 +106,7 @@
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
 
-(setq centaur-tabs-buffer-show-groups t)
+;; (setq centaur-tabs-buffer-show-groups t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -119,7 +141,7 @@
 ;; they are implemented.
 
 ;; disable mouse click to move cursor position, from https://emacs.stackexchange.com/questions/48563/prevent-mouse-click-from-changing-cursor-position-while-in-insert-mode
-(defun mouse-set-point (event))
+;; (defun mouse-set-point (event))
 
 ;; log TODO state change into LOGBOOK drawer
 (setq org-log-into_drawer "LOGBOOK")
@@ -156,30 +178,8 @@ gh https://github.com/")
               (cons (nth 0 el) (nth 1 el)))
     ))
 
-; (use-package! wallabag
-;   :defer-incrementally t
-;   :custom
-;   (wallabag-host "https://wallabag")
-;   (wallabag-username "gkzhb")
-;   (wallabag-password ""))
-
-(use-package! rime
-  :custom
-  (default-input-method "rime")
-  (rime-show-candidate 'posframe)
-  (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
-(use-package! format-all
-  :config
-  (map!
-   :leader
-   :prefix "b"
-   :desc "Format current buffer" "f" #'format-all-buffer) )
-
 (setq delete-by-moving-to-trash t)
-(when (eq system-type 'darwin)
-  ;; https://github.com/DogLooksGood/emacs-rime/issues/58 customize for doom ~/.emacs.d/librime/dist
-  (setq rime-librime-root (expand-file-name "librime/dist" doom-emacs-dir))
-  (setq trash-directory "~/.Trash"))
+
 
 ;; https://emacs.stackexchange.com/questions/47782/is-there-a-way-emacs-can-infer-is-running-on-wsl-windows-subsystem-for-linux
 (when (string-match "-[Mm]icrosoft" operating-system-release)
@@ -236,3 +236,26 @@ gh https://github.com/")
 (use-package! lsp-bridge
   :config
   (global-lsp-bridge-mode))
+
+; (use-package! wallabag
+;   :defer-incrementally t
+;   :custom
+;   (wallabag-host "https://wallabag")
+;   (wallabag-username "gkzhb")
+;   (wallabag-password ""))
+
+(use-package! rime
+  :custom
+  (default-input-method "rime")
+  (rime-show-candidate 'posframe)
+  (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
+(use-package! format-all
+  :config
+  (map!
+   :leader
+   :prefix "b"
+   :desc "Format current buffer" "f" #'format-all-buffer)
+  (when (eq system-type 'darwin)
+    ;; https://github.com/DogLooksGood/emacs-rime/issues/58 customize for doom ~/.emacs.d/librime/dist
+    (setq rime-librime-root (expand-file-name "librime/dist" doom-emacs-dir))
+    (setq trash-directory "~/.Trash")) )
