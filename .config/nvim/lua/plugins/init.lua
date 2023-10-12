@@ -229,6 +229,11 @@ return require('packer').startup({
       ft = { 'fugitive' },
       config = require('plugins.fugitive').init,
     })
+    use({
+      'rbong/vim-flog', -- git branch graph view
+      cmd = { 'Flog', 'Flogsplit' },
+      requires = { 'vim-fugitive' },
+    })
     -- two below are not working
     -- use 'junegunn/gv.vim' -- git commit browser
     -- use 'sodapopcan/vim-twiggy' -- git branch push/pull/rebase

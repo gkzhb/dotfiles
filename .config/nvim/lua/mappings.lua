@@ -74,8 +74,8 @@ function M.setMappings()
       b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
       s = { '<cmd>w<CR>', 'save buffer' },
     },
-    c = {
-      name = 'config',
+    t = {
+      name = 'toggle config',
       i = { '<cmd>set list!<CR>', 'toggle showing space chars' },
       h = { '<cmd>noh<CR>', 'toggle search highlight' },
       p = { '<cmd>set invpaste<CR>', 'toggle paste mode' },
