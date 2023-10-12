@@ -2,20 +2,37 @@ const { addSearchAlias, mapkey, unmap, cmap, Clipboard, Front } = api;
 // {{{1 options
 settings.useNeovim = false;
 
-// {{{1 org capture
+// {{{1 util function
+
+// {{{2 get web page info
+/** remove invisible chars in lark document title */
+const invisibleChars = /[\u2000-\u206f\ufeff]/g;
+/** format title, remove unvisible chars */
+const formatTitle = (title = document.title) => {
+  return title.replaceAll(invisibleChars, "");
+};
+
+const getUrl = () => {
+  let url = window.location.href;
+  if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
+    url = window.location.search.slice(3);
+  }
+  return url;
+};
+// {{{2 org capture
 
 const getOrgCaptureUrl = (protocol, params) => {
   const urlParams = new URLSearchParams();
-  Object.entries(params).forEach(item => {
+  Object.entries(params).forEach((item) => {
     urlParams.append(item[0], item[1]);
   });
   return `org-protocol://${protocol}?${urlParams.toString()}`;
-}
+};
 
 const captureCurrentPage = (key, protocol = "roam-ref") => {
   const template = key ?? "d";
-  const title = document.title;
-  const url = window.location.href;
+  const title = formatTitle();
+  const url = getUrl();
   const body = window.getSelection().toString();
   return getOrgCaptureUrl(protocol, {
     title,
@@ -60,7 +77,11 @@ gh https://github.com/`;
 const interWikiUrlPrefix = interWikis
   .split("\n")
   .map((item) => item.split(" "));
-const ageTitleRegexList = [/^《(.*)》/, /^(.*)\s*BDRIP.*$/, /^(.*\S+)\s*720P\/1080P.*$/];
+const ageTitleRegexList = [
+  /^《(.*)》/,
+  /^(.*)\s*BDRIP.*$/,
+  /^(.*\S+)\s*720P\/1080P.*$/,
+];
 const customizationMap = {
   age: (url, title) => {
     for (const regex of ageTitleRegexList) {
@@ -74,27 +95,23 @@ const customizationMap = {
 };
 /** match ' - [website name]'(may include Chinese characters) title suffix */
 const websiteSuffixRegex = /(\s*-\s*[\w\u4e00-\u9fa5\s]+)$/;
-/** remove invisible chars in lark document title */
-const invisibleChars = /[\u2000-\u206f\ufeff]/g;
 const linkRefMap = {
   d: (url, title) => {
     const matchedPrefix = interWikiUrlPrefix.find(
       (item) => url.indexOf(item[1]) === 0
     );
     if (matchedPrefix) {
-      const remainUrl = url.slice(
-        matchedPrefix[1].length
-      );
+      const remainUrl = url.slice(matchedPrefix[1].length);
       if (matchedPrefix[0] in customizationMap) {
-        const result = customizationMap[matchedPrefix[0]](
-          remainUrl,
-          title
-        );
+        const result = customizationMap[matchedPrefix[0]](remainUrl, title);
         return `[[${matchedPrefix[0]}>${result.url}|${result.title}]]`;
       }
       const suffixResult = websiteSuffixRegex.exec(title);
       if (suffixResult) {
-        return `[[${matchedPrefix[0]}>${remainUrl}|${title.slice(0, suffixResult.index)}]]`
+        return `[[${matchedPrefix[0]}>${remainUrl}|${title.slice(
+          0,
+          suffixResult.index
+        )}]]`;
       }
       return `[[${matchedPrefix[0]}>${remainUrl}|${title}]]`;
     }
@@ -110,11 +127,8 @@ const linkRefMap = {
   default: (url, title) => `${title} ${url}`, // default format
 };
 mapkey("yr", "copy link as ref", (key) => {
-  let url = window.location.href;
-  const title = document.title.replaceAll(invisibleChars, '');
-  if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
-    url = window.location.search.slice(3);
-  }
+  const url = getUrl();
+  const title = formatTitle();
   if (key in linkRefMap) {
     Clipboard.write(linkRefMap[key](url, title));
   } else {
@@ -128,13 +142,15 @@ const disabledRegexUrls = [
   /braintool\.org\/versions\/.*\/app/,
 ];
 // disable surfingkeys on regex matched url
-settings.blocklistPattern = new RegExp(disabledRegexUrls.map(item => item.source).join('|'));
+settings.blocklistPattern = new RegExp(
+  disabledRegexUrls.map((item) => item.source).join("|")
+);
 
 const captureOrg =
   (template = "d") =>
   () => {
     const url = captureCurrentPage(template);
-    Front.showBanner('Page Captured!');
+    Front.showBanner("Page Captured!");
     window.location.href = url;
   };
 mapkey("yxd", "Org Capture Daily", captureOrg("d"));
@@ -197,7 +213,7 @@ addSearchAlias(
   "wd",
   "dokuwiki",
   "https://wiki.gkzhb.top/?do=search&id=home&q=",
-  "swd",
+  "swd"
 );
 // search with zhihu
 addSearchAlias(
