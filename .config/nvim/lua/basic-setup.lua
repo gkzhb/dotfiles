@@ -83,8 +83,8 @@ vim.loader.enable()
 
 -- {{{1 check and install packer
 local utils = require('utils')
-local packer = utils.loadModuleSafely('utils.packer')
-if packer and not packer.checkPackerExist() then
-  packer.installPacker()
+local pckr = utils.loadModuleSafely('utils.packer')
+if pckr then
+  pckr.init()
 end
 -- }}}

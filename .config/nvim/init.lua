@@ -12,9 +12,8 @@ if mappings then
   utils.callFunctionSafely(mappings.init)
 end
 
--- load packer plugins
+-- load pckr plugins
 utils.loadModuleSafely('plugins')
-pcall(require, 'packer_compiled') -- load packer lua cache
 -- plugins and configs are in 'lua/plugins/init.lua'
 -- }}}
 -- {{{1 Keyboard Mappings/Bindings & Shortcuts

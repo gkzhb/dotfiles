@@ -1,6 +1,15 @@
 local M = {}
 local utils = require('utils')
 
+-- TODO: debug this
+function _G.CocCodeActionMapping(...)
+  local args = unpack(arg)
+  local ret = function()
+    vim.fn['CocAction'](args)
+  end
+  return ret
+end
+
 function M.init()
   -- {{{2 coc.vim config
   --
@@ -80,9 +89,11 @@ function M.init()
   -- {{{4 coc lists
   vim.fn['coc#config']('list.source.grep.args', { '--hidden', '--vimgrep', '--heading', '-S' })
   vim.fn['coc#config']('session.directory', vim.fn.stdpath('data') .. '/session') -- in startify autoload/startify.vim
+  -- vim.g.coc_enable_locationlist = 0
+  -- vim.cmd([[autocmd User CocLocationsChange CocList --no-quit --first --normal location]])
   -- {{{4 coc json
   -- json schemas
-  local pluginPath = vim.fn.stdpath('data') .. '/site/pack/packer/start'
+  local pluginPath = require('utils.packer').pluginPath
   local fileUrlPath = string.format('file://%s', pluginPath)
   vim.fn['coc#config']('json.schemas', {
     {
@@ -213,31 +224,38 @@ function M.mappings()
     name = 'goto somewhere',
     w = { '<plug>(coc-float-jump)', 'jump to coc float window' },
     -- GoTo code navigation.
-    d = { '<Plug>(coc-definition)', 'goto code definition' },
+    d = { '<cmd>call CocAction("jumpDefinition")<CR>', 'goto code definition' },
     ds = { '<cmd>call CocAction("jumpDefinition", "split")<CR>', 'code definition in split window' },
     dv = { '<cmd>call CocAction("jumpDefinition", "vsplit")<CR>', 'code definition in vsplit window' },
     dt = { '<cmd>call CocAction("jumpDefinition", "tabe")<CR>', 'code definition in new tab' },
     dq = { '<cmd>call CocAction("jumpDefinition", "quickfix")<CR>', 'code definition in quickfix' },
     dp = { '<cmd>call CocAction("jumpDefinition", "preview")<CR>', 'code definition in preview' },
-    y = { '<Plug>(coc-type-definition)', 'goto type definition' },
-    i = { '<Plug>(coc-implementation)', 'goto implementation' },
+    y = { '<cmd>call CocAction("jumpTypeDefinition")<CR>', 'goto type definition' },
+    i = { '<cmd>call CocAction("jumpImplementation")<CR>', 'goto implementation' },
     r = {
-      '<Plug>(coc-references)',
-      -- '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+      -- '<Plug>(coc-references)',
+      '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
       'references',
     },
   }, { mode = 'n', prefix = 'g' })
+  wk.register({
+    name = 'coc list related',
+    n = { '<cmd>CocNext<CR>', 'jump to next coc list item' },
+    p = { '<cmd>CocPrev<CR>', 'jump to previous coc list item' },
+  }, { mode = 'n', prefix = '<leader>c' })
 
   -- current cursor reltead
   wk.register({
-    K = { ':call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
-  }, { mode = 'n' })
+    K = { '<cmd>call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
+    d = { '<cmd>call v:lua.CocAction("diagnosticInfo")<CR>', 'show diagnostic message' },
+  }, { mode = 'n', prefix = 'K' })
   wk.register({
     k = {
       name = 'symbol under cursor',
       c = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
-      d = { '<cmd>call v:lua.CocAction("definitionHover")<CR>', 'get definition' },
-      k = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
+      k = { '<cmd>call v:lua.CocAction("definitionHover")<CR>', 'get definition' },
+      d = { CocCodeActionMapping('diagnosticInfo'), 'show diagnostic message' },
+      p = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
       v = { '<cmd>call v:lua.CocAction("doHover")<CR>', 'get info' },
     },
   }, { mode = 'n', prefix = '<Leader>' })
@@ -246,7 +264,7 @@ function M.mappings()
     autocmd CursorHold * silent call CocActionAsync('highlight')
   ]])
 
-  wk.register({
+  local actionMappings = {
     name = 'coc related',
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
     -- Example: `<leader>aap` for current paragraph
@@ -255,11 +273,14 @@ function M.mappings()
     d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     fl = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
-    o = { '<cmd>call CocAction("showOutline")<cr>', 'show coc outline', noremap = true },
+    o = { '<cmd>call CocAction("showOutline")<CR>', 'show coc outline', noremap = true },
     -- Symbol renaming.
     r = { '<Plug>(coc-rename)', 'rename variable' },
     wc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
-  }, { mode = 'n', prefix = '<Leader>l' })
+  }
+  wk.register(actionMappings, { mode = 'n', prefix = '<Leader>l' })
+  wk.register(actionMappings, { mode = 'n', prefix = '<Leader>a' })
+
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
@@ -280,7 +301,7 @@ function M.mappings()
   -- `:Format` format current buffer
   vim.cmd([[command! -nargs=0 Format :call CocAction('format')]])
   -- `:Fold` fold current buffer
-  vim.cmd([[command! -nargs=? Fold :call     CocAction('fold', <f-args>)]])
+  vim.cmd([[command! -nargs=? Fold :call CocAction('fold', <f-args>)]])
   -- `:OR` organize imports
   vim.cmd([[command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')]])
 
@@ -315,10 +336,10 @@ function M.mappings()
     },
   }, { mode = 'i', expr = true, nowait = true })
 
-  wk.register({
-    e = { ':call CocAction("runCommand", "explorer", "--preset", "workspace", getcwd())<CR>', 'coc explorer' },
-    y = { ':<C-u>CocList -A --normal yank<CR>', 'coc yank list' },
-  }, { mode = 'n', prefix = '<Leader>' })
+  -- wk.register({
+  --   e = { CocCodeActionMapping('runCommand', 'explorer', '--preset', 'workspace', vim.fn.getcwd()), 'coc explorer' },
+  --   y = { ':<C-u>CocList -A --normal yank<CR>', 'coc yank list' },
+  -- }, { mode = 'n', prefix = '<Leader>' })
 
   -- coc lists
   wk.register({
@@ -369,6 +390,8 @@ end
 function _G.CocAction(cmd)
   if vim.fn['coc#rpc#ready']() then
     vim.fn.CocActionAsync(cmd)
+  else
+    vim.api.nvim_echo('CocAction:: coc rpc not ready: ' + cmd, false, {})
   end
 end
 

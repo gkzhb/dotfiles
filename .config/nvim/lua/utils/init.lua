@@ -72,6 +72,7 @@ function M.callFunctionSafely(func, ...)
     return result
   else
     print(result)
+    vim.api.nvim_echo(result, true, {})
     return false
   end
 end

@@ -47,17 +47,18 @@ end
 function M.setMappings()
   local wk = require('which-key')
 
-	-- remap <C-a> incremeting number
-	wk.register({
-		["<C-s>"] = { "<C-a>", "increment number" }, }, { mode = "n" })
+  -- remap <C-a> incremeting number
+  wk.register({
+    ['<C-s>'] = { '<C-a>', 'increment number' },
+  }, { mode = 'n' })
   vim.cmd([[vmap g<C-s> g<C-a>]])
   -- terminal mode mappings
   wk.register({
     ['<C-q>'] = { '<cmd>stopinsert<CR>', 'quit terminal mode' },
-    ['<C-h>'] = {'<cmd>lua require("tmux").move_left()<CR>', 'move to left' },
-    ['<C-j>'] = {'<cmd>lua require("tmux").move_bottom()<CR>', 'move to bottom' },
-    ['<C-k>'] = {'<cmd>lua require("tmux").move_top()<CR>', 'move to top' },
-    ['<C-l>'] = {'<cmd>lua require("tmux").move_right()<CR>', 'move to right' },
+    ['<C-h>'] = { '<cmd>lua require("tmux").move_left()<CR>', 'move to left' },
+    ['<C-j>'] = { '<cmd>lua require("tmux").move_bottom()<CR>', 'move to bottom' },
+    ['<C-k>'] = { '<cmd>lua require("tmux").move_top()<CR>', 'move to top' },
+    ['<C-l>'] = { '<cmd>lua require("tmux").move_right()<CR>', 'move to right' },
   }, { mode = 't', noremap = true, silent = true })
 
   wk.register({
@@ -72,6 +73,7 @@ function M.setMappings()
     b = {
       name = 'buffer',
       b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
+      d = { '<cmd>bd<CR>', 'close buffer' },
       s = { '<cmd>w<CR>', 'save buffer' },
     },
     t = {
@@ -83,9 +85,9 @@ function M.setMappings()
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
       c = {
-        name = 'packer related',
-        c = { '<cmd>PackerCompile<CR>', 'packer compile' },
-        s = { '<cmd>PackerSync<CR>', 'packer sync plugins' },
+        name = 'pckr related',
+        i = { '<cmd>Pckr status<CR>', 'pckr plugin status' },
+        s = { '<cmd>Pckr sync<CR>', 'pckr sync plugins' },
       },
     },
     d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.glob("%:p"))<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
@@ -102,12 +104,16 @@ function M.setMappings()
       n = { '<cmd>tabnew<CR>', 'new tabpage' },
       d = { '<cmd>tabclose<CR>', 'delete this tabpage' },
     },
+    o = {
+      name = 'open',
+    },
     p = { -- nvim-projectconfig
       name = 'project related',
       c = { '<cmd>lua require("nvim-projectconfig").edit_project_config()<CR>', 'edit project config' },
     },
     -- q = { '<cmd>Wquit<CR>', 'close current window' }, -- for windline float statusline
     q = { '<cmd>q<CR>', 'close current window' },
+    r = { '<cmd>registers<CR>', 'show all registers' },
     z = { '<cmd>MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 
