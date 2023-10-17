@@ -6,7 +6,7 @@ function M.init()
       char = { '|', '¦', '┆', '┊' }, -- '▏'
     },
     scope = {
-      highlight = { 'Type' },
+      highlight = { 'MyIblScope' },
     },
     exclude = {
       filetypes = { 'help', 'terminal', 'dashboard', 'alpha' },

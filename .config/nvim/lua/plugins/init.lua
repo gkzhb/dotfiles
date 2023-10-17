@@ -14,10 +14,6 @@ require('pckr').add({
   -- {{{2 performance
   'dstein64/vim-startuptime',
   -- {{{2 color theme
-  {
-    'olimorris/onedarkpro.nvim',
-    config = require('plugins.onedarkpro').init,
-  },
   { 'Mofiqul/vscode.nvim', config = require('plugins.vscode').init },
   -- {{{2 display enhancement
   -- if not _G.getLocalConfig().performantMode then
@@ -53,7 +49,7 @@ require('pckr').add({
   },
   {
     'lukas-reineke/indent-blankline.nvim',
-    event = 'BufRead',
+    requires = 'Mofiqul/vscode.nvim',
     config = require('plugins.indent-blankline').init,
   },
   -- beautify notifications
@@ -78,7 +74,7 @@ require('pckr').add({
     'akinsho/bufferline.nvim',
     branch = 'main',
     config = require('plugins.bufferline').init,
-    requires = { 'onedarkpro.nvim' },
+    requires = { 'Mofiqul/vscode.nvim' },
   },
   -- improve bufferline.nvim, separate buffers to tabpages
   {

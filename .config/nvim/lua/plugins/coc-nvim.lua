@@ -1,11 +1,9 @@
 local M = {}
 local utils = require('utils')
 
--- TODO: debug this
-function _G.CocCodeActionMapping(...)
-  local args = unpack(arg)
+function _G.CocCodeActionMapping(cmd, ...)
   local ret = function()
-    vim.fn['CocAction'](args)
+    vim.fn['CocAction'](cmd, unpack(arg))
   end
   return ret
 end
@@ -233,9 +231,12 @@ function M.mappings()
     y = { '<cmd>call CocAction("jumpTypeDefinition")<CR>', 'goto type definition' },
     i = { '<cmd>call CocAction("jumpImplementation")<CR>', 'goto implementation' },
     r = {
-      -- '<Plug>(coc-references)',
-      '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+      '<Plug>(coc-references)',
       'references',
+    },
+    rr = {
+      '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+      'references with telescope',
     },
   }, { mode = 'n', prefix = 'g' })
   wk.register({
@@ -246,8 +247,9 @@ function M.mappings()
 
   -- current cursor reltead
   wk.register({
+    d = { CocCodeActionMapping('definitionHover'), 'show definition' },
     K = { '<cmd>call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
-    d = { '<cmd>call v:lua.CocAction("diagnosticInfo")<CR>', 'show diagnostic message' },
+    g = { CocCodeActionMapping('diagnosticInfo'), 'show diagnostic message' },
   }, { mode = 'n', prefix = 'K' })
   wk.register({
     k = {
@@ -264,21 +266,54 @@ function M.mappings()
     autocmd CursorHold * silent call CocActionAsync('highlight')
   ]])
 
+  -- see in *coc-code-actions*
   local actionMappings = {
-    name = 'coc related',
-    a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
-    -- Example: `<leader>aap` for current paragraph
-    ac = { '<Plug>(coc-codeaction)', 'apply codeAction' },
-    al = { '<Plug>(coc-codelens-action)', 'apply CodeLens Action' },
-    d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
-    f = { '<Plug>(coc-format-selected)', 'format selected code' },
-    fl = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
-    o = { '<cmd>call CocAction("showOutline")<CR>', 'show coc outline', noremap = true },
-    -- Symbol renaming.
-    r = { '<Plug>(coc-rename)', 'rename variable' },
-    wc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
+    name = 'coc actions',
+    a = {
+      name = 'code actions',
+      a = { '<Plug>(coc-codeaction)', 'CodeAction for file' },
+      -- a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
+      -- Example: `<leader>aap` for current paragraph
+      e = { '<Plug>(coc-codeaction-refactor)', 'CodeAction refactor' },
+      k = { '<Plug>(coc-codeaction-cursor)', 'CodeAction under cursor' },
+      l = { '<Plug>(coc-codeaction-line)', 'CodeAction for line' },
+      s = { '<Plug>(coc-codeaction-source)', 'source CodeAction' },
+    },
+    c = { '<Plug>(coc-codeaction-cursor)', 'CodeAction under cursor' },
+    cc = { '<Plug>(coc-codeaction)', 'CodeAction for file' },
+    e = { CocCodeActionMapping('refactor'), 'refactor symbol' },
+    k = { '<Plug>(coc-codeaction-cursor)', 'CodeAction under cursor' },
+    l = { '<Plug>(coc-codelens-action)', 'CodeLens Action' },
+    f = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
+    fc = { '<Plug>(coc-format-selected)', 'format selected code' },
+    r = { '<Plug>(coc-rename)', 'rename symbol' },
   }
-  wk.register(actionMappings, { mode = 'n', prefix = '<Leader>l' })
+  wk.register({
+    name = 'coc related',
+    a = actionMappings,
+    d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
+    da = { CocCodeActionMapping('diagnosticList'), 'diagnostic list' },
+    fc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
+    o = { CocCodeActionMapping('showOutline'), 'show coc outline', noremap = true },
+    v = {
+      name = 'enhanced views',
+      c = {
+        name = 'call hierarchy', -- see *coc-callHierarchy*
+        i = { CocCodeActionMapping('showIncomingCalls'), 'incoming call hierarchy' },
+        o = { CocCodeActionMapping('showOutgoingCalls'), 'outgoing call hierarchy' },
+      },
+      t = {
+        name = 'type hierarchy',
+        p = { CocCodeActionMapping('showSuperTypes'), 'super type hierarchy' },
+        c = { CocCodeActionMapping('showSubTypes'), 'sub type hierarchy' },
+      },
+    },
+    w = {
+      name = 'coc workspace',
+      r = { '<cmd>:CocCommand workspace.redo<CR>', 'redo' },
+      u = { '<cmd>:CocCommand workspace.undo<CR>', 'undo' },
+    },
+  }, { mode = 'n', prefix = '<Leader>l' })
   wk.register(actionMappings, { mode = 'n', prefix = '<Leader>a' })
 
   wk.register({
@@ -387,9 +422,9 @@ function _G.CocEnterConfirm()
   return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
 end
 
-function _G.CocAction(cmd)
+function _G.CocAction(cmd, ...)
   if vim.fn['coc#rpc#ready']() then
-    vim.fn.CocActionAsync(cmd)
+    vim.fn.CocActionAsync(cmd, unpack(arg))
   else
     vim.api.nvim_echo('CocAction:: coc rpc not ready: ' + cmd, false, {})
   end

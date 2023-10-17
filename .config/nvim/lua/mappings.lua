@@ -106,6 +106,10 @@ function M.setMappings()
     },
     o = {
       name = 'open',
+      a = {
+        '<cmd>NvimTreeToggle<CR>',
+        'toggle nvim tree',
+      },
     },
     p = { -- nvim-projectconfig
       name = 'project related',
@@ -130,10 +134,6 @@ function M.setMappings()
       f = { '<cmd>Neogen func<CR>', 'function doc comment' },
       c = { '<cmd>Neogen class<CR>', 'class doc comment' },
       t = { '<cmd>Neogen type<CR>', 'type doc comment' },
-    },
-    a = {
-      '<cmd>NvimTreeToggle<CR>',
-      'toggle nvim tree',
     },
   }, { mode = 'n', prefix = '<Leader>' })
   wk.register({ -- fzf-lua mappings

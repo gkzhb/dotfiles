@@ -1,7 +1,9 @@
 local M = {}
 
 function M.init()
-  local colors = require('onedarkpro.helpers').get_colors('onedark')
+  local c = require('vscode.colors').get_colors()
+  local selected_bg = c.vscTabCurrent
+  local selected_fg = c.vscFront
 
   require('bufferline').setup({
     options = {
@@ -16,27 +18,27 @@ function M.init()
     },
     highlights = {
       tab_selected = {
-        fg = colors.white,
-        bg = colors.bg0,
+        fg = selected_fg,
+        bg = selected_bg,
         bold = true,
       },
       buffer_selected = {
-        fg = colors.white,
-        bg = colors.bg0,
+        fg = selected_fg,
+        bg = selected_bg,
         bold = true,
         italic = true,
       },
       numbers_selected = {
-        fg = colors.white,
-        bg = colors.bg0,
+        fg = selected_fg,
+        bg = selected_bg,
       },
       separator_selected = {
-        fg = colors.white,
-        bg = colors.bg0,
+        fg = selected_fg,
+        bg = selected_bg,
       },
       indicator_selected = {
-        fg = colors.white,
-        bg = colors.bg0,
+        fg = selected_fg,
+        bg = selected_bg,
       },
     },
   })
