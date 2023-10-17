@@ -106,7 +106,7 @@ require('pckr').add({
       require('nvim-tree').setup({})
     end,
   },
-  { 'p00f/nvim-ts-rainbow' },
+  { 'p00f/nvim-ts-rainbow', requires = 'nvim-treesitter/nvim-treesitter' },
   -- pretty list
   {
     'folke/trouble.nvim',
@@ -166,7 +166,7 @@ require('pckr').add({
   'tpope/vim-repeat',
   {
     'windwp/nvim-ts-autotag',
-    requires = { 'nvim-treesitter' },
+    requires = { 'nvim-treesitter/nvim-treesitter' },
   },
   'tpope/vim-commentary',
   'honza/vim-snippets', -- coc-snippets needs snippets
@@ -175,7 +175,7 @@ require('pckr').add({
     config = function()
       require('neogen').setup({})
     end,
-    requires = { 'nvim-treesitter' },
+    requires = { 'nvim-treesitter/nvim-treesitter' },
   },
   { -- convert string between different naming cases
     'johmsalas/text-case.nvim',
