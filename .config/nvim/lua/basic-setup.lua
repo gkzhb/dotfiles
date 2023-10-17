@@ -76,6 +76,9 @@ vim.opt.updatetime = 300 -- CursorHold delay
 vim.opt.shortmess:append({ c = true })
 vim.g.loaded_matchparen = 1 -- do not load vim built-in matchparen plugin
 vim.opt.mouse = ''
+
+-- enable lua-loader to improve performance
+vim.loader.enable()
 -- }}}
 
 -- {{{1 check and install packer
@@ -84,9 +87,4 @@ local packer = utils.loadModuleSafely('utils.packer')
 if packer and not packer.checkPackerExist() then
   packer.installPacker()
 end
--- }}}
-
--- {{{1 load 'impatient' to cache lua
--- use 'pcall' to avoid crash when 'impatient' is not installed by packer
-pcall(require, 'impatient')
 -- }}}

@@ -18,8 +18,6 @@ return require('packer').startup({
 
     -- {{{2 performance
     use('dstein64/vim-startuptime')
-    -- use cache to speed up lua module loading
-    use('lewis6991/impatient.nvim')
 
     -- {{{2 color theme
     use({
