@@ -106,7 +106,7 @@ function M.setMappings()
     },
     o = {
       name = 'open',
-      a = {
+      d = {
         '<cmd>NvimTreeToggle<CR>',
         'toggle nvim tree',
       },
