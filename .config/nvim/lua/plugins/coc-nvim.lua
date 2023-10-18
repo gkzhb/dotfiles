@@ -31,6 +31,7 @@ function M.init()
     -- 'coc-pairs',
     'coc-prettier',
     'coc-protobuf',
+    'coc-react-refactor',
     'coc-rust-analyzer',
     'coc-sh',
     'coc-snippets',
@@ -103,9 +104,23 @@ function M.init()
       url = fileUrlPath .. '/vimspector/docs/schema/gadgets.schema.json',
     },
   })
+  -- {{{4 coc tsserver
+  vim.fn['coc#config']('tsserver', {
+  })
+  vim.fn['coc#config']('typescript', {
+    inlayHints = {
+      functionLikeReturnTypes = {
+        enabled = true,
+      }
+    }
+  })
   -- {{{4 coc eslint
   vim.fn['coc#config']('eslint', {
     filetypes = {},
+  })
+  -- {{{4 coc eslint
+  vim.fn['coc#config']('react-refactor', {
+    produceClass = false,
   })
   -- {{{4 coc highlight
   vim.fn['coc#config']('highlight', {
@@ -272,12 +287,12 @@ function M.mappings()
     a = {
       name = 'code actions',
       a = { '<Plug>(coc-codeaction)', 'CodeAction for file' },
-      -- a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
-      -- Example: `<leader>aap` for current paragraph
       e = { '<Plug>(coc-codeaction-refactor)', 'CodeAction refactor' },
       k = { '<Plug>(coc-codeaction-cursor)', 'CodeAction under cursor' },
       l = { '<Plug>(coc-codeaction-line)', 'CodeAction for line' },
       s = { '<Plug>(coc-codeaction-source)', 'source CodeAction' },
+      v = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
+      -- Example: `<leader>aap` for current paragraph
     },
     c = { '<Plug>(coc-codeaction-cursor)', 'CodeAction under cursor' },
     cc = { '<Plug>(coc-codeaction)', 'CodeAction for file' },
