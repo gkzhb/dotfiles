@@ -106,6 +106,7 @@ function M.init()
   })
   -- {{{4 coc tsserver
   vim.fn['coc#config']('tsserver', {
+    enable = true,
   })
   vim.fn['coc#config']('typescript', {
     inlayHints = {
