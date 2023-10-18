@@ -86,6 +86,7 @@ require('pckr').add({
   {
     'windwp/windline.nvim',
     config = require('plugins.windline').init,
+    requires = 'Mofiqul/vscode.nvim',
   },
   --  {
   --   'rebelot/heirline.nvim',
