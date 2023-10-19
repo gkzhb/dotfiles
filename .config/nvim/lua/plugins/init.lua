@@ -63,9 +63,28 @@ require('pckr').add({
     config = require('plugins.colorizer').init,
   },
   -- set foldtext
+  -- {
+  --   'scr1pt0r/crease.vim',
+  --   config = require('plugins.crease').init,
+  -- },
   {
-    'scr1pt0r/crease.vim',
-    config = require('plugins.crease').init,
+    'luukvbaal/statuscol.nvim', -- linenumber, line sign, etc
+    config = function()
+      local builtin = require('statuscol.builtin')
+      require('statuscol').setup({
+        relculright = true,
+        segments = {
+          { text = { '%s' }, click = 'v:lua.ScSa', sign = { name = { ".*" }, maxwidth = 3 } },
+          { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
+          { text = { builtin.foldfunc, ' ' }, click = 'v:lua.ScFa' },
+        },
+      })
+    end,
+  },
+  {
+    'kevinhwang91/nvim-ufo', -- foldtext
+    requires = { 'kevinhwang91/promise-async', 'luukvbaal/statuscol.nvim' },
+    config = require('plugins.ufo').init,
   },
   -- vim mark enhancement
   { 'chentoast/marks.nvim', config = require('plugins.marks').init },
@@ -158,7 +177,7 @@ require('pckr').add({
   },
   {
     'lambdalisue/suda.vim',
-    setup = require('plugins.suda').setup,
+    config_pre = require('plugins.suda').setup,
   },
   'tpope/vim-repeat',
   {

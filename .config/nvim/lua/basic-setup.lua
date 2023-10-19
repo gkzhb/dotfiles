@@ -7,7 +7,8 @@ vim.opt.background = 'dark'
 
 -- {{{2 display
 -- fillchars http://vimdoc.sourceforge.net/htmldoc/options.html#%27fillchars%27
-vim.opt.fillchars = { vert = '│', fold = '·' }
+vim.opt.fillchars = { vert = '│', fold = '·', foldopen = '󰅀', foldclose = '󰅂' } -- chevron icon
+-- vim.opt.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
 vim.opt.list = true
 vim.opt.listchars = {
   tab = '▸ ',
@@ -58,8 +59,9 @@ vim.opt.smarttab = true
 vim.opt.smartindent = true
 
 -- {{{2 folding
-vim.opt.foldlevelstart = 0
+vim.opt.foldlevelstart = 99
 vim.opt.foldlevel = 99
+vim.opt.foldcolumn = '1'
 
 -- {{{2 others
 vim.opt.history = 1000 -- save history
