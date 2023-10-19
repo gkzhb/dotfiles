@@ -491,6 +491,11 @@ function _G.CocGetHover()
 end
 
 function _G.CocShowDocumentation()
+  -- check if fold exists
+  local winid = require('ufo').peekFoldedLinesUnderCursor()
+  if winid then
+    return
+  end
   if vim.fn.index({ 'vim', 'help' }, vim.bo.filetype) >= 0 then
     vim.cmd('h ' .. vim.fn.expand('<cword>'))
     return

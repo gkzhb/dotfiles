@@ -128,6 +128,7 @@ function M.setMappings()
   require('plugins.telescope').mappings()
   require('plugins.notify').mappings()
   require('plugins.toggleterm').mappings()
+  require('plugins.ufo').mappings()
   wk.register({
     ['/'] = { -- Neogen
       name = 'generate doc comment',
