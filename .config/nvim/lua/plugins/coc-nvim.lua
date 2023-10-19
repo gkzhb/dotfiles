@@ -405,6 +405,36 @@ function M.mappings()
     o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
     s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
   }, { mode = 'n', prefix = '<leader>ll' })
+
+  -- coc git
+  wk.register({
+    c = {
+      name = 'git chunk',
+      i = { '<Plug>(coc-git-chunkinfo)', 'git chunk info' },
+      s = { '<cmd>CocCommand git.chunkStage<CR>', 'stage chunk' },
+      u = { '<cmd>CocCommand git.chunkUnstage<CR>', 'unstage chunk' },
+    },
+    f = {
+      name = 'confilcts',
+      b = { '<Plug>(coc-git-keepboth)', 'keep both' },
+      c = { '<Plug>(coc-git-keepcurrent)', 'keep current' },
+      i = { '<Plug>(coc-git-keepincoming)', 'keep incoming' },
+    },
+    h = { '<cmd>CocCommand git.foldUnchanged<CR>', 'fold unchanged lines' },
+    p = { '<cmd>CocCommand git.push<CR>', 'push branch to remote' },
+  }, { mode = 'n', prefix = '<leader>g' })
+  local coc_git_prev_map = {
+    name = 'git',
+    c = {'<Plug>(coc-git-prevconflict)', 'prev conflict'},
+    h = {'<Plug>(coc-git-prevchunk)', 'prev chunk'},
+  }
+  local coc_git_next_map = {
+    name = 'git',
+    c = {'<Plug>(coc-git-nextconflict)', 'next conflict'},
+    h = {'<Plug>(coc-git-nextchunk)', 'next chunk'},
+  }
+  wk.register(coc_git_prev_map, { mode = 'n', prefix = '[c'})
+  wk.register(coc_git_next_map, { mode = 'n', prefix = ']c'})
 end
 
 function _G.CheckBackSpace()
