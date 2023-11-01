@@ -74,7 +74,7 @@ require('pckr').add({
       require('statuscol').setup({
         relculright = true,
         segments = {
-          { text = { '%s' }, click = 'v:lua.ScSa', sign = { name = { ".*" }, maxwidth = 3 } },
+          { text = { '%s' }, click = 'v:lua.ScSa', sign = { name = { '.*' }, maxwidth = 3 } },
           { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
           { text = { builtin.foldfunc, ' ' }, click = 'v:lua.ScFa' },
         },
@@ -272,7 +272,11 @@ require('pckr').add({
   {
     'windwp/nvim-autopairs',
     config = function()
-      require('nvim-autopairs').setup({})
+      require('nvim-autopairs').setup({
+        enable_check_bracket_line = false,
+        check_ts = true,
+        ts_config = {},
+      })
     end,
   },
 
@@ -341,12 +345,12 @@ require('pckr').add({
     config = function()
       require('telescope').load_extension('frecency')
     end,
-    requires = { 'nvim-telescope/telescope.nvim', 'tami5/sqlite.lua' },
+    requires = { 'nvim-telescope/telescope.nvim' },
   },
   {
     'Shatur/neovim-session-manager',
     config = require('plugins.session-manager').init,
-    requires = { 'telescope.nvim', 'nvim-lua/plenary.nvim' },
+    requires = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
   },
   {
     'fannheyward/telescope-coc.nvim',

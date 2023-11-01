@@ -46,6 +46,9 @@ function M.init()
         override_file_sorter = true,
         case_mode = 'smart_case',
       },
+      frecency = {
+        db_safe_mode = false,
+      },
       tele_tabby = {
         use_highlight = true,
       },
