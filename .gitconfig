@@ -61,3 +61,8 @@
   tool = nvimdiff
 [difftool "nvimdiff"]
   cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[mergetool]
+  keepTemporaries = false
+  keepBackup = false
+[init]
+  defaultBranch = main
