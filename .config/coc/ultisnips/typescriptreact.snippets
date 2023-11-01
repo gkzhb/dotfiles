@@ -1,0 +1,52 @@
+# A valid snippet should starts with:
+#
+#		snippet trigger_word [ "description" [ options ] ]
+#
+# and end with:
+#
+#		endsnippet
+#
+# Snippet options:
+#
+#		b - Beginning of line.
+#		i - In-word expansion.
+#		w - Word boundary.
+#		r - Regular expression
+#		e - Custom context snippet
+#		A - Snippet will be triggered automatically, when condition matches.
+#
+# Basic example:
+#
+#		snippet emitter "emitter properties" b
+#		private readonly ${1} = new Emitter<$2>()
+#		public readonly ${1/^_(.*)/$1/}: Event<$2> = this.$1.event
+#		endsnippet
+#
+# Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
+
+snippet ume "useMemo hook" b
+const $1 = useMemo(() => {
+	$2
+}, [$3]);
+endsnippet
+
+snippet uef "useEffect hook" b
+useEffect(() => {
+	$1
+}, [$2]);
+endsnippet
+
+snippet ucb "useCallback hook" b
+const $1 = useCallback(($2) => {
+	$3
+}, [$4]);
+endsnippet
+
+snippet rfc "React Function Component" b
+export interface I$1Props {
+	prop: any;
+}
+export const $1: React.FC<I$1Props> = props => {
+	return <div></div>;
+};
+endsnippet

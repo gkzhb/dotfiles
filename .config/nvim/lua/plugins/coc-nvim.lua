@@ -264,18 +264,17 @@ function M.mappings()
 
   -- current cursor reltead
   wk.register({
-    d = { CocCodeActionMapping('definitionHover'), 'show definition' },
     K = { '<cmd>call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
-    g = { CocCodeActionMapping('diagnosticInfo'), 'show diagnostic message' },
-  }, { mode = 'n', prefix = 'K' })
+  }, { mode = 'n' })
+  wk.register({
+  }, { mode = 'n', prefix = '<leader>k' })
   wk.register({
     k = {
       name = 'symbol under cursor',
-      c = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
-      k = { '<cmd>call v:lua.CocAction("definitionHover")<CR>', 'get definition' },
-      d = { CocCodeActionMapping('diagnosticInfo'), 'show diagnostic message' },
-      p = { '<cmd>call v:lua.CocAction("pickColor")<CR>', 'pick color' },
-      v = { '<cmd>call v:lua.CocAction("doHover")<CR>', 'get info' },
+      c = { CocCodeActionMapping('pickColor'), 'pick color' },
+      d = { CocCodeActionMapping('definitionHover'), 'show definition' },
+      g = { CocCodeActionMapping('diagnosticInfo'), 'show diagnostic message' },
+      v = { CocCodeActionMapping('doHover'), 'get info' },
     },
   }, { mode = 'n', prefix = '<Leader>' })
   -- Highlight the symbol and its references when holding the cursor.
@@ -327,8 +326,9 @@ function M.mappings()
     },
     w = {
       name = 'coc workspace',
-      r = { '<cmd>:CocCommand workspace.redo<CR>', 'redo' },
-      u = { '<cmd>:CocCommand workspace.undo<CR>', 'undo' },
+      r = { '<cmd>CocCommand workspace.redo<CR>', 'redo' },
+      u = { '<cmd>CocCommand workspace.undo<CR>', 'undo' },
+      i = { '<cmd>CocCommand workspace.inspectEdit<CR>', 'inspect previous workspace edit' },
     },
   }, { mode = 'n', prefix = '<Leader>l' })
   wk.register(actionMappings, { mode = 'n', prefix = '<Leader>a' })
@@ -403,7 +403,11 @@ function M.mappings()
     g = { '<cmd>CocList grep<CR>', 'grep content' },
     l = { '<cmd>CocListResume<CR>', 'last view' },
     o = { '<cmd>CocList outline<CR>', 'symbols in current document' },
+    q = { '<cmd>CocListCancel<CR>', 'close coc list' },
+    r = { '<cmd>CocListResume<CR>', 'resume coc list' },
+    ['r<Space>'] = { ':CocListResume<Space>', 'resume command', silent = false },
     s = { '<cmd>CocList -I symbols<CR>', 'workspace symbols' },
+    ['<Space>'] = { ':CocList<Space>', 'CocList command', silent = false },
   }, { mode = 'n', prefix = '<leader>ll' })
 
   -- coc git
