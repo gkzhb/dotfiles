@@ -202,7 +202,7 @@ require('pckr').add({
   { -- enhanced vim word motion (support to distinguish words in camel case string)
     'chaoren/vim-wordmotion',
     config_pre = function()
-      -- do not replace default vim word motions, add prefix 'c' instead
+      -- do not replace default vim word motions, add prefix 'X' instead
       vim.g.wordmotion_prefix = 'X'
     end,
   },
@@ -289,6 +289,9 @@ require('pckr').add({
     branch = 'release',
     config = require('plugins.coc-nvim').init,
   },
+  { -- code snippets
+    'mlaursen/vim-react-snippets',
+  },
   -- {{{2 search
   { 'ibhagwan/fzf-lua', requires = { 'kyazdani42/nvim-web-devicons' } },
   -- {{{3 telescope related
@@ -340,13 +343,13 @@ require('pckr').add({
     requires = { 'nvim-telescope/telescope.nvim', 'tami5/sqlite.lua' },
     config = require('plugins.neoclip').init,
   },
-  {
-    'nvim-telescope/telescope-frecency.nvim',
-    config = function()
-      require('telescope').load_extension('frecency')
-    end,
-    requires = { 'nvim-telescope/telescope.nvim' },
-  },
+  -- {
+  --   'nvim-telescope/telescope-frecency.nvim',
+  --   config = function()
+  --     require('telescope').load_extension('frecency')
+  --   end,
+  --   requires = { 'nvim-telescope/telescope.nvim' },
+  -- },
   {
     'Shatur/neovim-session-manager',
     config = require('plugins.session-manager').init,
@@ -379,5 +382,8 @@ require('pckr').add({
     -- tag = "*",
     config = require('plugins.toggleterm').init,
   },
+  -- { -- run lua code
+  --   'bfredl/nvim-luadev',
+  -- }
 })
 -- vim: set fdm=marker:
