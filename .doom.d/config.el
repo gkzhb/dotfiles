@@ -33,6 +33,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
+(menu-bar-mode -1)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -40,10 +41,24 @@
 ;;
 (setq display-line-numbers-type 'visual)
 
+;; List of suggestions from which-key is partially covered by status line
+;; https://github.com/doomemacs/doomemacs/issues/5622
+(setq which-key-allow-imprecise-window-fit nil)
+
+(after! evil
+  (setq evil-auto-indent nil))
 (use-package! evil-snipe
   :custom
   (evil-snipe-scope 'buffer))
 
+(after! org
+  (map! :map org-mode-map :leader :prefix "l"
+        :desc "" :n "o" #'+org/insert-item-below
+        :desc "" :n "O" #'+org/insert-item-above
+        )
+  )
+(map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
+      #'+default/org-roam-search)
 ;; jump to line
 (map! :after evil-easymotion :map evilem-map :desc "Goto some line"
       "b" #'evil-avy-goto-line)
@@ -72,7 +87,8 @@
      ("r" "ref" plain "%?" :target
       (file+head "${slug}.org" "#+title: ${title}")
       :unnarrowed t)
-     ("d" "daily entry" entry "* [[${ref}][${title}]]
+     ("d" "daily entry" entry "* TODO [[${ref}][${title}]]
+SCHEDULED: %t
 :PROPERTIES:
 :CAPTURED: %U
 :ROAM_REFS: ${ref}

@@ -50,6 +50,7 @@
 (package! ox-pandoc)
 (package! org-download)
 (package! org-transclusion)
+(package! org-web-tools)
 (package! format-all)
 (package! rime)
 (package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
