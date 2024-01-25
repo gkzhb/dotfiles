@@ -66,3 +66,6 @@
   keepBackup = false
 [init]
   defaultBranch = main
+[diff "lockb"]
+	textconv = bun
+	binary = true
