@@ -68,9 +68,6 @@ function M.init()
         show_help = '?',
       },
     },
-    context_commentstring = {
-      enable = true,
-    },
     textobjects = {
       select = {
         enable = true,

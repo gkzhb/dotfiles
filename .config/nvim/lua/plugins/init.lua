@@ -250,6 +250,9 @@ require('pckr').add({
     'JoosepAlviste/nvim-ts-context-commentstring',
     requires = 'nvim-treesitter/nvim-treesitter',
     event = 'BufRead',
+    config_pre = function()
+      vim.g.skip_ts_context_commentstring_module = true
+    end,
   },
   {
     'nvim-treesitter/playground',
