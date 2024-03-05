@@ -302,6 +302,7 @@ function M.mappings()
     l = { '<Plug>(coc-codelens-action)', 'CodeLens Action' },
     f = { '<Plug>(coc-fix-current)', 'apply autofix on current line' },
     fc = { '<Plug>(coc-format-selected)', 'format selected code' },
+    ff = { '<Plug>(coc-format)', 'format current file' },
     r = { '<Plug>(coc-rename)', 'rename symbol' },
   }
   wk.register({
