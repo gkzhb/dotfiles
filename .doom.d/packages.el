@@ -43,6 +43,7 @@
 (package! request)
 ;; resolve https://github.com/org-roam/org-roam/issues/2361
 (package! org :pin "ca873f7")
+(package! org-super-agenda)
 (package! org-pandoc-import
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"

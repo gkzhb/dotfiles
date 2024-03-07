@@ -50,13 +50,14 @@
 (use-package! evil-snipe
   :custom
   (evil-snipe-scope 'buffer))
-
+(setq my-org-properties '("TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
 (after! org
   (map! :map org-mode-map :leader :prefix "l"
         :desc "" :n "o" #'+org/insert-item-below
         :desc "" :n "O" #'+org/insert-item-above
         )
-  )
+  (setq org-default-properties (append org-default-properties my-org-properties)
+        ))
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
 ;; jump to line
@@ -70,6 +71,7 @@
 (setq org-directory "~/org/")
 (setq org-agenda-files
       (list org-directory my-roam-dir (file-name-concat my-roam-dir my-roam-dailies-dir)))
+;; (setq org-tag-persistent-alist '(("work" . "w") ("capture" . "c") ("topic" . "t") ("byte" . "b") ("journal" . "j")))
 
 (setq my-roam-dailies-file-path (file-name-concat my-roam-dailies-dir "%<%Y-%m-%d>.org"))
 ;; setup org roam
@@ -87,13 +89,12 @@
      ("r" "ref" plain "%?" :target
       (file+head "${slug}.org" "#+title: ${title}")
       :unnarrowed t)
-     ("d" "daily entry" entry "* TODO [[${ref}][${title}]]
-SCHEDULED: %t
+     ("d" "daily entry" entry "* [[${ref}][${title}]] :capture:
 :PROPERTIES:
 :CAPTURED: %U
 :ROAM_REFS: ${ref}
 :END:
-- tags ::  %?
+- tags :: %?
 
 ${body}
 " :target
@@ -101,7 +102,8 @@ ${body}
 " ))))
   :config
   (org-roam-setup)
-  (org-roam-db-autosync-mode))
+  (org-roam-db-autosync-mode)
+  (map! :map org-mode-map :prefix "C-c r"  :desc "Insert Org Roam Node" "i" #'org-roam-node-insert))
 
 ;; mimic +default/org-notes-search
 (defun +default/org-roam-search (query)
@@ -114,10 +116,6 @@ ${body}
            "")))
   (+default/search-project-for-symbol-at-point
    query org-roam-directory))
-
-;; TODO: remove this
-(defun my-org-roam-search ()
-  (+vertico/project-search nil nil org-roam-directory))
 
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
@@ -204,7 +202,7 @@ gh https://github.com/")
   (setq doom-font (font-spec :family "Source Code Pro" :size 20.0))
   )
 ;; set cjk font for unicode to fix ununified Chinese chars
-(setq doom-unicode-font (font-spec :family "Noto Sans Mono CJK SC"))
+(setq doom-unicode-font (font-spec :family "Noto Sans CJK SC"))
 
 
 (setq org-pandoc-import-dokuwiki-extensions '("dokuwiki" "txt"))
@@ -249,13 +247,39 @@ gh https://github.com/")
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 
-(use-package! lsp-bridge
+(use-package! org-web-tools
   :config
-  (global-lsp-bridge-mode))
+  (defun org-web-tools--get-url (url)
+    "Return content for URL as string.
+This uses `url-retrieve-synchronously' to make a request with the
+URL, then returns the response body.  Since that function returns
+the entire response, including headers, we must remove the
+headers ourselves."
+    (let* ((response-buffer (url-retrieve-synchronously url))
+           (encoded-html (with-current-buffer response-buffer
+                           ;; Skip HTTP headers.
+                           ;; FIXME: Byte-compiling says that `url-http-end-of-headers' is a free
+                           ;; variable, which seems to be because it's not declared by url.el with
+                           ;; `defvar'.  Yet this seems to work fine...
+                           (delete-region (point-min) url-http-end-of-headers)
+                           (buffer-string))))
+      ;; NOTE: Be careful to kill the buffer, because `url' doesn't close it automatically.
+      (kill-buffer response-buffer)
+      (with-temp-buffer
+        ;; For some reason, running `decode-coding-region' in the
+        ;; response buffer has no effect, so we have to do it in a
+        ;; temp buffer.
+        (insert encoded-html)
+        (condition-case nil
+            ;; Fix undecoded text
+            (decode-coding-region (point-min) (point-max) 'utf-8)
+          (coding-system-error nil))
+        (buffer-string)))))
 
-; (use-package! wallabag
-;   :defer-incrementally t
-;   :custom
+;; (use-package! lsp-bridge
+;;   :config
+;;   (global-lsp-bridge-mode))
+
 ;   (wallabag-host "https://wallabag")
 ;   (wallabag-username "gkzhb")
 ;   (wallabag-password ""))
@@ -264,7 +288,7 @@ gh https://github.com/")
   :custom
   (default-input-method "rime")
   (rime-show-candidate 'posframe)
-  (rime-posframe-properties (list :font "Noto Sans Mono CJK SC")))
+  (rime-posframe-properties (list :font "Noto Sans CJK SC")))
 (use-package! format-all
   :config
   (map!
