@@ -84,7 +84,7 @@ require('pckr').add({
   },
   {
     'kevinhwang91/nvim-ufo', -- foldtext
-    requires = { 'kevinhwang91/promise-async', 'luukvbaal/statuscol.nvim' },
+    requires = { 'kevinhwang91/promise-async', 'luukvbaal/statuscol.nvim', 'folke/which-key.nvim' },
     config = require('plugins.ufo').init,
   },
   -- vim mark enhancement

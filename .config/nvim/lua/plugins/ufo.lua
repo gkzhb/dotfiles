@@ -57,6 +57,7 @@ function M.init()
   }
   opts['fold_virt_text_handler'] = handler
   require('ufo').setup(opts)
+  M.mappings()
 end
 
 function M.mappings()
