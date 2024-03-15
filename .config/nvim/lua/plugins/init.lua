@@ -28,6 +28,7 @@ require('pckr').add({
   },
   {
     'folke/which-key.nvim',
+    config_pre = require('plugins.which-key').setup,
     config = require('plugins.which-key').init,
     requires = { 'legendary.nvim' },
   },
