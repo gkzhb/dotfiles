@@ -18,6 +18,7 @@ function M.init()
       return true
     end,
   }
+  local actions = require('telescope.actions')
 
   require('telescope').setup({
     pickers = {
@@ -29,12 +30,42 @@ function M.init()
       oldfiles = fixfolds,
     },
     defaults = {
+      -- https://github.com/nvim-telescope/telescope.nvim/blob/master/lua/telescope/mappings.lua
       mappings = {
         i = {
-          ['C-q'] = require('telescope.actions').close,
+          ['<C-S-q>'] = actions.send_selected_to_qflist + actions.open_qflist,
+          ['<M-q>'] = nil,
+          ['<C-c>'] = nil,
+          ['<C-k>'] = nil,
+
+          ['<C-u>'] = actions.preview_scrolling_up,
+          ['<C-d>'] = actions.preview_scrolling_down,
+          ['<C-h>'] = actions.preview_scrolling_left,
+          ['<C-l>'] = actions.preview_scrolling_right,
+
+          ['<PageUp>'] = actions.results_scrolling_up,
+          ['<PageDown>'] = actions.results_scrolling_down,
+          ['<C-b>'] = actions.results_scrolling_up,
+          ['<C-f>'] = actions.results_scrolling_down,
+          ['<M-f>'] = nil, -- actions.results_scrolling_left,
+          ['<M-k>'] = nil, -- actions.results_scrolling_right,
+
+          ['<C-;>'] = actions.complete_tag,
         },
         n = {
-          ['q'] = require('telescope.actions').close,
+          ['<leader>qs'] = actions.send_selected_to_qflist + actions.open_qflist,
+
+          ['<C-h>'] = actions.preview_scrolling_left,
+          ['<C-l>'] = actions.preview_scrolling_right,
+          ['<C-u>'] = actions.preview_scrolling_up,
+          ['<C-d>'] = actions.preview_scrolling_down,
+
+          ['H'] = actions.results_scrolling_left,
+          ['L'] = actions.results_scrolling_right,
+          ['<C-b>'] = actions.results_scrolling_up,
+          ['<C-f>'] = actions.results_scrolling_down,
+          ['<leader>u'] = actions.results_scrolling_up,
+          ['<leader>d'] = actions.results_scrolling_down,
         },
       },
       dynamic_preview_title = true,
