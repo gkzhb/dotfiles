@@ -305,6 +305,7 @@ function M.mappings()
     ff = { '<Plug>(coc-format)', 'format current file' },
     r = { '<Plug>(coc-rename)', 'rename symbol' },
   }
+  
   wk.register({
     name = 'coc related',
     a = actionMappings,
@@ -333,6 +334,7 @@ function M.mappings()
     },
   }, { mode = 'n', prefix = '<Leader>l' })
   wk.register(actionMappings, { mode = 'n', prefix = '<Leader>a' })
+  wk.register({ f = { '<Plug>(coc-format)', 'format current file' } }, { mode = 'n', prefix = '<Leader>b' })
 
   wk.register({
     f = { '<Plug>(coc-format-selected)', 'format selected code' },
