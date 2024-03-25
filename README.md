@@ -74,6 +74,8 @@ as plugin manager.
 
 ### Neovim
 
+Details about my Neovim plugins: [gkzhb/dotfiles - Neovim configuration](https://dotfyle.com/gkzhb/dotfiles-config-nvim)
+
 See [init.lua](./.config/nvim/init.lua). Use [packer.nvim](https://github.com/wbthomason/packer.nvim)
 as plugin manager.
 
