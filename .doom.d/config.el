@@ -120,6 +120,11 @@ ${body}
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
 
+(use-package! org-ql)
+(use-package! helm-org-ql)
+(use-package! org-roam-ql
+  :after (org-roam)
+  )
 ;; (setq centaur-tabs-buffer-show-groups t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -245,12 +250,12 @@ gh https://github.com/")
   (setq org-super-agenda-groups
         '(
           (:name "Work"
-                 :tag "work")
+           :tag "work")
           (:name "High Priority"
-                 :priority>= "B")
+           :priority>= "B")
           (:name "Today"
-                 :time-grid t
-                 :todo "TODO")
+           :time-grid t
+           :todo "TODO")
           )))
 
 (use-package! org-transclusion

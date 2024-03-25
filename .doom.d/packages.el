@@ -43,8 +43,12 @@
 (package! request)
 ;; resolve https://github.com/org-roam/org-roam/issues/2361
 (package! org :pin "ca873f7")
+(package! org-ql)
+(package! helm-org-ql)
 (package! org-super-agenda)
-(package! vulpea)
+(package! vulpea) ;; enhance org-roam
+(package! org-roam-ql)
+(package! org-roam-ql-ql)
 (package! org-pandoc-import
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
@@ -55,7 +59,7 @@
 (package! org-web-tools)
 (package! format-all)
 (package! rime)
-(package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
+;; (package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
 (package! wallabag
   :recipe (:host github
            :repo "chenyanming/wallabag.el"
