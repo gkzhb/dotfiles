@@ -296,6 +296,10 @@ headers ourselves."
           (coding-system-error nil))
         (buffer-string)))))
 
+(use-package! ob-mermaid
+  :custom
+  (ob-mermaid-cli-path (executable-find "mmdc")))
+
 ;; (use-package! lsp-bridge
 ;;   :config
 ;;   (global-lsp-bridge-mode))
