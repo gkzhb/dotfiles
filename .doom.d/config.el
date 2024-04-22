@@ -9,29 +9,6 @@
 ;; (setq user-full-name "John Doe"
 ;;       user-mail-address "john@doe.com")
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-unicode-font' -- for unicode glyphs
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
-;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
-;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 (menu-bar-mode -1)
 
@@ -70,8 +47,35 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 (setq org-agenda-files
-      (list org-directory my-roam-dir (file-name-concat my-roam-dir my-roam-dailies-dir)))
+      (list org-directory my-roam-dir
+            (file-name-concat my-roam-dir my-roam-dailies-dir)))
 ;; (setq org-tag-persistent-alist '(("work" . "w") ("capture" . "c") ("topic" . "t") ("byte" . "b") ("journal" . "j")))
+;; set header https://org-roam.discourse.group/t/configure-deft-title-stripping-to-hide-org-roam-template-headers/478
+(use-package! deft
+  :after org
+  :custom
+  (deft-directory my-roam-dir)
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  :config
+  (defun cf/deft-parse-title (file contents)
+    "Parse the given FILE and CONTENTS and determine the title.
+    If `deft-use-filename-as-title' is nil, the title is taken to
+    be the first non-empty line of the FILE.  Else the base name of the FILE is
+    used as title."
+    (let ((begin (string-match "^#\\+[tT][iI][tT][lL][eE]: .*$" contents)))
+      (if begin
+          (string-trim (substring contents begin (match-end 0)) "#\\+[tT][iI][tT][lL][eE]: *" "[\n\t ]+")
+        (deft-base-filename file))))
+  (advice-add 'deft-parse-title :override #'cf/deft-parse-title)
+  (setq deft-strip-summary-regexp
+        (concat "\\("
+                "[\n\t]" ;; blank
+                "\\|^#\\+[[:alpha:]_]+:.*$" ;; org-mode metadata
+                "\\|^:PROPERTIES:\n\\(.+\n\\)+:END:\n" ;; org-roam ID
+                "\\|\\[\\[\\(.*\\]\\)" ;; any link
+                "\\)")))
 
 (setq my-roam-dailies-file-path (file-name-concat my-roam-dailies-dir "%<%Y-%m-%d>.org"))
 ;; setup org roam
@@ -207,11 +211,18 @@ gh https://github.com/")
   (setq doom-font (font-spec :family "Source Code Pro" :size 20.0))
   )
 ;; set cjk font for unicode to fix ununified Chinese chars
-(setq doom-unicode-font (font-spec :family "Noto Sans CJK SC"))
-
+(setq doom-symbol-font (font-spec :family "Noto Sans Mono CJK SC"))
 
 (setq org-pandoc-import-dokuwiki-extensions '("dokuwiki" "txt"))
 
+(use-package! org
+  :config
+  (org-link-set-parameters "zotero" :follow
+                           (lambda (zpath)
+                             (browse-url
+                              ;; we get the "zotero:"-less url, so we put it back.
+                              (format "zotero:%s" zpath))))
+  )
 (use-package! org-pandoc-import :after org
               :custom
               (org-pandoc-import-global-args '("--wrap=none"))
@@ -300,19 +311,17 @@ headers ourselves."
   :custom
   (ob-mermaid-cli-path (executable-find "mmdc")))
 
+(use-package! mermaid-ts-mode)
+
 ;; (use-package! lsp-bridge
 ;;   :config
 ;;   (global-lsp-bridge-mode))
-
-;   (wallabag-host "https://wallabag")
-;   (wallabag-username "gkzhb")
-;   (wallabag-password ""))
 
 (use-package! rime
   :custom
   (default-input-method "rime")
   (rime-show-candidate 'posframe)
-  (rime-posframe-properties (list :font "Noto Sans CJK SC")))
+  (rime-posframe-properties (list :font "Noto Sans CJK SC" :internal-border-width 5)))
 (use-package! format-all
   :config
   (map!

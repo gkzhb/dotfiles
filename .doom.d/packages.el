@@ -58,6 +58,7 @@
 (package! org-transclusion)
 (package! org-web-tools)
 (package! ob-mermaid)
+(package! mermaid-ts-mode)
 (package! format-all)
 (package! rime)
 ;; (package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
