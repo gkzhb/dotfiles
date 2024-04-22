@@ -79,6 +79,9 @@ yabai -m signal --add event=display_moved action="open -gj 'swiftbar://refreshpl
 # restore space labels
 $HOME/scripts/yabai-spaces/restore-space-labels.py
 
+# {{{1 window borders
+borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0 &
+
 # {{{1 load local config
 set -l LOCAL_CONFIG $HOME/.yabairc.local
 if test -f $LOCAL_CONFIG
