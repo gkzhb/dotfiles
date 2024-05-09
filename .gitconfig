@@ -56,7 +56,7 @@
 
 # neovim as difftool: [[https://oozou.com/til/use-neovim-as-a-git-difftool-57|Use Neovim as a git difftool | OOZOU]]
 [difftool]
-  prompt = true
+	prompt = false
 [diff]
   tool = nvimdiff
 [difftool "nvimdiff"]
@@ -64,8 +64,18 @@
 [mergetool]
   keepTemporaries = false
   keepBackup = false
+	prompt = false
 [init]
   defaultBranch = main
 [diff "lockb"]
 	textconv = bun
 	binary = true
+[diff "jupyternotebook"]
+	command = git-nbdiffdriver diff
+[merge "jupyternotebook"]
+	driver = git-nbmergedriver merge %O %A %B %L %P
+	name = jupyter notebook merge driver
+[difftool "nbdime"]
+	cmd = git-nbdifftool diff \"$LOCAL\" \"$REMOTE\" \"$BASE\"
+[mergetool "nbdime"]
+	cmd = git-nbmergetool merge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"

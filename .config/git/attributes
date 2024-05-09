@@ -1,2 +1,6 @@
 *.lockb binary diff=lockb
 
+
+*.ipynb	diff=jupyternotebook
+
+*.ipynb	merge=jupyternotebook
