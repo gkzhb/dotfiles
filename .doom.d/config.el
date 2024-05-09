@@ -27,6 +27,21 @@
 (use-package! evil-snipe
   :custom
   (evil-snipe-scope 'buffer))
+
+(use-package! gptel
+  :config
+  ;; (setq! gptel-api-key "your key")
+  ;; (setq gptel-default-mode 'org-mode)
+  (setq gptel-backend (gptel-make-ollama "Devbox Ollama"             ;Any name of your choosing
+                        :host "byte.gkzhb.top:11434"
+                        :stream t
+                        :models '("llama3:8b-instruct-q5_K_M" "qwen:7b-chat-v1.5-q5_K_M" "mistral:7b-instruct-v0.2-q5_K_M"))
+        )
+  (gptel-make-ollama "Local Ollama"             ;Any name of your choosing
+    :host "localhost:11434"
+    :stream t
+    :models '("llama3:8b-instruct-q5_K_M"))
+  )
 (setq my-org-properties '("TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
 (after! org
   (map! :map org-mode-map :leader :prefix "l"
@@ -123,6 +138,10 @@ ${body}
 
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
+
+(use-package! org-roam-timestamps
+  :after org-roam
+  :config (org-roam-timestamps-mode))
 
 (use-package! org-ql)
 (use-package! helm-org-ql)
