@@ -83,7 +83,7 @@ alias zb='z -I -b' # cd ..
 alias zh='z -I -t .'
 
 function j
-  cd $argv 2> /dev/null or zf $argv
+  cd $argv 2> /dev/null ; or z -I $argv
 end
 complete -c j -k -w z
 complete -c j -k -w cd
