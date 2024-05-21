@@ -117,6 +117,7 @@ const linkRefMap = {
     }
     return `[[${url}|${title}]]`;
   }, // dokuwiki link
+  j: (url, title) => JSON.stringify({url, title}), // JSON body
   m: (url, title) => `[${title}](${url})`, // markdown link
   p: (url, title) => {
     // copy URL path
