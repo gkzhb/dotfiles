@@ -64,6 +64,11 @@
 (setq org-agenda-files
       (list org-directory my-roam-dir
             (file-name-concat my-roam-dir my-roam-dailies-dir)))
+(defun zhb-refresh-org-agenda-files ()
+  (interactive)
+  (setq org-agenda-files
+        (list org-directory my-roam-dir
+              (file-name-concat my-roam-dir my-roam-dailies-dir))))
 ;; (setq org-tag-persistent-alist '(("work" . "w") ("capture" . "c") ("topic" . "t") ("byte" . "b") ("journal" . "j")))
 ;; set header https://org-roam.discourse.group/t/configure-deft-title-stripping-to-hide-org-roam-template-headers/478
 (use-package! deft
@@ -148,7 +153,6 @@ ${body}
 (use-package! org-roam-ql
   :after (org-roam)
   )
-;; (setq centaur-tabs-buffer-show-groups t)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
