@@ -186,7 +186,7 @@ cmd zj ${{
 # use fd and fzf to jump to sub-directory
 cmd fdj ${{
   clear
-  set target_path (fd . $PWD -t d | fzf)
+  set target_path (fd . $PWD -t d | command fzf)
   if test -n "$target_path"
     lf -remote "send $id cd \"$target_path\""
   end
