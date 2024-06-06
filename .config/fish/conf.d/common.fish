@@ -57,6 +57,7 @@ if  type -q systemctl
   alias s="sudo systemctl"
 end
 alias g=git
+alias v=nvim
 
 # {{{1 nvm
 # set node download mirror
