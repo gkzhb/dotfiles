@@ -42,8 +42,9 @@
 
 (package! request)
 (package! gptel)
+;; TODO: solved?
 ;; resolve https://github.com/org-roam/org-roam/issues/2361
-(package! org :pin "ca873f7")
+;; (package! org :pin "ca873f7")
 (package! org-ql)
 (package! helm-org-ql)
 (package! org-super-agenda)
