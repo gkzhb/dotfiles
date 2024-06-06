@@ -167,6 +167,7 @@ cmd zip ${{
 #   lf -remote "send $id unselect"
 # }}
 
+# use fzf to search z.lua jump targets
 cmd zj ${{
   clear
   read -p "printf 'z.lua jumps to: '" location
@@ -181,8 +182,15 @@ cmd zj ${{
     read -p "printf '[Enter] to quit '"
   end
 }}
-# use fzf to search z.lua jump targets
-map a zj
+
+# use fd and fzf to jump to sub-directory
+cmd fdj ${{
+  clear
+  set target_path (fd . $PWD -t d | fzf)
+  if test -n "$target_path"
+    lf -remote "send $id cd \"$target_path\""
+  end
+}}
 
 # {{{1 mappings
 # use enter for shell commands
@@ -196,6 +204,8 @@ map X !$f
 map o &mimeopen $f
 map O $mimeopen --ask $f
 
+map a zj
+map A fdj
 
 # make sure trash folder exists
 %mkdir -p ~/.trash
