@@ -90,7 +90,7 @@ function M.setMappings()
         s = { '<cmd>Pckr sync<CR>', 'pckr sync plugins' },
       },
     },
-    d = { '<cmd>lua require("fm-nvim").Lf(vim.api.nvim_buf_get_name(0))<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
+    d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.filereadable(vim.fn.expand("%:p")) > 0 and vim.api.nvim_buf_get_name(0) or "")<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
     D = { '<cmd>lua require("fm-nvim").Lf()<CR>', 'open lf' }, -- lf, open cwd
     h = { -- highlight related
       name = 'show highlight',
