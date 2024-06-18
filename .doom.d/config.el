@@ -18,6 +18,8 @@
 ;;
 (setq display-line-numbers-type 'visual)
 
+(setq shell-file-name (executable-find "bash"))
+
 ;; List of suggestions from which-key is partially covered by status line
 ;; https://github.com/doomemacs/doomemacs/issues/5622
 (setq which-key-allow-imprecise-window-fit nil)
@@ -354,10 +356,23 @@ headers ourselves."
   (when (eq system-type 'darwin)
     ;; https://github.com/DogLooksGood/emacs-rime/issues/58 customize for doom ~/.emacs.d/librime/dist
     (setq rime-librime-root (expand-file-name "librime/dist" doom-emacs-dir))
+    (setq rime-emacs-module-header-root "/opt/homebrew/include")
     (setq trash-directory "~/.Trash")) )
 
 (use-package! vulpea
   :hook ((org-roam-db-autosync-mode . vulpea-db-autosync-enable)))
+
+;; Python
+(defun projectile-pyenv-mode-set ()
+  "Set pyenv version matching project name."
+  (let ((project (projectile-project-name)))
+    (if (member project (pyenv-mode-versions))
+        (pyenv-mode-set project)
+      (pyenv-mode-unset))))
+
+(use-package! projectile
+  :config
+  (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
 
 ;; optimize org agenda performance
 ;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
