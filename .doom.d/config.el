@@ -51,7 +51,15 @@
         :desc "" :n "O" #'+org/insert-item-above
         )
   (setq org-default-properties (append org-default-properties my-org-properties)
-        ))
+        )
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t) (emacs-lisp . t)
+     )))
+(defun org-babel-edit-prep:python (babel-info)
+  (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+  (lsp))
+
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
 ;; jump to line
