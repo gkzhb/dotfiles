@@ -32,33 +32,53 @@
 
 (use-package! gptel
   :config
-  ;; (setq! gptel-api-key "your key")
   ;; (setq gptel-default-mode 'org-mode)
-  (setq gptel-backend (gptel-make-ollama "Devbox Ollama"             ;Any name of your choosing
-                        :host "byte.gkzhb.top:11434"
-                        :stream t
-                        :models '("llama3:8b-instruct-q5_K_M" "qwen:7b-chat-v1.5-q5_K_M" "mistral:7b-instruct-v0.2-q5_K_M"))
-        )
+  (setq gptel-backend
+        (gptel-make-openai "SiliconFlow" :models '("THUDM/glm-4-9b-chat") :host "api.siliconflow.cn" :protocol "https"
+                           :key  "sk-xxxxx"))
+  (setq gptel-model "THUDM/glm-4-9b-chat")
   (gptel-make-ollama "Local Ollama"             ;Any name of your choosing
     :host "localhost:11434"
     :stream t
     :models '("llama3:8b-instruct-q5_K_M"))
-  )
+  (map! :prefix ("C-c g" . "gptel")
+        :desc "send to gptel" "g" #'gptel-send
+        :desc "gptel menu" "m" #'gptel-menu))
 (setq my-org-properties '("TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
 (after! org
+  (setq org-edit-src-content-indentation 0)
   (map! :map org-mode-map :leader :prefix "l"
         :desc "" :n "o" #'+org/insert-item-below
-        :desc "" :n "O" #'+org/insert-item-above
-        )
-  (setq org-default-properties (append org-default-properties my-org-properties)
-        )
+        :desc "" :n "O" #'+org/insert-item-above)
+  (setq org-default-properties (append org-default-properties my-org-properties))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((python . t) (emacs-lisp . t)
-     )))
-(defun org-babel-edit-prep:python (babel-info)
-  (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
-  (lsp))
+   '((python . t) (emacs-lisp . t) (jupyter . t))))
+;; jupyter with org babel related
+;;
+;; (defun org-babel-edit-prep:python (babel-info)
+;;   (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+;;   (lsp))
+
+;; resolve emacs-jupyter bug
+(with-eval-after-load 'ob-jupyter
+  (org-babel-jupyter-aliases-from-kernelspecs))
+
+;; evil: set '_' as part of word
+(add-hook! 'python-mode-hook (modify-syntax-entry ?_ "w"))
+
+(use-package! code-cells
+  :config
+  (map! :map code-cells-mode-map
+        :desc "eval python cell" "C-c C-c" 'code-cells-eval
+        :desc "next python cell" :n "[ C" 'code-cells-backward-cell
+        :desc "next python cell" :n "] C" 'code-cells-forward-cell
+        )
+  (add-hook 'python-mode-hook 'code-cells-mode-maybe))
+;; (use-package! polymode
+;;   :config
+;;   (add-to-list 'polymode-run-these-before-change-functions-in-other-buffers 'lsp-before-change))
+;; (use-package! poly-org)
 
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
@@ -74,7 +94,10 @@
 (setq org-agenda-files
       (list org-directory my-roam-dir
             (file-name-concat my-roam-dir my-roam-dailies-dir)))
-(defun zhb-refresh-org-agenda-files ()
+(defun my-org-roam-files ()
+  "Get org file list under Org Roam directory"
+  (directory-files-recursively my-roam-dir "\\.org$"))
+(defun my-refresh-org-agenda-files ()
   (interactive)
   (setq org-agenda-files
         (list org-directory my-roam-dir
@@ -107,6 +130,20 @@
                 "\\|\\[\\[\\(.*\\]\\)" ;; any link
                 "\\)")))
 
+(defun my/org-roam-backlink-ql ()
+  "Search Org Roam backlinks with `org-roam-ql-search'"
+  (interactive)
+  ;; get node at point
+  (let ((node (org-roam-db-diagnose-node)))
+    (let ((id (org-roam-node-id node)) (node-title (org-roam-node-title node)))
+      (progn (org-roam-ql-search
+              ;; hide node itself in backlink results
+              `(and (backlink-to ,(list 'id id)) (not ,(list 'id id))))
+             (message "Showing backlink results for \"%s\"" node-title)))))
+(defun my/org-ql-search ()
+  (interactive)
+  (org-ql-search (my-org-roam-files)))
+
 (setq my-roam-dailies-file-path (file-name-concat my-roam-dailies-dir "%<%Y-%m-%d>.org"))
 ;; setup org roam
 (use-package! org-roam
@@ -137,7 +174,11 @@ ${body}
   :config
   (org-roam-setup)
   (org-roam-db-autosync-mode)
-  (map! :map org-mode-map :prefix "C-c r"  :desc "Insert Org Roam Node" "i" #'org-roam-node-insert))
+  (map! :map org-mode-map :prefix "C-c r"  :desc "Insert Org Roam Node" "i" #'org-roam-node-insert
+        :map org-mode-map :localleader (:prefix ("v" . "org-ql")
+                                        :desc "Search org roam note refs at point" "r" #'my/org-roam-backlink-ql
+                                        "s" #'org-ql-search
+                                        "v" #'org-roam-ql-search)))
 
 ;; mimic +default/org-notes-search
 (defun +default/org-roam-search (query)
@@ -158,11 +199,17 @@ ${body}
   :after org-roam
   :config (org-roam-timestamps-mode))
 
-(use-package! org-ql)
+(use-package! org-ql
+  :config
+  (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch))
 (use-package! helm-org-ql)
+
 (use-package! org-roam-ql
-  :after (org-roam)
-  )
+  :after (org-roam))
+(use-package! org-roam-ql-ql
+  :after (org-ql org-roam-ql)
+  :config
+  (org-roam-ql-ql-init))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -381,6 +428,9 @@ headers ourselves."
 (use-package! projectile
   :config
   (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
+
+;; lsp related
+(use-package! lsp-jedi)
 
 ;; optimize org agenda performance
 ;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html

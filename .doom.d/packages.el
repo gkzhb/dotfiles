@@ -64,6 +64,13 @@
 (package! mermaid-ts-mode)
 (package! format-all)
 (package! rime)
+(package! code-cells)
+(package! lsp-jedi)
+
+;; plenty of bugs in org mode, not usable
+;; (package! polymode)
+;; (package! poly-org)
+
 ;; (package! lsp-bridge :recipe (:host github :repo "manateelazycat/lsp-bridge" :files ("*" "acm/*")))
 (package! wallabag
   :recipe (:host github
