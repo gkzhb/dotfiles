@@ -10,7 +10,8 @@
 ;;       user-mail-address "john@doe.com")
 
 (setq doom-theme 'doom-one)
-(menu-bar-mode -1)
+(after! doom-ui
+  (menu-bar-mode -1))
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -40,7 +41,7 @@
   (gptel-make-ollama "Local Ollama"             ;Any name of your choosing
     :host "localhost:11434"
     :stream t
-    :models '("llama3:8b-instruct-q5_K_M"))
+    :models '("llama3:8b-instruct-q5_K_M" "yi:9b-chat-v1.5-q5_K_M" "qwen2" "phi3:14b-medium-128k-instruct-q5_K_M" "gemma2:9b-instruct-q5_K_M"))
   (map! :prefix ("C-c g" . "gptel")
         :desc "send to gptel" "g" #'gptel-send
         :desc "gptel menu" "m" #'gptel-menu))
@@ -102,6 +103,13 @@
   (setq org-agenda-files
         (list org-directory my-roam-dir
               (file-name-concat my-roam-dir my-roam-dailies-dir))))
+(defun my-calc-date-to-today (days)
+  "Calculate the target date relative to today.
+Return value is string that likes \"2024-07-21\" "
+  (let* ((current-date (current-time))
+         (future-date (time-add current-date (days-to-time days)))
+         (formatted-date (format-time-string "%Y-%m-%d" future-date)))
+    formatted-date))
 ;; (setq org-tag-persistent-alist '(("work" . "w") ("capture" . "c") ("topic" . "t") ("byte" . "b") ("journal" . "j")))
 ;; set header https://org-roam.discourse.group/t/configure-deft-title-stripping-to-hide-org-roam-template-headers/478
 (use-package! deft
@@ -335,7 +343,7 @@ gh https://github.com/")
    :desc "delete image link and source file" :n "d" #'org-download-delete))
 
 (use-package! org-super-agenda
-  :after org-agenda
+  :after (org-agenda evil-org)
   :config
   (org-super-agenda-mode)
   (setq org-super-agenda-groups
@@ -347,7 +355,9 @@ gh https://github.com/")
           (:name "Today"
            :time-grid t
            :todo "TODO")
-          )))
+          ))
+  ;; fix evil keybindings https://github.com/alphapapa/org-super-agenda/issues/50
+  (add-hook 'projectile-after-switch-project-hook (lambda () (setq org-super-agenda-header-map evil-org-agenda-mode-map))))
 
 (use-package! org-transclusion
   :after org
