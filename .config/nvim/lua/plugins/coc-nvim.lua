@@ -38,12 +38,14 @@ function M.init()
     'coc-sumneko-lua',
     'coc-stylua',
     'coc-tabnine',
+    'coc-thrift-syntax-support',
     'coc-tsserver',
     'coc-vetur', -- Vue.js
     'coc-vimlsp',
     'coc-vimtex',
     'coc-yaml',
     'coc-yank',
+    '@yaegassy/coc-tailwindcss3',
   }
 
   -- {{{3 coc-settings.json

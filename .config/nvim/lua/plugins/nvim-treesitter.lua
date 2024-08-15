@@ -29,6 +29,7 @@ function M.init()
       'query',
       'rust',
       'scss',
+      'thrift',
       'toml',
       'tsx',
       'typescript',
