@@ -310,7 +310,8 @@ function M.mappings()
   
   wk.register({
     name = 'coc related',
-    a = actionMappings,
+    -- whichkey.nvim bug https://github.com/folke/which-key.nvim/issues/814
+    a = vim.deepcopy(actionMappings) ,
     d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
     da = { CocCodeActionMapping('diagnosticList'), 'diagnostic list' },
     fc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
