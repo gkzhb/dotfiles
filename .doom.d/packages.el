@@ -42,12 +42,13 @@
 
 (package! request)
 (package! gptel)
-;; TODO: solved?
-;; resolve https://github.com/org-roam/org-roam/issues/2361
-;; (package! org :pin "ca873f7")
 (package! org-ql)
 (package! helm-org-ql)
 (package! org-super-agenda)
+(package! org-hyperscheduler
+  :recipe (:host github
+           :repo "dmitrym0/org-hyperscheduler"
+           :files ("*")))
 (package! vulpea) ;; enhance org-roam
 (package! org-roam-timestamps)
 (package! org-roam-ql)
@@ -56,6 +57,10 @@
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
+;; (package! calfw
+;;   :recipe (:host github
+;;            :repo "haji-ali/emacs-calfw"
+;;            :files ("*.el")))
 (package! ox-pandoc)
 (package! org-download)
 (package! org-transclusion)

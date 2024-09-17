@@ -8,6 +8,7 @@
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
 ;;       user-mail-address "john@doe.com")
+(defun my-is-termux () (getenv "TERMUX_VERSION"))
 
 (setq doom-theme 'doom-one)
 (after! doom-ui
@@ -45,8 +46,60 @@
   (map! :prefix ("C-c g" . "gptel")
         :desc "send to gptel" "g" #'gptel-send
         :desc "gptel menu" "m" #'gptel-menu))
-(setq my-org-properties '("TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
+(setq my-org-properties '("OBJECT_TYPE" "ZOTERO" "ROAM_REFS" "CAPTURED" "TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
 (after! org
+  ;; modified based on doom org config
+  (setq org-todo-keywords
+        '((sequence
+           "TODO(t)"  ; A task that needs doing & is ready to do
+           "PROJ(p)"  ; A project, which usually contains other tasks
+           "LOOP(r)"  ; A recurring task
+           "STRT(a!)"  ; A task that is in progress
+           "WAIT(w@/!)"  ; Something external is holding up this task
+           "HOLD(h@/!)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "|"
+           "DONE(d!)"  ; Task successfully completed
+           "CANCELLED(c@/!)" ; Task was cancelled
+           "KILL(k!)") ; Task was cancelled, aborted, or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence ; Software engineer procedure
+           "DESIGN(g!)"
+           "DEV(e!)"
+           "TEST(s!)"
+           "MERGE(m!)"
+           "DEPLOY(o!)")
+          (sequence ; bugfix procedure
+           "COMMIT(i!)"
+           "VERIFY(v!)"
+           "|"
+           "FIXED(f!)")
+          (sequence
+           "|"
+           "OKAY(o)"
+           "YES(y)"
+           "NO(n)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("STRT" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("WAIT" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel)))
+                                        ; set default tag list
+  (setq org-tag-persistent-alist '(("work") ("topic") ("journal") ("project")
+                                   ("fleet_node") ("ref_note") ("lit_node") ("main_card") ("bib_card") ("index_card")
+                                   ("capture") ("byte") ("share")
+                                   ("summary") ("plugin") ("zotero")
+                                   ("wallabag") ("awesome")
+                                   ("feat") ("bug") ("tech")))
   (setq org-edit-src-content-indentation 0)
   (map! :map org-mode-map :leader :prefix "l"
         :desc "" :n "o" #'+org/insert-item-below
@@ -110,7 +163,6 @@ Return value is string that likes \"2024-07-21\" "
          (future-date (time-add current-date (days-to-time days)))
          (formatted-date (format-time-string "%Y-%m-%d" future-date)))
     formatted-date))
-;; (setq org-tag-persistent-alist '(("work" . "w") ("capture" . "c") ("topic" . "t") ("byte" . "b") ("journal" . "j")))
 ;; set header https://org-roam.discourse.group/t/configure-deft-title-stripping-to-hide-org-roam-template-headers/478
 (use-package! deft
   :after org
@@ -142,30 +194,45 @@ Return value is string that likes \"2024-07-21\" "
   "Search Org Roam backlinks with `org-roam-ql-search'"
   (interactive)
   ;; get node at point
-  (let ((node (org-roam-db-diagnose-node)))
-    (let ((id (org-roam-node-id node)) (node-title (org-roam-node-title node)))
-      (progn (org-roam-ql-search
-              ;; hide node itself in backlink results
-              `(and (backlink-to ,(list 'id id)) (not ,(list 'id id))))
-             (message "Showing backlink results for \"%s\"" node-title)))))
+  (let* ((node (org-roam-db-diagnose-node)) (id (org-roam-node-id node)) (node-title (org-roam-node-title node)))
+    (progn (org-roam-ql-search
+            ;; hide node itself in backlink results
+            `(and (backlink-to ,(list 'id id)) (not ,(list 'id id))))
+           (message "Showing backlink results for \"%s\"" node-title))))
 (defun my/org-ql-search ()
   (interactive)
   (org-ql-search (my-org-roam-files)))
 
 (setq my-roam-dailies-file-path (file-name-concat my-roam-dailies-dir "%<%Y-%m-%d>.org"))
+(defun my-fix-org-super-agenda-map ()
+  "fix evil keybindings
+https://github.com/alphapapa/org-super-agenda/issues/50"
+  (setq org-super-agenda-header-map evil-org-agenda-mode-map))
 ;; setup org roam
 (use-package! org-roam
   :custom
   (org-roam-directory my-roam-dir)
   (org-roam-dailies-directory my-roam-dailies-dir)
+  (org-roam-capture-templates
+   '(("d" "default" entry "* %?" :target
+      (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
+- tags :: ")
+      :unnarrowed t)))
   (org-roam-dailies-capture-templates
    '(("d" "default" entry
       "* %?"
       :target (file+head "%<%Y-%m-%d>.org"
-                         "#+title: %<%Y-%m-%d>\n"))))
+                         "#+title: %<%Y-%m-%d>\n"))
+     ("r" "reference note" entry "* %? :ref_note:"
+      :target (file+head "%<%Y-%m-%d>.org"
+                         "#+title: %<%Y-%m-%d>\n"))
+     ("f" "fleeting note" entry "* %? :fleet_note:"
+      :target (file+head "%<%Y-%m-%d>.org"
+                         "#+title: %<%Y-%m-%d>\n"))
+     ("w" "work todo" entry "* TODO %?\nSCHEDULED: %t"
+      :target (file+head+olp "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n" ("TODO %<%Y-%m-%d> 工作 :work:\nSCHEDULED: %t")))))
   (org-roam-capture-ref-templates
-   '(
-     ("r" "ref" plain "%?" :target
+   '(("r" "ref" plain "%?" :target
       (file+head "${slug}.org" "#+title: ${title}")
       :unnarrowed t)
      ("d" "daily entry" entry "* [[${ref}][${title}]] :capture:
@@ -186,7 +253,12 @@ ${body}
         :map org-mode-map :localleader (:prefix ("v" . "org-ql")
                                         :desc "Search org roam note refs at point" "r" #'my/org-roam-backlink-ql
                                         "s" #'org-ql-search
-                                        "v" #'org-roam-ql-search)))
+                                        "v" #'org-roam-ql-search
+                                        :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map))
+  (when (my-is-termux)
+    (progn (setq org-roam-node-display-template "${doom-hierarchy} ${doom-tags:10}")
+           (setq browse-url-browser-function 'browse-url-xdg-open))
+    ))
 
 ;; mimic +default/org-notes-search
 (defun +default/org-roam-search (query)
@@ -209,7 +281,104 @@ ${body}
 
 (use-package! org-ql
   :config
-  (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch))
+  (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch)
+  (map! :leader :prefix ("v" . "org views")
+        "v" #'org-ql-view
+        :desc "Refresh org agenda files" "r" #'my-refresh-org-agenda-files
+        :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map))
+(setq org-ql-views
+      (list (cons "Overview: Agenda-like"
+                  (list :buffers-files #'org-agenda-files
+                        :query '(and (not (done))
+                                     (or (habit)
+                                         (deadline auto)
+                                         (scheduled :to today)
+                                         (ts-active :on today)))
+                        :sort '(todo priority date)
+                        :super-groups 'org-super-agenda-groups
+                        :title "Agenda-like"))
+            (cons "Overview: NEXT tasks"
+                  (list :buffers-files #'org-agenda-files
+                        :query '(todo "NEXT")
+                        :sort '(date priority)
+                        :super-groups 'org-super-agenda-groups
+                        :title "Overview: NEXT tasks"))
+            (cons "Calendar: Today"
+                  (list :buffers-files #'org-agenda-files
+                        :query '(ts-active :on today)
+                        :title "Today"
+                        :super-groups 'org-super-agenda-groups
+                        :sort '(priority)))
+            (cons "Calendar: This week"
+                  (lambda ()
+                    "Show items with an active timestamp during this calendar week."
+                    (interactive)
+                    (let* ((ts (ts-now))
+                           (beg-of-week (->> ts
+                                             (ts-adjust 'day (- (ts-dow (ts-now))))
+                                             (ts-apply :hour 0 :minute 0 :second 0)))
+                           (end-of-week (->> ts
+                                             (ts-adjust 'day (- 6 (ts-dow (ts-now))))
+                                             (ts-apply :hour 23 :minute 59 :second 59))))
+                      (org-ql-search (org-agenda-files)
+                        `(ts-active :from ,beg-of-week
+                          :to ,end-of-week)
+                        :title "This week"
+                        :super-groups 'org-super-agenda-groups
+                        :sort '(priority)))))
+            (cons "Calendar: Next week"
+                  (lambda ()
+                    "Show items with an active timestamp during the next calendar week."
+                    (interactive)
+                    (let* ((ts (ts-adjust 'day 7 (ts-now)))
+                           (beg-of-week (->> ts
+                                             (ts-adjust 'day (- (ts-dow (ts-now))))
+                                             (ts-apply :hour 0 :minute 0 :second 0)))
+                           (end-of-week (->> ts
+                                             (ts-adjust 'day (- 6 (ts-dow (ts-now))))
+                                             (ts-apply :hour 23 :minute 59 :second 59))))
+                      (org-ql-search (org-agenda-files)
+                        `(ts-active :from ,beg-of-week
+                          :to ,end-of-week)
+                        :title "Next week"
+                        :super-groups 'org-super-agenda-groups
+                        :sort '(priority)))))
+            (cons "Review: Recently timestamped" #'org-ql-view-recent-items)
+            (cons (propertize "Review: Dangling tasks"
+                              'help-echo "Tasks whose ancestor is done")
+                  (list :buffers-files #'org-agenda-files
+                        :query '(and (todo)
+                                     (ancestors (done)))
+                        :title (propertize "Review: Dangling tasks"
+                                           'help-echo "Tasks whose ancestor is done")
+                        :sort '(todo priority date)
+                        :super-groups '((:auto-parent t))))
+            (cons (propertize "Review: Stale tasks"
+                              'help-echo "Tasks without a timestamp in the past 2 weeks")
+                  (list :buffers-files #'org-agenda-files
+                        :query '(and (todo)
+                                     (not (ts :from -14)))
+                        :title (propertize "Review: Stale tasks"
+                                           'help-echo "Tasks without a timestamp in the past 2 weeks")
+                        :sort '(todo priority date)
+                        :super-groups '((:auto-parent t))))
+            (cons (propertize "Review: Stuck projects"
+                              'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
+                  (list :buffers-files #'org-agenda-files
+                        :query '(and (todo)
+                                     (descendants (todo))
+                                     (not (descendants (todo "NEXT"))))
+                        :title (propertize "Review: Stuck projects"
+                                           'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
+                        :sort '(date priority)
+                        :super-groups 'org-super-agenda-groups))
+            (cons "Work items" (list :buffers-files #'org-agenda-files
+                                     :query '(and (not (done)) (todo "TODO" "STRT") (tags "work"))
+                                     :title "工作事项清单"
+                                     :sort '(todo priority date)
+                                     :super-groups '((:auto-parent t))))
+            ))
+
 (use-package! helm-org-ql)
 
 (use-package! org-roam-ql
@@ -343,7 +512,7 @@ gh https://github.com/")
    :desc "delete image link and source file" :n "d" #'org-download-delete))
 
 (use-package! org-super-agenda
-  :after (org-agenda evil-org)
+  :after (:all org-agenda evil evil-org-agenda)
   :config
   (org-super-agenda-mode)
   (setq org-super-agenda-groups
@@ -356,8 +525,9 @@ gh https://github.com/")
            :time-grid t
            :todo "TODO")
           ))
-  ;; fix evil keybindings https://github.com/alphapapa/org-super-agenda/issues/50
-  (add-hook 'projectile-after-switch-project-hook (lambda () (setq org-super-agenda-header-map evil-org-agenda-mode-map))))
+  (my-fix-org-super-agenda-map))
+
+(use-package! org-hyperscheduler)
 
 (use-package! org-transclusion
   :after org
@@ -441,69 +611,3 @@ headers ourselves."
 
 ;; lsp related
 (use-package! lsp-jedi)
-
-;; optimize org agenda performance
-;; https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
-;; (defun vulpea-project-p ()
-;;   "Return non-nil if current buffer has any todo entry.
-
-;; TODO entries marked as done are ignored, meaning the this
-;; function returns nil if current buffer contains only completed
-;; tasks."
-;;   (seq-find                                 ; (3)
-;;    (lambda (type)
-;;      (eq type 'todo))
-;;    (org-element-map                         ; (2)
-;;        (org-element-parse-buffer 'headline) ; (1)
-;;        'headline
-;;      (lambda (h)
-;;        (org-element-property :todo-type h)))))
-
-;; (defun vulpea-project-update-tag ()
-;;     "Update PROJECT tag in the current buffer."
-;;     (when (and (not (active-minibuffer-window))
-;;                (vulpea-buffer-p))
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (let* ((tags (vulpea-buffer-tags-get))
-;;                (original-tags tags))
-;;           (if (vulpea-project-p)
-;;               (setq tags (cons "project" tags))
-;;             (setq tags (remove "project" tags)))
-
-;;           ;; cleanup duplicates
-;;           (setq tags (seq-uniq tags))
-
-;;           ;; update tags if changed
-;;           (when (or (seq-difference tags original-tags)
-;;                     (seq-difference original-tags tags))
-;;             (apply #'vulpea-buffer-tags-set tags))))))
-
-;; (defun vulpea-buffer-p ()
-;;   "Return non-nil if the currently visited buffer is a note."
-;;   (and buffer-file-name
-;;        (string-prefix-p
-;;         (expand-file-name (file-name-as-directory org-roam-directory))
-;;         (file-name-directory buffer-file-name))))
-
-;; (defun vulpea-project-files ()
-;;     "Return a list of note files containing 'project' tag." ;
-;;     (seq-uniq
-;;      (seq-map
-;;       #'car
-;;       (org-roam-db-query
-;;        [:select [nodes:file]
-;;         :from tags
-;;         :left-join nodes
-;;         :on (= tags:node-id nodes:id)
-;;         :where (like tag (quote "%\"project\"%"))]))))
-
-;; (defun vulpea-agenda-files-update (&rest _)
-;;   "Update the value of `org-agenda-files'."
-;;   (setq org-agenda-files (vulpea-project-files)))
-
-;; (add-hook 'find-file-hook #'vulpea-project-update-tag)
-;; (add-hook 'before-save-hook #'vulpea-project-update-tag)
-
-;; (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
-;; (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
