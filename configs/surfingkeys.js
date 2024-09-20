@@ -14,9 +14,9 @@ const formatTitle = (title = document.title) => {
 
 const getUrl = () => {
   let url = window.location.href;
-  if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
-    url = window.location.search.slice(3);
-  }
+  // if (url.indexOf(chrome.extension.getURL("/pages/pdf_viewer.html")) === 0) {
+  //   url = window.location.search.slice(3);
+  // }
   return url;
 };
 // {{{2 org capture
@@ -151,7 +151,7 @@ const captureOrg =
   (template = "d") =>
   () => {
     const url = captureCurrentPage(template);
-    Front.showBanner("Page Captured!");
+    // Front.showBanner("Page Captured!");
     window.location.href = url;
   };
 mapkey("yxd", "Org Capture Daily", captureOrg("d"));
@@ -159,7 +159,7 @@ mapkey("yxr", "Org Capture Ref", captureOrg("r"));
 
 mapkey("yu", "Org Store Link", () => {
   const url = captureCurrentPage(undefined, "store-link");
-  Front.showBanner("Page Link Stored");
+  // Front.showBanner("Page Link Stored");
   window.location.href = url;
 });
 
