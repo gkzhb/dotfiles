@@ -114,7 +114,7 @@ function M.init()
   vim.fn['coc#config']('typescript', {
     inlayHints = {
       functionLikeReturnTypes = {
-        enabled = true,
+        enabled = false,
       }
     }
   })
