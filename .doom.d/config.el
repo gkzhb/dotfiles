@@ -46,6 +46,11 @@
   (map! :prefix ("C-c g" . "gptel")
         :desc "send to gptel" "g" #'gptel-send
         :desc "gptel menu" "m" #'gptel-menu))
+
+(use-package! embark
+  :custom
+  (embark-quit-after-action nil))
+
 (setq my-org-properties '("OBJECT_TYPE" "ZOTERO" "ROAM_REFS" "CAPTURED" "TECH_SOLUTION" "TECH_SOLUTION_BACKEND" "MEEGO" "PRD" "GIT_BRANCH" "GIT_REPO" "MR" "DOC"))
 (after! org
   ;; modified based on doom org config
@@ -136,6 +141,8 @@
 
 (map! :after org-roam :leader :desc "Search Org Roam notes" :n "s n"
       #'+default/org-roam-search)
+(map! :after evil :nv "j" #'evil-next-visual-line
+      :nv "k" #'evil-previous-visual-line)
 ;; jump to line
 (map! :after evil-easymotion :map evilem-map :desc "Goto some line"
       "b" #'evil-avy-goto-line)
@@ -208,6 +215,9 @@ Return value is string that likes \"2024-07-21\" "
   "fix evil keybindings
 https://github.com/alphapapa/org-super-agenda/issues/50"
   (setq org-super-agenda-header-map evil-org-agenda-mode-map))
+(defun my-fix-org-super-agenda-map-cmd ()
+  (interactive)
+  (my-fix-org-super-agenda-map))
 ;; setup org roam
 (use-package! org-roam
   :custom
@@ -238,7 +248,7 @@ https://github.com/alphapapa/org-super-agenda/issues/50"
      ("d" "daily entry" entry "* [[${ref}][${title}]] :capture:
 :PROPERTIES:
 :CAPTURED: %U
-:ROAM_REFS: ${ref}
+:ROAM_REFS: \"${ref}\"
 :END:
 - tags :: %?
 
@@ -280,104 +290,139 @@ ${body}
   :config (org-roam-timestamps-mode))
 
 (use-package! org-ql
+  :after (org-roam vulpea)
   :config
   (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch)
   (map! :leader :prefix ("v" . "org views")
         "v" #'org-ql-view
         :desc "Refresh org agenda files" "r" #'my-refresh-org-agenda-files
-        :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map))
-(setq org-ql-views
-      (list (cons "Overview: Agenda-like"
-                  (list :buffers-files #'org-agenda-files
-                        :query '(and (not (done))
-                                     (or (habit)
-                                         (deadline auto)
-                                         (scheduled :to today)
-                                         (ts-active :on today)))
-                        :sort '(todo priority date)
-                        :super-groups 'org-super-agenda-groups
-                        :title "Agenda-like"))
-            (cons "Overview: NEXT tasks"
-                  (list :buffers-files #'org-agenda-files
-                        :query '(todo "NEXT")
-                        :sort '(date priority)
-                        :super-groups 'org-super-agenda-groups
-                        :title "Overview: NEXT tasks"))
-            (cons "Calendar: Today"
-                  (list :buffers-files #'org-agenda-files
-                        :query '(ts-active :on today)
-                        :title "Today"
-                        :super-groups 'org-super-agenda-groups
-                        :sort '(priority)))
-            (cons "Calendar: This week"
-                  (lambda ()
-                    "Show items with an active timestamp during this calendar week."
-                    (interactive)
-                    (let* ((ts (ts-now))
-                           (beg-of-week (->> ts
-                                             (ts-adjust 'day (- (ts-dow (ts-now))))
-                                             (ts-apply :hour 0 :minute 0 :second 0)))
-                           (end-of-week (->> ts
-                                             (ts-adjust 'day (- 6 (ts-dow (ts-now))))
-                                             (ts-apply :hour 23 :minute 59 :second 59))))
-                      (org-ql-search (org-agenda-files)
-                        `(ts-active :from ,beg-of-week
-                          :to ,end-of-week)
-                        :title "This week"
-                        :super-groups 'org-super-agenda-groups
-                        :sort '(priority)))))
-            (cons "Calendar: Next week"
-                  (lambda ()
-                    "Show items with an active timestamp during the next calendar week."
-                    (interactive)
-                    (let* ((ts (ts-adjust 'day 7 (ts-now)))
-                           (beg-of-week (->> ts
-                                             (ts-adjust 'day (- (ts-dow (ts-now))))
-                                             (ts-apply :hour 0 :minute 0 :second 0)))
-                           (end-of-week (->> ts
-                                             (ts-adjust 'day (- 6 (ts-dow (ts-now))))
-                                             (ts-apply :hour 23 :minute 59 :second 59))))
-                      (org-ql-search (org-agenda-files)
-                        `(ts-active :from ,beg-of-week
-                          :to ,end-of-week)
-                        :title "Next week"
-                        :super-groups 'org-super-agenda-groups
-                        :sort '(priority)))))
-            (cons "Review: Recently timestamped" #'org-ql-view-recent-items)
-            (cons (propertize "Review: Dangling tasks"
-                              'help-echo "Tasks whose ancestor is done")
-                  (list :buffers-files #'org-agenda-files
-                        :query '(and (todo)
-                                     (ancestors (done)))
-                        :title (propertize "Review: Dangling tasks"
-                                           'help-echo "Tasks whose ancestor is done")
-                        :sort '(todo priority date)
-                        :super-groups '((:auto-parent t))))
-            (cons (propertize "Review: Stale tasks"
-                              'help-echo "Tasks without a timestamp in the past 2 weeks")
-                  (list :buffers-files #'org-agenda-files
-                        :query '(and (todo)
-                                     (not (ts :from -14)))
-                        :title (propertize "Review: Stale tasks"
-                                           'help-echo "Tasks without a timestamp in the past 2 weeks")
-                        :sort '(todo priority date)
-                        :super-groups '((:auto-parent t))))
-            (cons (propertize "Review: Stuck projects"
-                              'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
-                  (list :buffers-files #'org-agenda-files
-                        :query '(and (todo)
-                                     (descendants (todo))
-                                     (not (descendants (todo "NEXT"))))
-                        :title (propertize "Review: Stuck projects"
-                                           'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
-                        :sort '(date priority)
-                        :super-groups 'org-super-agenda-groups))
-            (cons "Work items" (list :buffers-files #'org-agenda-files
-                                     :query '(and (not (done)) (todo "TODO" "STRT") (tags "work"))
-                                     :title "工作事项清单"
-                                     :sort '(todo priority date)
-                                     :super-groups '((:auto-parent t))))
-            ))
+        :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map-cmd)
+  (org-ql-defpred link-with-title (&rest titles)
+    "Search for entries containing org roam links with specified TITLES."
+    :normalizers
+    ((`(link-with-title . ,titles)
+      (let (ids)
+        ;; Collect all IDs from notes with specified titles
+        (dolist (title titles)
+          (let ((notes (vulpea-db-search-by-title title)))
+            (dolist (note notes)
+              (let ((id (vulpea-note-id note)))
+                (push id ids)))))
+        `(regexp ,(concat "\\[\\[id:"
+                          (regexp-opt ids)
+                          "\\]\\(?:\\[.*?\\]\\)?\\]"))))))
+  (setq org-ql-views
+        (list (cons "Overview: Agenda-like"
+                    (list :buffers-files #'org-agenda-files
+                          :query '(and (not (done))
+                                       (or (habit)
+                                           (deadline auto)
+                                           (scheduled :to today)
+                                           (ts-active :on today)))
+                          :sort '(todo priority date)
+                          :super-groups 'org-super-agenda-groups
+                          :title "Agenda-like"))
+              (cons "Overview: NEXT tasks"
+                    (list :buffers-files #'org-agenda-files
+                          :query '(todo "NEXT")
+                          :sort '(date priority)
+                          :super-groups 'org-super-agenda-groups
+                          :title "Overview: NEXT tasks"))
+              (cons "Calendar: Today"
+                    (list :buffers-files #'org-agenda-files
+                          :query '(ts-active :on today)
+                          :title "Today"
+                          :super-groups 'org-super-agenda-groups
+                          :sort '(priority)))
+              (cons "Calendar: This week"
+                    (lambda ()
+                      "Show items with an active timestamp during this calendar week."
+                      (interactive)
+                      (let* ((ts (ts-now))
+                             (beg-of-week (->> ts
+                                               (ts-adjust 'day (- (ts-dow (ts-now))))
+                                               (ts-apply :hour 0 :minute 0 :second 0)))
+                             (end-of-week (->> ts
+                                               (ts-adjust 'day (- 6 (ts-dow (ts-now))))
+                                               (ts-apply :hour 23 :minute 59 :second 59))))
+                        (org-ql-search (org-agenda-files)
+                          `(ts-active :from ,beg-of-week
+                            :to ,end-of-week)
+                          :title "This week"
+                          :super-groups 'org-super-agenda-groups
+                          :sort '(priority)))))
+              (cons "Calendar: Next week"
+                    (lambda ()
+                      "Show items with an active timestamp during the next calendar week."
+                      (interactive)
+                      (let* ((ts (ts-adjust 'day 7 (ts-now)))
+                             (beg-of-week (->> ts
+                                               (ts-adjust 'day (- (ts-dow (ts-now))))
+                                               (ts-apply :hour 0 :minute 0 :second 0)))
+                             (end-of-week (->> ts
+                                               (ts-adjust 'day (- 6 (ts-dow (ts-now))))
+                                               (ts-apply :hour 23 :minute 59 :second 59))))
+                        (org-ql-search (org-agenda-files)
+                          `(ts-active :from ,beg-of-week
+                            :to ,end-of-week)
+                          :title "Next week"
+                          :super-groups 'org-super-agenda-groups
+                          :sort '(priority)))))
+              (cons "Review: Recently timestamped" #'org-ql-view-recent-items)
+              (cons (propertize "Review: Dangling tasks"
+                                'help-echo "Tasks whose ancestor is done")
+                    (list :buffers-files #'org-agenda-files
+                          :query '(and (todo)
+                                       (ancestors (done)))
+                          :title (propertize "Review: Dangling tasks"
+                                             'help-echo "Tasks whose ancestor is done")
+                          :sort '(todo priority date)
+                          :super-groups '((:auto-parent t))))
+              (cons (propertize "Review: Stale tasks"
+                                'help-echo "Tasks without a timestamp in the past 2 weeks")
+                    (list :buffers-files #'org-agenda-files
+                          :query '(and (todo)
+                                       (not (ts :from -14)))
+                          :title (propertize "Review: Stale tasks"
+                                             'help-echo "Tasks without a timestamp in the past 2 weeks")
+                          :sort '(todo priority date)
+                          :super-groups '((:auto-parent t))))
+              (cons (propertize "Review: Stuck projects"
+                                'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
+                    (list :buffers-files #'org-agenda-files
+                          :query '(and (todo)
+                                       (descendants (todo))
+                                       (not (descendants (todo "NEXT"))))
+                          :title (propertize "Review: Stuck projects"
+                                             'help-echo "Tasks with sub-tasks but no NEXT sub-tasks")
+                          :sort '(date priority)
+                          :super-groups 'org-super-agenda-groups))
+              (cons "Work items" (list :buffers-files #'org-agenda-files
+                                       :query '(and (not (done)) (todo "TODO" "STRT") (tags "work"))
+                                       :title "工作事项清单"
+                                       :sort '(todo priority date)
+                                       :super-groups '((:auto-parent t))))
+              (cons "PARA: Projects" (list :buffers-files #'org-agenda-files
+                                           :query '(and (not (done)) (link-with-title  "PARA/Project"))
+                                           :title "PARA: Project 清单"
+                                           :sort '(todo priority date)
+                                           :super-groups '((:auto-parent t))))
+              (cons "PARA: Areas" (list :buffers-files #'org-agenda-files
+                                        :query '(and (not (done)) (link-with-title  "PARA/Area"))
+                                        :title "PARA: Area 清单"
+                                        :sort '(todo priority date)
+                                        :super-groups '((:auto-parent t))))
+              (cons "PARA: Resources" (list :buffers-files #'org-agenda-files
+                                            :query '(and (not (done)) (link-with-title  "PARA/Resource"))
+                                            :title "PARA: Resource 清单"
+                                            :sort '(todo priority date)
+                                            :super-groups '((:auto-parent t))))
+              (cons "PARA: Archives" (list :buffers-files #'org-agenda-files
+                                           :query '(and (not (done)) (link-with-title  "PARA/Archive"))
+                                           :title "PARA: Archive 清单"
+                                           :sort '(todo priority date)
+                                           :super-groups '((:auto-parent t))))
+              )))
 
 (use-package! helm-org-ql)
 
@@ -611,3 +656,6 @@ headers ourselves."
 
 ;; lsp related
 (use-package! lsp-jedi)
+(use-package! dap-mode
+  :config
+  (setq dap-python-debugger 'debugpy))
