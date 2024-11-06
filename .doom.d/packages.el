@@ -43,6 +43,11 @@
 (package! request)
 (package! gptel)
 (package! org-ql)
+(package! doct)
+(package! doct-org-roam
+  :recipe (:type git
+           :repo "https://gist.github.com/f9b21eeea7d7c9123dc400a30599d50d.git"
+           :files ("*.el")))
 (package! helm-org-ql)
 (package! org-super-agenda)
 (package! org-hyperscheduler

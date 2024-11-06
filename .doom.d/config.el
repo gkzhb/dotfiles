@@ -113,6 +113,11 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t) (emacs-lisp . t) (jupyter . t))))
+
+(use-package! doct)
+(use-package! doct-org-roam
+  :after doct)
+
 ;; jupyter with org babel related
 ;;
 ;; (defun org-babel-edit-prep:python (babel-info)
@@ -220,6 +225,7 @@ https://github.com/alphapapa/org-super-agenda/issues/50"
   (my-fix-org-super-agenda-map))
 ;; setup org roam
 (use-package! org-roam
+  :after (:all org doct-org-roam)
   :custom
   (org-roam-directory my-roam-dir)
   (org-roam-dailies-directory my-roam-dailies-dir)
@@ -290,7 +296,7 @@ ${body}
   :config (org-roam-timestamps-mode))
 
 (use-package! org-ql
-  :after (org-roam vulpea)
+  :after (:all org-roam vulpea)
   :config
   (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch)
   (map! :leader :prefix ("v" . "org views")
@@ -426,10 +432,52 @@ ${body}
 
 (use-package! helm-org-ql)
 
+(defun my/org-roam-select-filter-nodes (nodes)
+  "Search and select Org Roam within given nodes"
+  (let* ((node-list (mapcar #'org-roam-node-id nodes))
+         (node-hash (make-hash-table :test 'equal)))
+    ;; add node ids to the hash table
+    (dolist (node-id node-list)
+      (puthash node-id t node-hash))
+    (let* ((my-filter-fn (lambda (node)
+                           "filter nodes in node-list"
+                           (gethash (org-roam-node-id node) node-hash)))
+           ;; call org-roam-node-read, and pass in custom filter fn
+           (selected-node (org-roam-node-read nil my-filter-fn nil t "Select PARA Node: ")))
+      (when selected-node
+        (org-roam-node-visit selected-node)))))
 (use-package! org-roam-ql
-  :after (org-roam))
+  :after org-roam
+  :config
+  (map!
+   :leader :prefix ("n r e" . "Select Org Roam Node")
+   :desc "Select PARA node" :n "s"
+   (lambda ()
+     (interactive)
+     (my/org-roam-select-filter-nodes
+      (org-roam-ql-nodes
+       `(backlink-to (title "^PARA/\\(Project\\|Area\\|Resource\\)$") :combine :or))))
+   :desc "Select Project node" :n "p"
+   (lambda ()
+     (interactive)
+     (my/org-roam-select-filter-nodes
+      (org-roam-ql-nodes
+       `(backlink-to (title "^PARA/Project$") :combine :or))))
+   :desc "Select Archive node" :n "a"
+   (lambda ()
+     (interactive)
+     (my/org-roam-select-filter-nodes
+      (org-roam-ql-nodes
+       `(backlink-to (title "^PARA/Archive$") :combine :or))))
+   :desc "Select Reference node" :n "r"
+   (lambda ()
+     (interactive)
+     (my/org-roam-select-filter-nodes
+      (org-roam-ql-nodes
+       `(backlink-to ,org-roam-buffer-current-node :combine :or))))
+   ))
 (use-package! org-roam-ql-ql
-  :after (org-ql org-roam-ql)
+  :after (:all org-ql org-roam-ql)
   :config
   (org-roam-ql-ql-init))
 
