@@ -144,7 +144,7 @@ function M.init()
   --- {{{4 coc go
   -- temporary disable go lsp
   vim.fn['coc#config']('go', {
-    enable = false,
+    enable = true,
   })
   -- {{{4 coc sumneko lua
   vim.fn['coc#config']('sumneko-lua', {
