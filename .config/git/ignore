@@ -1,4 +1,5 @@
 .ignore
+.env
 # Node
 node_modules/
 
@@ -19,3 +20,6 @@ log/
 
 # nvm
 .nvmrc
+
+# aider
+.aider*
