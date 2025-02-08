@@ -298,6 +298,10 @@ require('pckr').add({
   },
   -- {{{2 search
   { 'ibhagwan/fzf-lua', requires = { 'kyazdani42/nvim-web-devicons' } },
+  { 'nvim-pack/nvim-spectre',
+    requires= { 'nvim-lua/plenary.nvim' },
+    config = require('plugins.spectre').init,
+  },
   -- {{{3 telescope related
   {
     'nvim-telescope/telescope.nvim',

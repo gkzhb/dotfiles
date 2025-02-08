@@ -126,6 +126,7 @@ function M.setMappings()
   require('plugins.coc-nvim').mappings()
   require('plugins.vim-win').mappings()
   require('plugins.telescope').mappings()
+  require('plugins.spectre').mappings()
   require('plugins.notify').mappings()
   require('plugins.toggleterm').mappings()
   wk.register({
