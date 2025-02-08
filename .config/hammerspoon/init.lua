@@ -38,16 +38,11 @@ function asyncLeftClick(point, delay, onFinished)
 end
 
 -- Get offset based on window title
-local function getOffsetByTitle(title)
-  -- TODO update diff
-  if title == "Chrome" then
-    return 10, 20
-  elseif title == "Visual Studio Code" then
-    return 15, 25
-  elseif title == "iTerm2" then
-    return 5, 15
-  elseif title == "Finder" then
-    return 8, 18
+local function getOffsetByApp(app)
+  if app == "Brave Browser" then
+    return 15, 15
+  -- elseif title == "Finder" then
+  --   return 8, 18
   else
     return 5, 15  -- default offset
   end
@@ -59,7 +54,7 @@ function moveWindowToSpace(window, spaceNumber)
   local prevCursorPoint = hs.mouse.absolutePosition()
   local winFrame = window:frame()
   
-  local xOffset, yOffset = getOffsetByTitle(window:title())
+  local xOffset, yOffset = getOffsetByApp(window:application():name())
   local point = hs.geometry(winFrame.x + xOffset, winFrame.y + yOffset)
   asyncLeftClick(point, 1, function()
     -- restore cursor position
@@ -105,3 +100,15 @@ for i = 1, 6 do
     moveFocusedWindowToSpace(i + 10)
   end)
 end
+
+-- debug getOffsetByApp
+-- hs.hotkey.bind({ "cmd", "shift"}, "e", function()
+--   local focusedWindow = hs.window.focusedWindow()
+--   if focusedWindow then
+--     log.i("Moving window " .. focusedWindow:title(), " app: " .. focusedWindow:application():name())
+--     local winFrame = focusedWindow:frame()
+--     local xOffset, yOffset = getOffsetByApp(focusedWindow:application():name())
+--     local point = hs.geometry(winFrame.x + xOffset, winFrame.y + yOffset)
+--     hs.mouse.absolutePosition(point)
+--   end
+-- end)
