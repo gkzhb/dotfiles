@@ -42,6 +42,7 @@
 
 (package! request)
 (package! gptel)
+(package! aider :recipe (:host github :repo "tninja/aider.el" :files ("*.el")))
 (package! org-ql)
 (package! doct)
 (package! doct-org-roam
@@ -70,12 +71,14 @@
 (package! org-download)
 (package! org-transclusion)
 (package! org-web-tools)
+(package! org-appear)
 (package! ob-mermaid)
 (package! mermaid-ts-mode)
 (package! format-all)
 (package! rime)
 (package! code-cells)
 (package! lsp-jedi)
+(package! uv-mode)
 
 ;; plenty of bugs in org mode, not usable
 ;; (package! polymode)

@@ -10,6 +10,10 @@
 ;;       user-mail-address "john@doe.com")
 (defun my-is-termux () (getenv "TERMUX_VERSION"))
 
+(setq shell-file-name (executable-find "bash"))
+(setq-default vterm-shell (executable-find "fish"))
+(setq-default explicit-shell-file-name (executable-find "fish"))
+
 (setq doom-theme 'doom-one)
 (after! doom-ui
   (menu-bar-mode -1))
@@ -42,10 +46,11 @@
   (gptel-make-ollama "Local Ollama"             ;Any name of your choosing
     :host "localhost:11434"
     :stream t
-    :models '("llama3:8b-instruct-q5_K_M" "yi:9b-chat-v1.5-q5_K_M" "qwen2" "phi3:14b-medium-128k-instruct-q5_K_M" "gemma2:9b-instruct-q5_K_M"))
+    :models '("llama3.1:8b-instruct-q5_K_M" "qwen2.5:14b-instruct-q5_K_M" "qwen2.5-coder:14b-instruct-q4_0" "gemma2:9b-instruct-q5_K_M"))
   (map! :prefix ("C-c g" . "gptel")
         :desc "send to gptel" "g" #'gptel-send
         :desc "gptel menu" "m" #'gptel-menu))
+(use-package! aider)
 
 (use-package! embark
   :custom
@@ -99,8 +104,7 @@
           ("NO"   . +org-todo-cancel)
           ("KILL" . +org-todo-cancel)))
                                         ; set default tag list
-  (setq org-tag-persistent-alist '(("work") ("topic") ("journal") ("project")
-                                   ("fleet_node") ("ref_note") ("lit_node") ("main_card") ("bib_card") ("index_card")
+  (setq org-tag-persistent-alist '(("work") ("journal")
                                    ("capture") ("byte") ("share")
                                    ("summary") ("plugin") ("zotero")
                                    ("wallabag") ("awesome")
@@ -129,7 +133,7 @@
   (org-babel-jupyter-aliases-from-kernelspecs))
 
 ;; evil: set '_' as part of word
-(add-hook! 'python-mode-hook (modify-syntax-entry ?_ "w"))
+;; (add-hook! 'python-mode-hook (modify-syntax-entry ?_ "w"))
 
 (use-package! code-cells
   :config
@@ -175,6 +179,12 @@ Return value is string that likes \"2024-07-21\" "
          (future-date (time-add current-date (days-to-time days)))
          (formatted-date (format-time-string "%Y-%m-%d" future-date)))
     formatted-date))
+(use-package! org-agenda
+  :demand t
+  :config
+  (setq org-agenda-files
+        (list org-directory my-roam-dir
+              (file-name-concat my-roam-dir my-roam-dailies-dir))))
 ;; set header https://org-roam.discourse.group/t/configure-deft-title-stripping-to-hide-org-roam-template-headers/478
 (use-package! deft
   :after org
@@ -233,16 +243,19 @@ https://github.com/alphapapa/org-super-agenda/issues/50"
    '(("d" "default" entry "* %?" :target
       (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}
 - tags :: ")
-      :unnarrowed t)))
+      :unnarrowed t)
+     ("i" "Inbox" plain "* %?\n  :PROPERTIES:\n  :CREATED: %U\n  :END:\n" :target (node "Inbox"))))
   (org-roam-dailies-capture-templates
    '(("d" "default" entry
       "* %?"
       :target (file+head "%<%Y-%m-%d>.org"
                          "#+title: %<%Y-%m-%d>\n"))
-     ("r" "reference note" entry "* %? :ref_note:"
+     ("r" "reference note" entry "* %?
+- tags [[roam:#ZK/Reference Note]]"
       :target (file+head "%<%Y-%m-%d>.org"
                          "#+title: %<%Y-%m-%d>\n"))
-     ("f" "fleeting note" entry "* %? :fleet_note:"
+     ("f" "fleeting note" entry "* %?
+- tags [[roam:#ZK/Fleeting Note]]"
       :target (file+head "%<%Y-%m-%d>.org"
                          "#+title: %<%Y-%m-%d>\n"))
      ("w" "work todo" entry "* TODO %?\nSCHEDULED: %t"
@@ -265,12 +278,26 @@ ${body}
   :config
   (org-roam-setup)
   (org-roam-db-autosync-mode)
+  (defun my/org-roam-capture-inbox ()
+    (interactive)
+    (let* ((inbox-node (org-roam-node-from-title-or-alias "Inbox"))
+           (inbox-file (when inbox-node
+                         (org-roam-node-file inbox-node)))) ; 获取 "Inbox" 节点对应的文件路径
+      (if inbox-file
+          (org-roam-capture- :node (org-roam-node-create)
+                             :templates `(("i" "inbox" plain "* %? :capture:
+:PROPERTIES:
+:CAPTURED: %U
+:END:"
+                                           :if-new (file+head ,inbox-file "#+title: Inbox\n"))))
+        (message "Node 'Inbox' not found."))))
   (map! :map org-mode-map :prefix "C-c r"  :desc "Insert Org Roam Node" "i" #'org-roam-node-insert
         :map org-mode-map :localleader (:prefix ("v" . "org-ql")
                                         :desc "Search org roam note refs at point" "r" #'my/org-roam-backlink-ql
                                         "s" #'org-ql-search
                                         "v" #'org-roam-ql-search
                                         :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map))
+  (map! :leader :desc "Capture to Inbox" "x" #'my/org-roam-capture-inbox)
   (when (my-is-termux)
     (progn (setq org-roam-node-display-template "${doom-hierarchy} ${doom-tags:10}")
            (setq browse-url-browser-function 'browse-url-xdg-open))
@@ -296,13 +323,12 @@ ${body}
   :config (org-roam-timestamps-mode))
 
 (use-package! org-ql
-  :after (:all org-roam vulpea)
   :config
   (map! :map org-ql-view-map :prefix ("C-c v" . "org-ql") "v" #'org-ql-view-dispatch)
   (map! :leader :prefix ("v" . "org views")
         "v" #'org-ql-view
-        :desc "Refresh org agenda files" "r" #'my-refresh-org-agenda-files
-        :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map-cmd)
+        :n :desc "Refresh org agenda files" "r" #'my-refresh-org-agenda-files
+        :n :desc "Fix org super agenda evil map" "f" #'my-fix-org-super-agenda-map-cmd)
   (org-ql-defpred link-with-title (&rest titles)
     "Search for entries containing org roam links with specified TITLES."
     :normalizers
@@ -432,10 +458,11 @@ ${body}
 
 (use-package! helm-org-ql)
 
-(defun my/org-roam-select-filter-nodes (nodes)
+(defun my/org-roam-select-filter-nodes (nodes &optional prompt)
   "Search and select Org Roam within given nodes"
   (let* ((node-list (mapcar #'org-roam-node-id nodes))
-         (node-hash (make-hash-table :test 'equal)))
+         (node-hash (make-hash-table :test 'equal))
+         (prompt (or prompt "Select Node:"))) ;; provide default prompt value
     ;; add node ids to the hash table
     (dolist (node-id node-list)
       (puthash node-id t node-hash))
@@ -443,7 +470,7 @@ ${body}
                            "filter nodes in node-list"
                            (gethash (org-roam-node-id node) node-hash)))
            ;; call org-roam-node-read, and pass in custom filter fn
-           (selected-node (org-roam-node-read nil my-filter-fn nil t "Select PARA Node: ")))
+           (selected-node (org-roam-node-read nil my-filter-fn nil t prompt)))
       (when selected-node
         (org-roam-node-visit selected-node)))))
 (use-package! org-roam-ql
@@ -456,26 +483,41 @@ ${body}
      (interactive)
      (my/org-roam-select-filter-nodes
       (org-roam-ql-nodes
-       `(backlink-to (title "^PARA/\\(Project\\|Area\\|Resource\\)$") :combine :or))))
+       `(backlink-to (title "^PARA/\\(Project\\|Area\\|Resource\\)$") :combine :or))
+      "Select PARA Node:"))
    :desc "Select Project node" :n "p"
    (lambda ()
      (interactive)
      (my/org-roam-select-filter-nodes
       (org-roam-ql-nodes
-       `(backlink-to (title "^PARA/Project$") :combine :or))))
-   :desc "Select Archive node" :n "a"
+       `(backlink-to (title "^PARA/Project$") :combine :or))
+      "Select Project Node:"))
+   :desc "Select Area node" :n "a"
    (lambda ()
      (interactive)
      (my/org-roam-select-filter-nodes
       (org-roam-ql-nodes
-       `(backlink-to (title "^PARA/Archive$") :combine :or))))
+       `(backlink-to (title "^PARA/Area$") :combine :or))
+      "Select Area Node:"))
    :desc "Select Reference node" :n "r"
    (lambda ()
      (interactive)
      (my/org-roam-select-filter-nodes
       (org-roam-ql-nodes
-       `(backlink-to ,org-roam-buffer-current-node :combine :or))))
-   ))
+       `(backlink-to ,org-roam-buffer-current-node :combine :or))
+      "Select Backlink Node:"))
+   :desc "Select Archive node" :n "A"
+   (lambda ()
+     (interactive)
+     (my/org-roam-select-filter-nodes
+      (org-roam-ql-nodes
+       `(backlink-to (title "^PARA/Archive$") :combine :or))
+      "Select Archive Node:"))
+   )
+  ;; (map!
+  ;;  :leader :prefix ("n r v" . "Org Roam ql view")
+  ;;  :desc "r" "Reference Nodes" (org-roam-ql-view))
+  )
 (use-package! org-roam-ql-ql
   :after (:all org-ql org-roam-ql)
   :config
@@ -660,6 +702,11 @@ headers ourselves."
           (coding-system-error nil))
         (buffer-string)))))
 
+(use-package! org-appear
+  :custom
+  (org-appear-autolinks t)
+  :hook ((org-mode-hook . org-appear-mode)))
+
 (use-package! ob-mermaid
   :custom
   (ob-mermaid-cli-path (executable-find "mmdc")))
@@ -698,9 +745,8 @@ headers ourselves."
         (pyenv-mode-set project)
       (pyenv-mode-unset))))
 
-(use-package! projectile
-  :config
-  (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set))
+(use-package! uv-mode
+  :hook ((python-mode . uv-mode-auto-activate-hook)))
 
 ;; lsp related
 (use-package! lsp-jedi)
