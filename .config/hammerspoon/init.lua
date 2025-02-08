@@ -1,3 +1,6 @@
+-- See https://github.com/Hammerspoon/hammerspoon/issues/2175
+-- to change hammerspoon config path
+
 -- Set up the logger
 local log = hs.logger.new('WindowMover', 'info')
 
