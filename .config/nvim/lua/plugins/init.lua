@@ -297,7 +297,11 @@ require('pckr').add({
     'mlaursen/vim-react-snippets',
   },
   -- {{{2 search
-  { 'ibhagwan/fzf-lua', requires = { 'kyazdani42/nvim-web-devicons' } },
+  {
+    'ibhagwan/fzf-lua',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+    config = require('plugins.fzf').init,
+  },
   { 'nvim-pack/nvim-spectre',
     requires= { 'nvim-lua/plenary.nvim' },
     config = require('plugins.spectre').init,
