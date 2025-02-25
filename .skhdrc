@@ -97,8 +97,10 @@ alt - l : yabai -m window --focus east || yabai -m display --focus east
 # focus next/previous stack window.
 # If failed, focus next/previous window
 # If still failed, focus first stack window or focus first window
-alt - n : yabai -m window --focus stack.next || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | reverse | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.first || yabai -m window --focus first
-alt - p : yabai -m window --focus stack.prev || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.last || yabai -m window --focus last
+alt - n : yabai -m window --focus next # yabai -m window --focus stack.next || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | reverse | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.first || yabai -m window --focus first
+shift + alt - n : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+alt - p : yabai -m window --focus prev # stack.prev || yabai -m window --focus (yabai -m query --windows --space | jq -re "sort_by(.display, .space, .frame.x, .frame.y, .id) | map(select(.\"is-visible\" == true and .role != \"AXUnknown\")) | nth(index(map(select(.\"has-focus\" == true))) - 1).id") || yabai -m window --focus stack.last || yabai -m window --focus last
+shift + alt - p : yabai -m window --focus stack.prev || yabai -m window --focus stack.last
 
 # {{{3 focus spaces
 
@@ -188,6 +190,9 @@ alt - f : yabai -m window --toggle zoom-fullscreen
 # toggle window split type
 alt - v : yabai -m window --toggle split
 
+# change layout to bsp
+alt - b : yabai -m space --layout bsp
+
 # stack to next window
 alt - s : yabai -m window --stack next
 # stack to previous window
@@ -202,10 +207,7 @@ alt - m : yabai -m window --toggle sticky;\
           yabai -m window --toggle topmost;\
           yabai -m window --toggle pip
 # {{{2 shell actions
-# rename space
-ctrl + alt - r : $HOME/scripts/yabai-spaces/rename-space.py
 # find window and focus selected
-alt - a : $HOME/scripts/yabai/find-window.fish
 # {{{3 Start App
 shift + alt - r : yabai --restart-service && skhd --restart-service
 alt - t : $HOME/scripts/yabai/open-kitty.sh
