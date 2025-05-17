@@ -51,21 +51,11 @@ function mk --description="Create file or directory"
   end
 end
 
-# {{{1 alias
-# systemd
-if  type -q systemctl
-  alias s="sudo systemctl"
-end
-alias g=git
-alias v=nvim
-
 # {{{1 nvm
 # set node download mirror
 set -uU nvm_mirror https://npmmirror.com/mirrors/node/
 # set node default version
 # set -uU nvm_default_version v12
-# {{{1 npm registry
-alias npmjs='npm --registry https://registry.npmjs.org/'
 
 # {{{1 fzf
 function fzf --wraps=fzf --description="Use fzf-tmux if in tmux session"
@@ -77,14 +67,14 @@ function fzf --wraps=fzf --description="Use fzf-tmux if in tmux session"
 end
 
 # {{{1 z.lua
-alias zz='z -I -c' # child path
-alias zi='z -i' # interactive
-alias zf='z -I' # fzf
-alias zb='z -I -b' # cd ..
-alias zh='z -I -t .'
+# alias zz='z -I -c' # child path
+# alias zi='z -i' # interactive
+# alias zf='z -I' # fzf
+# alias zb='z -I -b' # cd ..
+# alias zh='z -I -t .'
 
-function j
-  cd $argv 2> /dev/null ; or z -I $argv
-end
-complete -c j -k -w z
-complete -c j -k -w cd
+# function j
+#   cd $argv 2> /dev/null ; or z -I $argv
+# end
+# complete -c j -k -w z
+# complete -c j -k -w cd
