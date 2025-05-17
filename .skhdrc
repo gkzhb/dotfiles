@@ -212,13 +212,13 @@ alt - m : yabai -m window --toggle sticky;\
 shift + alt - r : yabai --restart-service && skhd --restart-service
 alt - t : $HOME/scripts/yabai/open-kitty.sh
 # {{{1 open-app mode
-alt - w ; openapp
+alt + ctrl - w ; openapp
 openapp < e: emacsclient -n -c -a ""
 openapp < alt - q ; default
 openapp < escape ; default
 # {{{1 resize mode
 # activate 'resize' mode
-alt - r ; resize
+alt + ctrl - r ; resize
 
 # {{{2 actions in resize mode
 resize < h : yabai -m window --resize left:-20:0

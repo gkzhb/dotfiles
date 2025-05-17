@@ -44,7 +44,7 @@ function M.init()
     'coc-vimlsp',
     'coc-vimtex',
     'coc-yaml',
-    'coc-yank',
+    -- 'coc-yank',
     '@yaegassy/coc-tailwindcss3',
   }
 
