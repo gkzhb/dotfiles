@@ -46,5 +46,19 @@ const $1 = useCallback(($2) => {
 endsnippet
 
 snippet impsty "import less module style" b
-import style from "./${VISUAL:style}.module.less";
+import styles from './${VISUAL:index}.module.less';
+endsnippet
+
+
+snippet impcls "import classnames module" b
+import clsx from 'classnames';
+endsnippet
+
+snippet uch "React Custom Hook" b
+export interface I`!p snip.rv=capitalize_first(t[1])`Props {
+}
+export const $1 = (props: I`!p snip.rv=capitalize_first(t[1])`Props) => {
+	const {} = props;
+	return {};
+};
 endsnippet

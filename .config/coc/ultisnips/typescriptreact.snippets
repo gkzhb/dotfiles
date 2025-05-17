@@ -24,24 +24,6 @@
 #
 # Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
 
-snippet ume "useMemo hook" b
-const $1 = useMemo(() => {
-	$2
-}, [$3]);
-endsnippet
-
-snippet uef "useEffect hook" b
-useEffect(() => {
-	$1
-}, [$2]);
-endsnippet
-
-snippet ucb "useCallback hook" b
-const $1 = useCallback(($2) => {
-	$3
-}, [$4]);
-endsnippet
-
 snippet rfc "React Function Component" b
 export interface I$1Props {
 }
@@ -51,6 +33,7 @@ export const $1: React.FC<I$1Props> = props => {
 };
 endsnippet
 
-snippet impsty "import less module style" b
-import style from "./${VISUAL:style}.module.less";
+snippet cn "react className prop"
+className={$1}
 endsnippet
+	
