@@ -54,8 +54,8 @@ end
 
 # from https://github.com/yeseni-today/ays-fish-theme/blob/master/fish_right_prompt.fish
 function fish_right_prompt
-  __lf_prompt
-  __tmux_prompt
+  # __lf_prompt
+  # __tmux_prompt
   set_color 666666
   printf ' [%s]' (date +%H:%M:%S)
   set_color normal

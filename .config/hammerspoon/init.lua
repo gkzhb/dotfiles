@@ -62,9 +62,9 @@ function moveWindowToSpace(window, spaceNumber)
   end)
   -- Switch to target space with Mission Control shortcuts
   if spaceNumber < 10 then
-    hs.eventtap.keyStroke({ 'alt' }, tostring(spaceNumber), 0.2 * timeUnit)
+    hs.eventtap.keyStroke({ 'alt' }, tostring(spaceNumber), 0.5 * timeUnit)
   else
-    hs.eventtap.keyStroke({ 'alt', 'ctrl' }, tostring(spaceNumber - 10), 0.2 * timeUnit)
+    hs.eventtap.keyStroke({ 'alt', 'ctrl' }, tostring(spaceNumber - 10), 0.5 * timeUnit)
   end
 end
 

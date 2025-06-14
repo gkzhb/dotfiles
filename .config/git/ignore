@@ -23,3 +23,4 @@ log/
 
 # aider
 .aider*
+/CONVENTIONS.md
