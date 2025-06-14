@@ -59,10 +59,10 @@ require('pckr').add({
     config = require('plugins.notify').init,
   },
   -- show colors
-  {
-    'norcalli/nvim-colorizer.lua',
-    config = require('plugins.colorizer').init,
-  },
+  -- {
+  --   'norcalli/nvim-colorizer.lua',
+  --   config = require('plugins.colorizer').init,
+  -- },
   -- set foldtext
   -- {
   --   'scr1pt0r/crease.vim',

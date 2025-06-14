@@ -3,7 +3,7 @@ local M = {}
 function M.init()
   local notify = require('notify')
   notify.setup({
-    stages = 'fade',
+    stages = 'static',
     render = 'default',
     background_colour = '#000000',
   })

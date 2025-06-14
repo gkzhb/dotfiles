@@ -1,3 +1,11 @@
+-- {{{1 for vscode neovim
+if vim.g.vscode then
+  -- VSCode Neovim
+  require "user.vscode"
+  return
+end
+
+-- for Ordinary Neovim
 -- {{{1 Load Local Configuration
 -- load local vim config file `.config/nvim/customize.vim`
 local utils = require('utils')
