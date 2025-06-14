@@ -65,16 +65,3 @@ function fzf --wraps=fzf --description="Use fzf-tmux if in tmux session"
     command fzf $argv
   end
 end
-
-# {{{1 z.lua
-# alias zz='z -I -c' # child path
-# alias zi='z -i' # interactive
-# alias zf='z -I' # fzf
-# alias zb='z -I -b' # cd ..
-# alias zh='z -I -t .'
-
-# function j
-#   cd $argv 2> /dev/null ; or z -I $argv
-# end
-# complete -c j -k -w z
-# complete -c j -k -w cd

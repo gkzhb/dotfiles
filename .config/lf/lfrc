@@ -79,10 +79,10 @@ cmd open-with ${{
 # map r push :rename<space>
 
 cmd on-cd &{{
-  # update z.lua cd frequency
-  # env varialbes are found in fish shell(tried out)
-  # reference to https://github.com/skywind3000/z.lua/blob/master/ranger_zlua.py
-  test -n "$ZLUA_SCRIPT" and $ZLUA_SCRIPT --add $PWD
+  # update zoxide cd frequency
+  if type -q zoxide
+    zoxide add "$PWD"
+  end
 
   # Configure __fish_git_prompt
   set -g __fish_git_prompt_show_informative_status true
@@ -170,15 +170,11 @@ cmd zip ${{
 # use fzf to search z.lua jump targets
 cmd zj ${{
   clear
-  read -p "printf 'z.lua jumps to: '" location
-  set -l target_path ""
-  if test -n "$location"
-    set target_path (~/scripts/lf/z-echo.fish $location)
-  end
+  set -l target_path (zoxide query -i)
   if test -n "$target_path"
     lf -remote "send $id cd \"$target_path\""
   else
-    printf "Can't find related path from z.lua.\n"
+    printf "Can't find related path from zoxide.\n"
     read -p "printf '[Enter] to quit '"
   end
 }}
