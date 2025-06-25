@@ -209,13 +209,6 @@ addSearchAlias(
     return rsp.result.tag.map((el) => el.value);
   }
 );
-// search with my dokuwiki
-addSearchAlias(
-  "wd",
-  "dokuwiki",
-  "https://wiki.gkzhb.top/?do=search&id=home&q=",
-  "swd"
-);
 // search with zhihu
 addSearchAlias(
   "zh",
