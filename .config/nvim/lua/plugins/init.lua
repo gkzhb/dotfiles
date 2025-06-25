@@ -14,7 +14,10 @@ require('pckr').add({
   -- {{{2 performance
   'dstein64/vim-startuptime',
   -- {{{2 color theme
-  { 'Mofiqul/vscode.nvim', config = require('plugins.vscode').init },
+  {
+    'Mofiqul/vscode.nvim',
+    config = require('plugins.vscode').init
+  },
   -- {{{2 display enhancement
   -- if not _G.getLocalConfig().performantMode then
   --   ({
@@ -75,7 +78,11 @@ require('pckr').add({
       require('statuscol').setup({
         relculright = true,
         segments = {
-          { text = { '%s' }, click = 'v:lua.ScSa', sign = { name = { '.*' }, maxwidth = 3 } },
+          {
+            text = { '%s' },
+            click = 'v:lua.ScSa',
+            sign = { name = { '.*' }, maxwidth = 3 }
+          },
           { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
           { text = { builtin.foldfunc, ' ' }, click = 'v:lua.ScFa' },
         },
@@ -88,7 +95,10 @@ require('pckr').add({
     config = require('plugins.ufo').init,
   },
   -- vim mark enhancement
-  { 'chentoast/marks.nvim', config = require('plugins.marks').init },
+  {
+    'chentoast/marks.nvim',
+    config = require('plugins.marks').init
+  },
   -- status line and tab line
   {
     'akinsho/bufferline.nvim',
@@ -123,7 +133,10 @@ require('pckr').add({
       require('nvim-tree').setup({})
     end,
   },
-  { 'p00f/nvim-ts-rainbow', requires = 'nvim-treesitter/nvim-treesitter' },
+  {
+    'p00f/nvim-ts-rainbow',
+    requires = 'nvim-treesitter/nvim-treesitter'
+  },
   -- pretty list
   {
     'folke/trouble.nvim',
@@ -139,34 +152,20 @@ require('pckr').add({
     cmd = { 'UndotreeToggle' },
   },
   -- {{{2 movement
+  -- {
+  --   't9md/vim-choosewin',
+  --   config = require('plugins.choosewin').init,
+  -- },
+  -- {
+  --   'dstein64/vim-win',
+  --   config = require('plugins.vim-win').init,
+  -- },
   {
-    'aserowy/tmux.nvim',
+    'ggandor/leap.nvim',
     config = function()
-      require('tmux').setup({
-        copy_sync = { -- sync vim register with tmux clipboard and OS clipboard
-          enable = true,
-          redirect_to_clipboard = true,
-          sync_clipboard = false, -- sync system clipboard with tmux is not working on Mac OS
-        },
-        navigation = {
-          enable_default_keybindings = true,
-          persist_zoom = true,
-        },
-        resize = {
-          enable_default_keybindings = false,
-        },
-      })
+      require('leap').set_default_mappings()
     end,
   },
-  {
-    't9md/vim-choosewin',
-    config = require('plugins.choosewin').init,
-  },
-  {
-    'dstein64/vim-win',
-    config = require('plugins.vim-win').init,
-  },
-  'ggandor/lightspeed.nvim',
   'szw/vim-maximizer',
   'tpope/vim-unimpaired', -- `[<char>`, `]<char>` related keymappings
   -- {{{2 edit
@@ -188,7 +187,8 @@ require('pckr').add({
   'tpope/vim-commentary',
   'honza/vim-snippets', -- coc-snippets needs snippets
   {
-    'danymat/neogen', -- generate documentation comment for class, function, type
+    -- generate documentation comment for class, function, type
+    'danymat/neogen',
     config = function()
       require('neogen').setup({})
     end,
@@ -302,8 +302,9 @@ require('pckr').add({
     requires = { 'kyazdani42/nvim-web-devicons' },
     config = require('plugins.fzf').init,
   },
-  { 'nvim-pack/nvim-spectre',
-    requires= { 'nvim-lua/plenary.nvim' },
+  {
+    'nvim-pack/nvim-spectre',
+    requires = { 'nvim-lua/plenary.nvim' },
     config = require('plugins.spectre').init,
   },
   -- {{{3 telescope related
