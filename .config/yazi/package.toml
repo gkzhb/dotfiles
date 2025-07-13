@@ -8,5 +8,10 @@ use = "llanosrocas/githead"
 rev = "230dc7f"
 hash = "d8c2bf67a4da2a2af89f981ce2f7ba22"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "b886025"
+hash = "56fdabc96fc1f4d53c96eb884b02a5be"
+
 [flavor]
 deps = []
