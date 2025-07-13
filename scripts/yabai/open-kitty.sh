@@ -9,4 +9,4 @@ yabai -m signal --add event=window_created action=" \
   yabai -m window $YABAI_WINDOW_ID --display $index &&
   yabai -m display --focus $index" \
 app="kitty" label="testkitty"
-/Applications/kitty.app/Contents/MacOS/kitty --single-instance --instance-group=1 -d ~
+kitty --single-instance --instance-group=1 -d ~

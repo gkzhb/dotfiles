@@ -1,4 +1,5 @@
 .ignore
+.hidden-items.json
 .env
 # Node
 node_modules/
@@ -27,3 +28,5 @@ log/
 # Serena
 .serena
 # Promptx
+
+**/.claude/settings.local.json
