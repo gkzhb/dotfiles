@@ -123,10 +123,16 @@ require('pckr').add({
   --   config = require('plugins.heirline').init
   -- }
   -- file explorer
-  { -- used for lf
-    'is0n/fm-nvim',
-    config = require('plugins.fm-nvim').init,
+  {
+'mikavilpas/yazi.nvim',
+    config = function()
+      vim.g.loaded_netrwPlugin = 1
+    end
   },
+  -- { -- used for lf
+  --   'is0n/fm-nvim',
+  --   config = require('plugins.fm-nvim').init,
+  -- },
   {
     'kyazdani42/nvim-tree.lua',
     config = function()
