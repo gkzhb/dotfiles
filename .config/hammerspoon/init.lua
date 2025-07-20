@@ -83,23 +83,23 @@ end
 
 -- TODO: cmd and alt are reversed?
 -- Bind keys cmd + shift + 0-9
-for i = 0, 9 do
-  hs.hotkey.bind({ "alt", "shift" }, tostring(i), function()
-    log.i("Hotkey pressed: cmd + shift + " .. i)
-    if i == 0 then
-      moveFocusedWindowToSpace(10)
-    else
-      moveFocusedWindowToSpace(i)
-    end
-  end)
-end
+-- for i = 0, 9 do
+--   hs.hotkey.bind({ "alt", "shift" }, tostring(i), function()
+--     log.i("Hotkey pressed: cmd + shift + " .. i)
+--     if i == 0 then
+--       moveFocusedWindowToSpace(10)
+--     else
+--       moveFocusedWindowToSpace(i)
+--     end
+--   end)
+-- end
 -- Bind keys alt + shift + 1-6
-for i = 1, 6 do
-  hs.hotkey.bind({ "cmd", "shift" }, tostring(i), function()
-    log.i("Hotkey pressed: alt + shift + " .. i)
-    moveFocusedWindowToSpace(i + 10)
-  end)
-end
+-- for i = 1, 6 do
+--   hs.hotkey.bind({ "cmd", "shift" }, tostring(i), function()
+--     log.i("Hotkey pressed: alt + shift + " .. i)
+--     moveFocusedWindowToSpace(i + 10)
+--   end)
+-- end
 
 -- debug getOffsetByApp
 -- hs.hotkey.bind({ "cmd", "shift"}, "e", function()
