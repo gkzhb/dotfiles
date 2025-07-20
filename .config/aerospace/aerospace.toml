@@ -125,15 +125,16 @@ automatically-unhide-macos-hidden-apps = false
     alt-equal = 'resize smart +50'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-    alt-1 = 'workspace 1'
+    alt-1 = 'workspace 1_chat'
     alt-2 = 'workspace 2'
-    alt-3 = 'workspace 3'
-    alt-4 = 'workspace 4'
+    alt-3 = 'workspace 3_web'
+    alt-4 = 'workspace 4_code'
     alt-5 = 'workspace 5'
     alt-6 = 'workspace 6'
     alt-7 = 'workspace 7'
     alt-8 = 'workspace 8'
     alt-9 = 'workspace 9'
+    alt-0 = 'workspace 10'
     # alt-a = 'workspace A' # In your config, you can drop workspace bindings that you don't need
     alt-b = 'workspace B'
     alt-c = 'workspace C'
@@ -151,17 +152,17 @@ automatically-unhide-macos-hidden-apps = false
     alt-s = 'workspace S'
     # alt-t = 'workspace T'
     alt-u = 'workspace U'
-    alt-v = 'workspace V'
+    # alt-v = 'workspace V'
     alt-w = 'workspace W'
     alt-x = 'workspace X'
     alt-y = 'workspace Y'
     alt-z = 'workspace Z'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-1 = 'move-node-to-workspace 1'
+    alt-shift-1 = 'move-node-to-workspace 1_chat'
     alt-shift-2 = 'move-node-to-workspace 2'
-    alt-shift-3 = 'move-node-to-workspace 3'
-    alt-shift-4 = 'move-node-to-workspace 4'
+    alt-shift-3 = 'move-node-to-workspace 3_web'
+    alt-shift-4 = 'move-node-to-workspace 4_code'
     alt-shift-5 = 'move-node-to-workspace 5'
     alt-shift-6 = 'move-node-to-workspace 6'
     alt-shift-7 = 'move-node-to-workspace 7'
@@ -184,7 +185,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-s = 'move-node-to-workspace S'
     # alt-shift-t = 'move-node-to-workspace T'
     alt-shift-u = 'move-node-to-workspace U'
-    alt-shift-v = 'move-node-to-workspace V'
+    # alt-shift-v = 'move-node-to-workspace V'
     alt-shift-w = 'move-node-to-workspace W'
     alt-shift-x = 'move-node-to-workspace X'
     alt-shift-y = 'move-node-to-workspace Y'
@@ -226,3 +227,15 @@ automatically-unhide-macos-hidden-apps = false
     # down = 'volume down'
     # up = 'volume up'
     # shift-down = ['volume set 0', 'mode main']
+
+[workspace-to-monitor-force-assignment]
+'1_chat' = 'main'
+2 = 'main'
+'3_web' = 'main'
+'4_code' = 'main'
+5 = 'main'
+6 = ['secondary','main']
+7 = ['secondary','main']
+8 = ['secondary','main']
+9 = ['secondary','main']
+10 = ['secondary','main']
