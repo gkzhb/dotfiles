@@ -24,6 +24,7 @@ if status is-login
   if type -q zoxide
     zoxide init fish | source
     set -gx _ZO_ECHO 1
+    alias zz="z $PWD"
   end
 
 end
