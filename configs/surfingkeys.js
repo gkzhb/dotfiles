@@ -98,7 +98,7 @@ const websiteSuffixRegex = /(\s*-\s*[\w\u4e00-\u9fa5\s]+)$/;
 const linkRefMap = {
   d: (url, title) => {
     const matchedPrefix = interWikiUrlPrefix.find(
-      (item) => url.indexOf(item[1]) === 0
+      (item) => url.indexOf(item[1]) === 0,
     );
     if (matchedPrefix) {
       const remainUrl = url.slice(matchedPrefix[1].length);
@@ -110,15 +110,19 @@ const linkRefMap = {
       if (suffixResult) {
         return `[[${matchedPrefix[0]}>${remainUrl}|${title.slice(
           0,
-          suffixResult.index
+          suffixResult.index,
         )}]]`;
       }
       return `[[${matchedPrefix[0]}>${remainUrl}|${title}]]`;
     }
     return `[[${url}|${title}]]`;
   }, // dokuwiki link
-  j: (url, title) => JSON.stringify({url, title}), // JSON body
-  m: (url, title) => `[${title}](${url})`, // markdown link
+  j: (url, title) => JSON.stringify({ url, title }), // JSON body
+  // markdown link
+  m: (url, title) => {
+    const finalTitle = title.replace(/\[|\]/g, match => (match === '[' ? '\\[' : '\\]'));
+    return `[${finalTitle}](${url})`;
+  },
   p: (url, title) => {
     // copy URL path
     const urlObj = new URL(url);
@@ -144,7 +148,7 @@ const disabledRegexUrls = [
 ];
 // disable surfingkeys on regex matched url
 settings.blocklistPattern = new RegExp(
-  disabledRegexUrls.map((item) => item.source).join("|")
+  disabledRegexUrls.map((item) => item.source).join("|"),
 );
 
 const captureOrg =
@@ -168,11 +172,11 @@ mapkey(
   "close extension imcompatible alert",
   () => {
     const closeBtn = document.querySelector(
-      "#mainContainer .not-compatible__announce .ud__notice__close"
+      "#mainContainer .not-compatible__announce .ud__notice__close",
     );
     closeBtn && closeBtn.click();
   },
-  { domain: /feishu\.cn/i }
+  { domain: /feishu\.cn/i },
 );
 
 // use vim-style to cycle through ominibar
@@ -207,7 +211,7 @@ addSearchAlias(
     const rsp = JSON.parse(ret.text);
     if (rsp.code != "0") return [];
     return rsp.result.tag.map((el) => el.value);
-  }
+  },
 );
 // search with zhihu
 addSearchAlias(
@@ -219,7 +223,7 @@ addSearchAlias(
   (ret) => {
     const rsp = JSON.parse(ret.text);
     return rsp.suggest.map((el) => el.query);
-  }
+  },
 );
 // rebind old searches
 mapkey("osbd", "#8Open Search with alias baidu", () => {
