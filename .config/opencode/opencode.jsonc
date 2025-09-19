@@ -1,0 +1,51 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "myprovider": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "volc",
+      "options": {
+        "baseURL": "https://ark.cn-beijing.volces.com/api/v3",
+        "apiKey": "{env:VOLCENGINE_API_KEY}"
+      },
+      "models": {
+        "kimi-k2-250905": {
+          "name": "Kimi K2 0905"
+        },
+        "kimi-k2-250711": {
+          "name": "Kimi K2"
+        },
+        "deepseek-v3-1-250821": {
+          "name": "DS V3"
+        },
+        "deepseek-r1-250528": {
+          "name": "DS R1"
+        }
+      }
+    }
+  },
+  "permission": {
+    "edit": "ask",
+    "bash": "ask"
+  },
+  // include memory from other agent files
+  "instructions": ["CLAUDE.md"],
+  "mcp": {
+    "web-search": {
+      "type": "remote",
+      "url": "{file:~/.secrets/mcp-search-url.txt}",
+      "enabled": true
+    },
+    "web-fetch": {
+      "type": "remote",
+      "url": "{file:~/.secrets/mcp-fetch-url.txt}",
+      "enabled": false
+    },
+    "web-browser": {
+      "type": "remote",
+      "url": "http://localhost:12306/mcp",
+      "enabled": true
+    }
+  },
+  "share": "disabled"
+}
