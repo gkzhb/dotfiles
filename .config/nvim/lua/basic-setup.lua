@@ -40,6 +40,7 @@ vim.opt.fileencoding = 'utf-8'
 
 -- {{{2 edit
 vim.opt.hidden = true
+vim.opt.autoread = true
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
 if vim.fn.has('nvim-0.9') then

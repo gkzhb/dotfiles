@@ -11,13 +11,8 @@ function M.init()
   }
   if localProjectConfig then
     -- merge localProjectConfig into projectConfig
-    localProjectConfig = table.move(
-      localProjectConfig.config,
-      1,
-      #localProjectConfig.config,
-      #projectConfig + 1,
-      projectConfig
-    )
+    localProjectConfig =
+      table.move(localProjectConfig.config, 1, #localProjectConfig.config, #projectConfig + 1, projectConfig)
   end
   require('nvim-projectconfig').load_project_config({
     project_config = projectConfig,

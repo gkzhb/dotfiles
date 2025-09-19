@@ -210,7 +210,7 @@ basic.lsp_diagnos = {
         { ' ', 'red' },
         { utils.format({ format = ' %s ', value = diag.error }), 'red' },
         { utils.format({ format = ' %s ', value = diag.warning }), 'yellow' },
-        { utils.format({ format = ' %s', value = diag.information }), 'blue' },
+        { utils.format({ format = ' %s', value = diag.information }), 'blue' },
       }
     end
     return { ' ', 'red' }

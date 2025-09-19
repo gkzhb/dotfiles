@@ -1,7 +1,7 @@
 -- {{{1 for vscode neovim
 if vim.g.vscode then
   -- VSCode Neovim
-  require "user.vscode"
+  require('user.vscode')
   return
 end
 

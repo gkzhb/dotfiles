@@ -112,7 +112,7 @@ function M.init()
     autotag = { -- windwp/nvim-ts-autotag
       enable = true,
       -- fix bug https://github.com/windwp/nvim-ts-autotag/issues/125
-      enable_close_on_slash = false
+      enable_close_on_slash = false,
     },
     rainbow = { -- nvim-ts-rainbow
       enable = false,

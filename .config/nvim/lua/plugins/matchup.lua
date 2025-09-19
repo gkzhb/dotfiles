@@ -1,6 +1,5 @@
 local M = {}
 
-function M.init()
-end
+function M.init() end
 
 return M

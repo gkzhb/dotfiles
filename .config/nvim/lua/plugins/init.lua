@@ -11,12 +11,18 @@ require('pckr').add({
       require('terminal').setup()
     end,
   },
+  {
+    'folke/snacks.nvim',
+    config = function()
+      require('snacks').setup({ input = { enabled = true } })
+    end,
+  },
   -- {{{2 performance
   'dstein64/vim-startuptime',
   -- {{{2 color theme
   {
     'Mofiqul/vscode.nvim',
-    config = require('plugins.vscode').init
+    config = require('plugins.vscode').init,
   },
   -- {{{2 display enhancement
   -- if not _G.getLocalConfig().performantMode then
@@ -81,7 +87,7 @@ require('pckr').add({
           {
             text = { '%s' },
             click = 'v:lua.ScSa',
-            sign = { name = { '.*' }, maxwidth = 3 }
+            sign = { name = { '.*' }, maxwidth = 3 },
           },
           { text = { builtin.lnumfunc, ' ' }, click = 'v:lua.ScLa' },
           { text = { builtin.foldfunc, ' ' }, click = 'v:lua.ScFa' },
@@ -97,7 +103,7 @@ require('pckr').add({
   -- vim mark enhancement
   {
     'chentoast/marks.nvim',
-    config = require('plugins.marks').init
+    config = require('plugins.marks').init,
   },
   -- status line and tab line
   {
@@ -124,10 +130,10 @@ require('pckr').add({
   -- }
   -- file explorer
   {
-'mikavilpas/yazi.nvim',
+    'mikavilpas/yazi.nvim',
     config = function()
       vim.g.loaded_netrwPlugin = 1
-    end
+    end,
   },
   -- { -- used for lf
   --   'is0n/fm-nvim',
@@ -141,7 +147,7 @@ require('pckr').add({
   },
   {
     'p00f/nvim-ts-rainbow',
-    requires = 'nvim-treesitter/nvim-treesitter'
+    requires = 'nvim-treesitter/nvim-treesitter',
   },
   -- pretty list
   {
@@ -174,7 +180,7 @@ require('pckr').add({
   },
   'szw/vim-maximizer',
   'tpope/vim-unimpaired', -- `[<char>`, `]<char>` related keymappings
-  {
+  { -- navigate in tmux
     'numToStr/Navigator.nvim',
     config = function()
       require('Navigator').setup()
@@ -182,14 +188,14 @@ require('pckr').add({
       vim.keymap.set({ 'n', 't' }, '<C-l>', '<CMD>NavigatorRight<CR>')
       vim.keymap.set({ 'n', 't' }, '<C-k>', '<CMD>NavigatorUp<CR>')
       vim.keymap.set({ 'n', 't' }, '<C-j>', '<CMD>NavigatorDown<CR>')
-    end
+    end,
   },
   -- {{{2 edit
   'tpope/vim-surround',
   {
     'windwp/nvim-projectconfig',
     config = require('plugins.projectconfig').init,
-    requires = { 'coc.nvim' },
+    requires = { 'neoclide/coc.nvim' },
   },
   {
     'lambdalisue/suda.vim',
@@ -414,5 +420,15 @@ require('pckr').add({
   -- { -- run lua code
   --   'bfredl/nvim-luadev',
   -- }
+  -- {{{2 opencode.nvim
+  {
+    'NickvanDyke/opencode.nvim',
+    requires = {
+      'folke/snacks.nvim',
+      'numToStr/Navigator.nvim',
+      'neoclide/coc.nvim',
+    },
+    config = require('plugins.opencode').init,
+  },
 })
 -- vim: set fdm=marker:

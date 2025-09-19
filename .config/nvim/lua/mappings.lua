@@ -47,6 +47,10 @@ end
 function M.setMappings()
   local wk = require('which-key')
 
+  -- set yank to system clipboard
+  wk.register({
+    y = { '"+y', 'yank to clipboard' },
+  }, { mode = { 'n', 'v' }, prefix = '<leader>' })
   -- remap <C-a> incremeting number
   wk.register({
     ['<C-s>'] = { '<C-a>', 'increment number' },
@@ -55,10 +59,6 @@ function M.setMappings()
   -- terminal mode mappings
   wk.register({
     ['<C-q>'] = { '<cmd>stopinsert<CR>', 'quit terminal mode' },
-    ['<C-h>'] = { '<cmd>lua require("tmux").move_left()<CR>', 'move to left' },
-    ['<C-j>'] = { '<cmd>lua require("tmux").move_bottom()<CR>', 'move to bottom' },
-    ['<C-k>'] = { '<cmd>lua require("tmux").move_top()<CR>', 'move to top' },
-    ['<C-l>'] = { '<cmd>lua require("tmux").move_right()<CR>', 'move to right' },
   }, { mode = 't', noremap = true, silent = true })
 
   wk.register({
@@ -131,6 +131,7 @@ function M.setMappings()
   require('plugins.spectre').mappings()
   require('plugins.notify').mappings()
   require('plugins.toggleterm').mappings()
+  require('plugins.opencode').mappings()
   wk.register({
     ['/'] = { -- Neogen
       name = 'generate doc comment',

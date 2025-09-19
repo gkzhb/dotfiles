@@ -47,5 +47,12 @@
       "enabled": true
     }
   },
-  "share": "disabled"
+  "share": "disabled",
+  "keybinds": {
+    // scroll page like in vim
+    "messages_page_up": "ctrl+b",
+    "messages_page_down": "ctrl+r", // ctrl+f not working
+    "messages_half_page_up": "ctrl+u",
+    "messages_half_page_down": "ctrl+d"
+  }
 }

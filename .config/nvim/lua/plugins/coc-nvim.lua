@@ -115,8 +115,8 @@ function M.init()
     inlayHints = {
       functionLikeReturnTypes = {
         enabled = false,
-      }
-    }
+      },
+    },
   })
   -- {{{4 coc eslint
   vim.fn['coc#config']('eslint', {
@@ -268,8 +268,7 @@ function M.mappings()
   wk.register({
     K = { '<cmd>call v:lua.CocShowDocumentation()<CR>', 'show documentation in preview window' },
   }, { mode = 'n' })
-  wk.register({
-  }, { mode = 'n', prefix = '<leader>k' })
+  wk.register({}, { mode = 'n', prefix = '<leader>k' })
   wk.register({
     k = {
       name = 'symbol under cursor',
@@ -307,11 +306,11 @@ function M.mappings()
     ff = { '<Plug>(coc-format)', 'format current file' },
     r = { '<Plug>(coc-rename)', 'rename symbol' },
   }
-  
+
   wk.register({
     name = 'coc related',
     -- whichkey.nvim bug https://github.com/folke/which-key.nvim/issues/814
-    a = vim.deepcopy(actionMappings) ,
+    a = vim.deepcopy(actionMappings),
     d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
     da = { CocCodeActionMapping('diagnosticList'), 'diagnostic list' },
     fc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
@@ -435,16 +434,16 @@ function M.mappings()
   }, { mode = 'n', prefix = '<leader>g' })
   local coc_git_prev_map = {
     name = 'git',
-    c = {'<Plug>(coc-git-prevconflict)', 'prev conflict'},
-    h = {'<Plug>(coc-git-prevchunk)', 'prev chunk'},
+    c = { '<Plug>(coc-git-prevconflict)', 'prev conflict' },
+    h = { '<Plug>(coc-git-prevchunk)', 'prev chunk' },
   }
   local coc_git_next_map = {
     name = 'git',
-    c = {'<Plug>(coc-git-nextconflict)', 'next conflict'},
-    h = {'<Plug>(coc-git-nextchunk)', 'next chunk'},
+    c = { '<Plug>(coc-git-nextconflict)', 'next conflict' },
+    h = { '<Plug>(coc-git-nextchunk)', 'next chunk' },
   }
-  wk.register(coc_git_prev_map, { mode = 'n', prefix = '[c'})
-  wk.register(coc_git_next_map, { mode = 'n', prefix = ']c'})
+  wk.register(coc_git_prev_map, { mode = 'n', prefix = '[c' })
+  wk.register(coc_git_next_map, { mode = 'n', prefix = ']c' })
 end
 
 function _G.CheckBackSpace()

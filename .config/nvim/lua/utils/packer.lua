@@ -13,7 +13,8 @@ end
 function M.installPacker()
   vim.api.nvim_echo({ { 'Installing pckr.nvim', 'Type' } }, true, {})
   local packerGitUrl = 'https://github.com/lewis6991/pckr.nvim'
-  local installPackerCmd = string.format('10split |term git clone --filter=blob:none --depth=1 %s %s', packerGitUrl, M.packerPath)
+  local installPackerCmd =
+    string.format('10split |term git clone --filter=blob:none --depth=1 %s %s', packerGitUrl, M.packerPath)
   vim.api.nvim_command(installPackerCmd)
 end
 
