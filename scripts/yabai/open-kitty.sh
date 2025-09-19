@@ -9,4 +9,5 @@
 #   yabai -m window $YABAI_WINDOW_ID --display $index &&
 #   yabai -m display --focus $index" \
 # app="kitty" label="testkitty"
-kitty --single-instance --instance-group=1 -d ~
+# kitty --single-instance --instance-group=1 -d ~
+open -a kitty.app -n
