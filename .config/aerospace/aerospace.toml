@@ -4,7 +4,13 @@
 # You can use it to add commands that run after AeroSpace startup.
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
-  'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+  # 'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
+]
+
+exec-on-workspace-change = [
+  # '/opt/homebrew/bin/fish',
+  # '-c',
+  # '~/scripts/aerospace/on-new-window.fish',
 ]
 
 # Start AeroSpace at login
@@ -33,7 +39,7 @@ default-root-container-orientation = 'auto'
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = [
-  'exec-and-forget aerospace move-mouse window-lazy-center || aerospace move-mouse monitor-lazy-center'
+  # 'exec-and-forget aerospace move-mouse window-lazy-center || aerospace move-mouse monitor-lazy-center'
 ]
 
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
@@ -143,7 +149,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-b = 'workspace B'
     alt-c = 'workspace C'
     alt-d = 'workspace D'
-    alt-e = 'workspace E'
+    # alt-e = 'workspace E'
     # alt-f = 'workspace F'
     alt-g = 'workspace G'
     alt-i = 'workspace I'
@@ -176,7 +182,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-shift-b = 'move-node-to-workspace B'
     alt-shift-c = 'move-node-to-workspace C'
     alt-shift-d = 'move-node-to-workspace D'
-    alt-shift-e = 'move-node-to-workspace E'
+    # alt-shift-e = 'move-node-to-workspace E'
     # alt-shift-f = 'move-node-to-workspace F'
     alt-shift-g = 'move-node-to-workspace G'
     alt-shift-i = 'move-node-to-workspace I'
@@ -248,35 +254,60 @@ automatically-unhide-macos-hidden-apps = false
 # windows rules
 # Make lark preview windows floating
 [[on-window-detected]]
-    if.app-id = 'com.electron.lark.helper'
-    if.window-title-regex-substring = '图片$'
-    run = 'layout floating'
+  if.app-id = 'com.electron.lark.helper'
+  if.window-title-regex-substring = '图片$'
+  run = 'layout floating'
+
 [[on-window-detected]]
-    if.app-id = 'com.electron.lark'
-    if.window-title-regex-substring = '会话记录$'
-    run = 'layout floating'
+  if.app-id = 'com.electron.lark'
+  if.window-title-regex-substring = '会话记录$'
+  run = 'layout floating'
+
+[[on-window-detected]]
+  if.app-id = 'com.electron.lark.iron'
+  run = 'move-node-to-workspace M'
 
 # Disable management for licecap (screen recording)
 [[on-window-detected]]
-    if.app-id = 'com.cockos.LICEcap'
-    run = 'layout floating'
+  if.app-id = 'com.cockos.LICEcap'
+  run = 'layout floating'
+
+# Disable management for Snipaste
+[[on-window-detected]]
+  if.app-id = 'com.Snipaste'
+  run = 'layout floating'
 
 # Disable management for Digital Color Meter
 [[on-window-detected]]
-    if.app-id = 'com.apple.DigitalColorMeter'
-    run = 'layout floating'
+  if.app-id = 'com.apple.DigitalColorMeter'
+  run = 'layout floating'
 
 # Disable management for QuickTime Player
 [[on-window-detected]]
-    if.app-id = 'com.apple.QuickTimePlayerX'
-    run = 'layout floating'
+  if.app-id = 'com.apple.QuickTimePlayerX'
+  run = 'layout floating'
 
 # Disable management for Preview
 [[on-window-detected]]
-    if.app-id = 'com.apple.Preview'
-    run = 'layout floating'
+  if.app-id = 'com.apple.Preview'
+  run = 'layout floating'
 
 # Disable management for Picture in Picture window
 [[on-window-detected]]
-    if.window-title-regex-substring = 'Picture in Picture'
-    run = 'layout floating'
+  if.window-title-regex-substring = 'Picture in Picture'
+  run = 'layout floating'
+
+[[on-window-detected]]
+  if.app-id = 'com.apple.archiveutility'
+  if.window-title-regex-substring = 'Picture in Picture'
+  run = 'layout floating'
+
+[[on-window-detected]]
+  if.app-id = 'com.kangfenmao.CherryStudio'
+  if.window-title-regex-substring = 'Selection Toolbar'
+  run = 'layout floating'
+
+[[on-window-detected]]
+  if.app-id = 'com.kangfenmao.CherryStudio'
+  if.window-title-regex-substring = '- 划词助手'
+  run = 'layout floating'
