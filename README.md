@@ -40,19 +40,13 @@ Dependencies required by Neovim plugins:
 
 Suggested:
 
-* [skywind3000/z.lua: A new cd command that helps you navigate faster by learning your habits.](https://github.com/skywind3000/z.lua)
-  * Requires Lua
-* [andreafrancia/trash-cli: Command line interface to the freedesktop.org trashcan.](https://github.com/andreafrancia/trash-cli): used in lf
+* [sst/opencode: AI coding agent, built for the terminal.](https://github.com/sst/opencode): awesome open source AI Coding Agent, alternative to Claude Code
+  * With [NickvanDyke/opencode.nvim](https://github.com/NickvanDyke/opencode.nvim/tree/main), you will get awesome AI integration in the Neovim editor
 * [junegunn/fzf: A command-line fuzzy finder](https://github.com/junegunn/fzf):
 very useful cli tool to select item from a list
-* **[gokcehan/lf: Terminal file manager](https://github.com/gokcehan/lf)**(highly
-recommended): used in shell and also in Neovim
-  * PS: [my `lfrc` config](./.config/lf/lfrc) is based on fish shell.
-  * My lf config integrates with z.lua
-    * `a` key to jump with z.lua and fzf
-    * all navigations to directories will be recorded in z.lua's cd database so
-    you can forget `cd` command and use `lc`(alias for `lfcd`) to navigate
-    between directories
+* [sxyazi/yazi](https://github.com/sxyazi/yazi): blazing fast async file manager in terminal and Neovim
+* [ajeetdsouza/zoxide: A smarter cd command](https://github.com/ajeetdsouza/zoxide)
+* [andreafrancia/trash-cli: Command line interface to the freedesktop.org trashcan.](https://github.com/andreafrancia/trash-cli): used in lf
 
 ### Kitty
 
