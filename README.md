@@ -33,10 +33,10 @@ Finally, run two bash scripts: `script/dotfiles/install.sh` and `script/dotfiles
 
 Dependencies required by Neovim plugins:
 
-* [sharkdp/fd: A simple, fast and user-friendly alternative to 'find'](https://github.com/sharkdp/fd)
-* [BurntSushi/ripgrep: ripgrep recursively searches directories for a regex pattern while respecting your gitignore](https://github.com/BurntSushi/ripgrep)
 * [Git](https://github.com/git/git) to install [packer.nvim](https://github.com/wbthomason/packer.nvim)
 * [nodejs/node: Node.js JavaScript runtime](https://github.com/nodejs/node) for coc.nvim
+* [BurntSushi/ripgrep: ripgrep recursively searches directories for a regex pattern while respecting your gitignore](https://github.com/BurntSushi/ripgrep)
+* [sharkdp/fd: A simple, fast and user-friendly alternative to 'find'](https://github.com/sharkdp/fd)
 
 Suggested:
 
@@ -46,7 +46,6 @@ Suggested:
 very useful cli tool to select item from a list
 * [sxyazi/yazi](https://github.com/sxyazi/yazi): blazing fast async file manager in terminal and Neovim
 * [ajeetdsouza/zoxide: A smarter cd command](https://github.com/ajeetdsouza/zoxide)
-* [andreafrancia/trash-cli: Command line interface to the freedesktop.org trashcan.](https://github.com/andreafrancia/trash-cli): used in lf
 
 ### Kitty
 
