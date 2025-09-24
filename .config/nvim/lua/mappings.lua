@@ -44,6 +44,9 @@ function M.init()
   vim.opt.tm = 500
 end
 
+function _G.CopyBufFilePath()
+       vim.fn.setreg('+', vim.fn.expand('%:.'))
+end
 function M.setMappings()
   local wk = require('which-key')
 
@@ -75,6 +78,7 @@ function M.setMappings()
       b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
       d = { '<cmd>bd<CR>', 'close buffer' },
       s = { '<cmd>w<CR>', 'save buffer' },
+      y = { '<cmd>lua CopyBufFilePath()<CR>', 'copy file path'},
     },
     t = {
       name = 'toggle config',

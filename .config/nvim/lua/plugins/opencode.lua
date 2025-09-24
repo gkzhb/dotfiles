@@ -196,22 +196,22 @@ function M.select_diagnostic_and_fix()
     local action_state = require('telescope.actions.state')
 
     pickers
-      .new({}, {
-        prompt_title = 'Select Diagnostic to Fix',
-        finder = finders.new_table({ results = items }),
-        sorter = conf.generic_sorter({}),
-        attach_mappings = function(prompt_bufnr, map)
-          actions.select_default:replace(function()
-            actions.close(prompt_bufnr)
-            local selection = action_state.get_selected_entry()
-            if selection then
-              on_select_diagnostic(selection[1])
-            end
-          end)
-          return true
-        end,
-      })
-      :find()
+        .new({}, {
+          prompt_title = 'Select Diagnostic to Fix',
+          finder = finders.new_table({ results = items }),
+          sorter = conf.generic_sorter({}),
+          attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+              actions.close(prompt_bufnr)
+              local selection = action_state.get_selected_entry()
+              if selection then
+                on_select_diagnostic(selection[1])
+              end
+            end)
+            return true
+          end,
+        })
+        :find()
   elseif has_fzf then
     fzf.fzf_exec(items, {
       prompt = 'Select Diagnostic to Fix> ',

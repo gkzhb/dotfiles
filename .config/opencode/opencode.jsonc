@@ -6,27 +6,43 @@
       "name": "volc",
       "options": {
         "baseURL": "https://ark.cn-beijing.volces.com/api/v3",
-        "apiKey": "{env:VOLCENGINE_API_KEY}"
+        "apiKey": "{env:VOLCENGINE_API_KEY}",
+        "compatibility": "strict",
+        "includeUsage": true,
       },
       "models": {
         "kimi-k2-250905": {
-          "name": "Kimi K2 0905"
-        },
-        "kimi-k2-250711": {
-          "name": "Kimi K2"
+          "name": "Kimi K2",
+          "tool_call": true,
+          "limit": {
+            "context": 256000,
+            "output": 32000,
+          },
         },
         "deepseek-v3-1-250821": {
-          "name": "DS V3"
+          "name": "DS V3.1",
+          "reasoning": true,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 32000,
+          },
         },
         "deepseek-r1-250528": {
-          "name": "DS R1"
-        }
-      }
-    }
+          "name": "DS R1",
+          "reasoning": true,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 32000,
+          },
+        },
+      },
+    },
   },
   "permission": {
     "edit": "ask",
-    "bash": "ask"
+    "bash": "ask",
   },
   // include memory from other agent files
   "instructions": ["CLAUDE.md"],
@@ -34,25 +50,36 @@
     "web-search": {
       "type": "remote",
       "url": "{file:~/.secrets/mcp-search-url.txt}",
-      "enabled": true
+      "enabled": true,
     },
     "web-fetch": {
       "type": "remote",
       "url": "{file:~/.secrets/mcp-fetch-url.txt}",
-      "enabled": false
+      "enabled": false,
     },
-    "web-browser": {
-      "type": "remote",
-      "url": "http://localhost:12306/mcp",
-      "enabled": true
-    }
+    // TODO mcps cause opencode stuck before generating prompt
+    // "web-browser": {
+    //   "type": "remote",
+    //   "url": "http://localhost:12306/mcp",
+    //   "enabled": true
+    // },
+    // "figma": {
+    //   "type": "remote",
+    //   "url": "http://localhost:8612/sse",
+    //   "enabled": true
+    // }
   },
   "share": "disabled",
   "keybinds": {
+    "app_help": "<leader>/",
     // scroll page like in vim
     "messages_page_up": "ctrl+b",
     "messages_page_down": "ctrl+r", // ctrl+f not working
     "messages_half_page_up": "ctrl+u",
-    "messages_half_page_down": "ctrl+d"
-  }
+    "messages_half_page_down": "ctrl+d",
+    "messages_first": "<leader>h",
+    "messages_last": "<leader>g",
+    // stop session like in emacs
+    "session_interrupt": "esc,ctrl+g",
+  },
 }
