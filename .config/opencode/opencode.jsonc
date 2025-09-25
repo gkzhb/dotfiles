@@ -18,6 +18,11 @@
             "context": 256000,
             "output": 32000,
           },
+          "cost": {
+            "input": 4,
+            "output": 16,
+            "cache_read": 0.8,
+          },
         },
         "deepseek-v3-1-250821": {
           "name": "DS V3.1",
@@ -27,6 +32,11 @@
             "context": 128000,
             "output": 32000,
           },
+          "cost": {
+            "input": 4,
+            "output": 12,
+            "cache_read": 0.8,
+          },
         },
         "deepseek-r1-250528": {
           "name": "DS R1",
@@ -35,6 +45,11 @@
           "limit": {
             "context": 128000,
             "output": 32000,
+          },
+          "cost": {
+            "input": 4,
+            "output": 16,
+            "cache_read": 0.8,
           },
         },
       },
