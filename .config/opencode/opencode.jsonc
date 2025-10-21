@@ -1,5 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    "opencode-skills",
+  ],
   "provider": {
     "myprovider": {
       "npm": "@ai-sdk/openai-compatible",
@@ -71,6 +74,10 @@
       "type": "remote",
       "url": "{file:~/.secrets/mcp-fetch-url.txt}",
       "enabled": false,
+    },
+    "pdf-reader": {
+      "type": "local",
+      "command": ["pnpx", "@gkzhb/pdf-reader-mcp"],
     },
     // TODO mcps cause opencode stuck before generating prompt
     // "web-browser": {

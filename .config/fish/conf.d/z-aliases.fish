@@ -4,7 +4,11 @@ if status is-login
   alias tn='tmux new'
   alias tsn='tmux display-message'
 
-  # lf
+  alias oc=opencode
+  # edit skills
+  alias oc_sk='cd ~/.opencode/skills; opencode'
+
+  # lf @deprecated
   alias lc=lfcd
 
   # systemd
