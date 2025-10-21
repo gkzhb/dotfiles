@@ -14,9 +14,12 @@ function vproxy
   if test -z "$VPROXY_HOST"
     set -gx VPROXY_HOST localhost
   end
-  set -gx all_proxy socks5://$VPROXY_HOST:10880
-  set -gx https_proxy http://$VPROXY_HOST:10881
-  set -gx http_proxy http://$VPROXY_HOST:10881
+  if test -z "$VPROXY_PORT"
+    set -gx VPROXY_PORT 10880
+  end
+  set -gx all_proxy socks5://$VPROXY_HOST:$VPROXY_PORT
+  set -gx https_proxy http://$VPROXY_HOST:(math $VPROXY_PORT + 1)
+  set -gx http_proxy http://$VPROXY_HOST:(math $VPROXY_PORT + 1)
 end
 function unvproxy
   set -e all_proxy
