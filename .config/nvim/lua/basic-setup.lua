@@ -41,6 +41,11 @@ vim.opt.fileencoding = 'utf-8'
 -- {{{2 edit
 vim.opt.hidden = true
 vim.opt.autoread = true
+-- reload buffer when changing focused buffer
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = "*",
+})
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
 if vim.fn.has('nvim-0.9') then
