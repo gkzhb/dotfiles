@@ -15,7 +15,7 @@ fi
 if hash fish 2>/dev/null;
 then
   # install fisher and its plugins
-  curl -sL https://git.io/fisher | source && fisher install "$(cat $HOME/.config/fish/fish_plugins)"
+  fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install \$(cat $HOME/.config/fish/fish_plugins)"
 fi
 
 if hash emacs 2>/dev/null;
