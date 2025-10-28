@@ -228,10 +228,11 @@ end
 
 function M.init()
   vim.g.opencode_opts = {
-    input = {
-      win = {
-        b = {
-          completion = false,
+    provider = {
+      enabled = 'snacks',
+      snacks = {
+        win = {
+          enter = true,
         },
       },
     },
@@ -252,11 +253,6 @@ function M.init()
       refactor = {
         description = 'Refactor the file',
         prompt = '/refactor @@buffer',
-      },
-    },
-    terminal = {
-      win = {
-        enter = true,
       },
     },
   }

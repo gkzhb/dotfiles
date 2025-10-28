@@ -175,7 +175,7 @@ require('pckr').add({
   {
     'ggandor/leap.nvim',
     config = function()
-      require('leap').set_default_mappings()
+      vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap)')
     end,
   },
   'szw/vim-maximizer',
