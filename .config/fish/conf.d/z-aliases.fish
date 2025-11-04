@@ -5,8 +5,8 @@ if status is-login
   alias tsn='tmux display-message'
 
   alias oc=opencode
-  # edit skills
-  alias oc_sk='cd ~/.opencode/skills; opencode'
+  # edit opencode configs
+  alias occ='cd ~/.config/opencode; opencode'
 
   # lf @deprecated
   alias lc=lfcd
@@ -28,7 +28,11 @@ if status is-login
   if type -q zoxide
     zoxide init fish | source
     set -gx _ZO_ECHO 1
-    alias zz="z $PWD"
+    alias zz="z \$PWD"
+  end
+
+  if type -q bun
+    fish_add_path $HOME/.bun/bin/
   end
 
 end
