@@ -15,7 +15,14 @@ export const NotificationPlugin: Plugin = async ({
           path: { id: event.properties.sessionID },
         });
         const sessionTitle = session?.data?.title ?? "";
-        await $`terminal-notifier -message "Session \"${sessionTitle}\" completed!" -title "OpenCode"'`;
+        
+        // Check if terminal-notifier exists before executing
+        try {
+          await $`which terminal-notifier`.quiet();
+          await $`terminal-notifier -message "Session \"${sessionTitle}\" completed!" -title "OpenCode"'`;
+        } catch {
+          // terminal-notifier not found, skip notification
+        }
       }
     },
   };
