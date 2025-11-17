@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: elisp action
+# uuid: elisp-action
+# key: elisp-action
+# condition: t
+# --
+#+begin_src emacs-lisp :results silent
+`%`$0
+#+end_src

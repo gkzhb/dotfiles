@@ -753,3 +753,9 @@ headers ourselves."
 (use-package! dap-mode
   :config
   (setq dap-python-debugger 'debugpy))
+
+(use-package! ai-code-interface
+  :config
+  ;; (ai-code-set-backend  'claude-code-ide) ;; use claude-code-ide as backend
+  ;; Enable global keybinding for the main menu
+  (global-set-key (kbd "C-c a") #'ai-code-menu))
