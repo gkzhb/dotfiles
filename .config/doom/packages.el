@@ -90,8 +90,12 @@
            :repo "chenyanming/wallabag.el"
            :files ("*.el" "*.alist" "*.css")))
 
+(package! eat)
+(package! claude-code
+  :recipe (:host github :repo "tninja/claude-code.el" :files ("*.el")))
+
 (package! ai-code-interface
-  :recipe (:host github :repo "tninja/ai-code-interface.el" ;; :branch "copilot/add-opencode-support" 
+  :recipe (:host github :repo "tninja/ai-code-interface.el" :branch "copilot/add-opencode-support"
                  :files ("*.el")))
 
 ;; Doom's packages are pinned to a specific commit and updated from release to
