@@ -1,8 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    "opencode-skills-gkzhb"
-  ],
+  "plugin": ["opencode-skills-gkzhb"],
   "provider": {
     "myprovider": {
       "npm": "@ai-sdk/openai-compatible",
@@ -64,45 +62,53 @@
   },
   // include memory from other agent files
   "instructions": ["CLAUDE.md"],
-  "mcp": {
-    "web-search": {
-      "type": "remote",
-      "url": "{file:~/.secrets/mcp-search-url.txt}",
-      "enabled": true,
-    },
-    "web-fetch": {
-      "type": "remote",
-      "url": "{file:~/.secrets/mcp-fetch-url.txt}",
-      "enabled": false,
-    },
-    "pdf-reader": {
-      "type": "local",
-      "command": ["pnpx", "@gkzhb/pdf-reader-mcp"],
-    },
-    // TODO mcps cause opencode stuck before generating prompt
-    "web-browser": {
-      "type": "remote",
-      "url": "http://localhost:12306/mcp",
-      "enabled": true
-    },
-    // "figma": {
-    //   "type": "remote",
-    //   "url": "http://localhost:8612/sse",
-    //   "enabled": true
-    // }
+  "tools": {
+    "webfetch": false,
   },
+  "mcp": {},
   "share": "disabled",
   "keybinds": {
-    "app_help": "<leader>/",
-    // scroll page like in vim
-    "messages_page_up": "ctrl+b",
-    "messages_page_down": "ctrl+r", // ctrl+f not working
-    "messages_half_page_up": "ctrl+u",
-    "messages_half_page_down": "ctrl+d",
-    "messages_first": "<leader>h",
-    "messages_last": "<leader>g",
+    "leader": "ctrl+x",
+    "app_exit": "ctrl+c,ctrl+d,<leader>q",
+    "editor_open": "<leader>e",
+    "theme_list": "<leader>t",
+    "sidebar_toggle": "<leader>s",
+    "status_view": "<leader>i",
+    "session_export": "<leader>p",
+    "session_new": "<leader>n",
+    "session_list": "<leader>l",
+    "session_timeline": "<leader>g",
+    "session_share": "none",
+    "session_unshare": "none",
     // stop session like in emacs
-    "session_interrupt": "esc,ctrl+g",
+    "session_interrupt": "escape,ctrl+g",
+    "session_compact": "<leader>c",
+    "session_child_cycle": "ctrl+right",
+    "session_child_cycle_reverse": "ctrl+left",
+    "messages_page_up": "pageup",
+    "messages_page_down": "pagedown",
+    "messages_half_page_up": "ctrl+u",
+    "messages_half_page_down": "ctrl+s", // if using ctrl+d will trigger permission reject
+    "messages_first": "home",
+    "messages_last": "end",
+    "messages_copy": "<leader>y",
+    "messages_undo": "<leader>u",
+    "messages_redo": "<leader>r",
+    "messages_toggle_conceal": "<leader>h",
+    "model_list": "<leader>m",
+    "model_cycle_recent": "f2",
+    "model_cycle_recent_reverse": "shift+f2",
+    "command_list": "ctrl+p",
+    "agent_list": "<leader>a",
+    "agent_cycle": "tab",
+    "agent_cycle_reverse": "shift+tab",
+    "input_clear": "ctrl+c",
+    "input_forward_delete": "none",
+    "input_paste": "ctrl+v",
+    "input_submit": "enter",
+    "input_newline": "shift+enter,ctrl+j",
+    "history_previous": "up",
+    "history_next": "down",
   },
   "autoupdate": false,
 }

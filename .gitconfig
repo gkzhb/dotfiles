@@ -6,8 +6,6 @@
   quotepath = false
 [pull]
   rebase = true
-[include]
-  path = ~/.gitconfig.local
 [alias]
   co = checkout
   br = branch
@@ -81,3 +79,5 @@
 	cmd = git-nbmergetool merge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
 [push]
 	autoSetupRemote = true
+[include]
+  path = ~/.gitconfig.local
