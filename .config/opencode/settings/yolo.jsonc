@@ -11,6 +11,7 @@
       "git commit": "allow",
       "ls": "allow",
       "pwd": "allow",
+      "cat": "allow",
     },
   },
   "mcp": {},
