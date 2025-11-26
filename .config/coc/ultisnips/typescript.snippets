@@ -27,6 +27,10 @@ snippet lg "console.log" b
 console.log('#$1', $2);
 endsnippet
 
+snippet ust "useState()" b
+const [$1, set`!p snip.rv=upperfirst(t[1])`] = useState$3($2)$0
+endsnippet
+
 snippet ume "useMemo hook" b
 const $1 = useMemo(() => {
 	$2
@@ -55,10 +59,20 @@ import clsx from 'classnames';
 endsnippet
 
 snippet uch "React Custom Hook" b
-export interface I`!p snip.rv=capitalize_first(t[1])`Props {
+export interface `!p snip.rv=capitalize_first(t[1])`Props {
 }
-export const $1 = (props: I`!p snip.rv=capitalize_first(t[1])`Props) => {
+export const $1 = (props: `!p snip.rv=capitalize_first(t[1])`Props) => {
 	const {} = props;
 	return {};
 };
+endsnippet
+
+snippet zst "Zustand store state" b
+export interface $1State {
+
+	// 更新状态函数
+	actions: {
+
+	};
+}
 endsnippet
