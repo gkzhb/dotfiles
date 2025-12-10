@@ -39,7 +39,7 @@ end
 function M.init()
   -- leader key
   vim.g.mapleader = ' '
-  vim.g.maplocalleader = ' '
+  vim.g.maplocalleader = ','
   vim.opt.ttimeout = true
   vim.opt.tm = 500
 end

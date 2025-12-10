@@ -12,6 +12,7 @@
   ci = commit
   st = status -sb
   r = remote
+  w = worktree
 
   # Show verbose output about tags, branches or remotes
   ltg = tag -l

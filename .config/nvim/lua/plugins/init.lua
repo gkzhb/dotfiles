@@ -175,12 +175,12 @@ require('pckr').add({
   {
     'ggandor/leap.nvim',
     config = function()
-      vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap)')
+      vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
     end,
   },
   'szw/vim-maximizer',
   'tpope/vim-unimpaired', -- `[<char>`, `]<char>` related keymappings
-  { -- navigate in tmux
+  {                       -- navigate in tmux
     'numToStr/Navigator.nvim',
     config = function()
       require('Navigator').setup()
@@ -329,6 +329,13 @@ require('pckr').add({
     requires = { 'nvim-lua/plenary.nvim' },
     config = require('plugins.spectre').init,
   },
+  {
+    'MagicDuck/grug-far.nvim',
+    config = function()
+      require('grug-far').setup({
+      });
+    end,
+  },
   -- {{{3 telescope related
   {
     'nvim-telescope/telescope.nvim',
@@ -341,6 +348,9 @@ require('pckr').add({
     config = function()
       require('telescope').load_extension('ui-select')
     end,
+  },
+  {
+    'Marskey/telescope-sg',
   },
   {
     'nvim-telescope/telescope-fzf-native.nvim',

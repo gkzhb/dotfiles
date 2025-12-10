@@ -83,6 +83,14 @@ function M.init()
       tele_tabby = {
         use_highlight = true,
       },
+      ast_grep = {
+        command = {
+          "sg",                      -- For Linux, use `ast-grep` instead of `sg`
+          "--json=stream",
+        },                           -- must have --json=stream
+        grep_open_files = false,     -- search in opened files
+        lang = nil,                  -- string value, specify language for ast-grep `nil` for default
+      }
     },
   })
 end
@@ -136,7 +144,8 @@ function M.mappings()
       e = { '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>', 'cheatsheet' },
       n = { '<cmd>lua require("telescope").extensions.notify.notify()<cr>', 'notification history' },
       p = { '<cmd>lua require("telescope").extensions.project.project{}<cr>', 'project' },
-      r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
+      r = { '<cmd>lua require("telescope").extensions.ast_grep.ast_grep()<cr>', 'recent files' },
+      -- r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
       s = { '<cmd>SessionManager load_session<cr>', 'sessions' },
       t = { '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', 'current tabs' },
       w = { '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', 'tmux win' },
