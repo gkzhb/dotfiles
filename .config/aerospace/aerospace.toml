@@ -7,14 +7,18 @@ after-startup-command = [
   # 'exec-and-forget borders active_color=0xffe1e3e4 inactive_color=0xff494d64 width=5.0'
 ]
 
-exec-on-workspace-change = [
+# exec-on-workspace-change = [
   # '/opt/homebrew/bin/fish',
   # '-c',
   # '~/scripts/aerospace/on-new-window.fish',
+# ]
+exec-on-workspace-change = [
+  "/bin/bash", "-c",
+  "aerospace-scratchpad hook pull-window $AEROSPACE_PREV_WORKSPACE $AEROSPACE_FOCUSED_WORKSPACE"
 ]
 
 # Start AeroSpace at login
-start-at-login = false
+start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
@@ -214,6 +218,17 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
+
+    alt-ctrl-1 = "exec-and-forget aerospace-scratchpad show Finder"
+    alt-ctrl-o = "exec-and-forget aerospace-scratchpad show Obsidian"
+    alt-ctrl-shift-p = "exec-and-forget aerospace-scratchpad show Bitwarden"
+
+    # Or using summon instead
+    alt-ctrl-2 = 'exec-and-forget aerospace-scratchpad summon Finder || aerospace-scratchpad move Finder '
+
+    # Bring windows one by one to current workspace
+    alt-ctrl-minus = "exec-and-forget aerospace-scratchpad next"
+
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
