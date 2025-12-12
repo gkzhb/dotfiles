@@ -38,6 +38,20 @@
             "cache_read": 0.8,
           },
         },
+        "deepseek-v3-2-251201": {
+          "name": "DS V3.2",
+          "reasoning": true,
+          "tool_call": true,
+          "limit": {
+            "context": 128000,
+            "output": 32000,
+          },
+          "cost": {
+            "input": 4,
+            "output": 12,
+            "cache_read": 0.8,
+          },
+        },
         "deepseek-v3-1-250821": {
           "name": "DS V3.1",
           "reasoning": true,
@@ -90,8 +104,8 @@
             "cache_read": 0.8,
           },
         },
-        "deepseek-v3-1-250821": {
-          "name": "DS V3.1",
+        "deepseek-v3-2-251201": {
+          "name": "DS V3.2",
           "reasoning": true,
           "tool_call": true,
           "limit": {
@@ -103,6 +117,18 @@
             "output": 12,
             "cache_read": 0.8,
           },
+        },
+      },
+    },
+    "minimax": {
+      "npm": "@ai-sdk/anthropic",
+      "options": {
+        "baseURL": "https://api.minimaxi.com/anthropic/v1",
+        "apiKey": "{env:MINIMAX_API_KEY}",
+      },
+      "models": {
+        "MiniMax-M2": {
+          "name": "MiniMax-M2",
         },
       },
     },
@@ -176,7 +202,7 @@
     "agent_cycle": "tab",
     "agent_cycle_reverse": "shift+tab",
     "input_clear": "ctrl+c",
-    "input_forward_delete": "none",
+    // "input_forward_delete": "none",
     "input_paste": "ctrl+v",
     "input_submit": "enter",
     "input_newline": "shift+enter,ctrl+j",
