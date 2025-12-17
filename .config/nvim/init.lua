@@ -13,20 +13,16 @@ local localConfig = require('utils.local-config')
 localConfig.initLocalConfig()
 localConfig.loadHooks()
 localConfig.runHook(localConfig.HookNames.beforeAll)
+
 -- {{{1 basic config
 utils.loadModuleSafely('basic-setup')
 
--- load pckr plugins
-utils.loadModuleSafely('plugins')
--- plugins and configs are in 'lua/plugins/init.lua'
--- }}}
+-- 加载Lazy.nvim
+require('config.lazy')
+
+-- {{{1 autocommands
 utils.loadModuleSafely('autocommands')
 
--- {{{1 file type
-vim.cmd([[
-  autocmd BufNewFile,BufRead *.mdx :set filetype=markdown
-]])
--- }}}
 -- {{{1 afterAll hook
 localConfig.runHook(localConfig.HookNames.afterAll)
 -- vim: set fdm=marker:

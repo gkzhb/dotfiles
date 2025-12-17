@@ -14,3 +14,8 @@ vim.cmd([[
     autocmd WinEnter term://* startinsert
   augroup END
 ]])
+
+-- file type
+vim.cmd([[
+  autocmd BufNewFile,BufRead *.mdx :set filetype=markdown
+]])

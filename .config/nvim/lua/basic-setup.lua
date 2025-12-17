@@ -42,9 +42,9 @@ vim.opt.fileencoding = 'utf-8'
 vim.opt.hidden = true
 vim.opt.autoread = true
 -- reload buffer when changing focused buffer
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
   command = "if mode() != 'c' | checktime | endif",
-  pattern = "*",
+  pattern = '*',
 })
 -- {{{2 diff
 vim.opt.diffopt = { algorithm = 'patience' }
@@ -87,12 +87,4 @@ vim.opt.mouse = ''
 
 -- enable lua-loader to improve performance
 vim.loader.enable()
--- }}}
-
--- {{{1 check and install packer
-local utils = require('utils')
-local pckr = utils.loadModuleSafely('utils.packer')
-if pckr then
-  pckr.init()
-end
 -- }}}

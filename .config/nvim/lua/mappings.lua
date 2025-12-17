@@ -37,15 +37,12 @@ function _G.SynStack()
 end
 
 function M.init()
-  -- leader key
-  vim.g.mapleader = ' '
-  vim.g.maplocalleader = ','
   vim.opt.ttimeout = true
   vim.opt.tm = 500
 end
 
 function _G.CopyBufFilePath()
-       vim.fn.setreg('+', vim.fn.expand('%:.'))
+  vim.fn.setreg('+', vim.fn.expand('%:.'))
 end
 function M.setMappings()
   local wk = require('which-key')
@@ -65,7 +62,6 @@ function M.setMappings()
   }, { mode = 't', noremap = true, silent = true })
 
   wk.register({
-    ['-'] = { '<Plug>(choosewin)', 'choose win', noremap = false, silent = true }, -- choosewin
     -- buffer actions
     ['<C-N>'] = { ':bnext<CR>', 'next buffer' },
     ['<C-P>'] = { ':bprev<CR>', 'previous buffer' },
@@ -78,7 +74,7 @@ function M.setMappings()
       b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
       d = { '<cmd>bd<CR>', 'close buffer' },
       s = { '<cmd>w<CR>', 'save buffer' },
-      y = { '<cmd>lua CopyBufFilePath()<CR>', 'copy file path'},
+      y = { '<cmd>lua CopyBufFilePath()<CR>', 'copy file path' },
     },
     t = {
       name = 'toggle config',
@@ -89,9 +85,10 @@ function M.setMappings()
       t4 = { '<cmd>call v:lua.SetTab(4)<CR>', 'set tab size to 4' },
       t2 = { '<cmd>call v:lua.SetTab(2)<CR>', 'set tab size to 2' },
       c = {
-        name = 'pckr related',
-        i = { '<cmd>Pckr status<CR>', 'pckr plugin status' },
-        s = { '<cmd>Pckr sync<CR>', 'pckr sync plugins' },
+        name = 'lazy related',
+        i = { '<cmd>Lazy<CR>', 'lazy plugin manager' },
+        s = { '<cmd>Lazy sync<CR>', 'sync plugins' },
+        p = { '<cmd>Lazy profile<CR>', 'profile plugins' },
       },
     },
     -- d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.filereadable(vim.fn.expand("%:p")) > 0 and vim.api.nvim_buf_get_name(0) or "")<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
@@ -129,7 +126,7 @@ function M.setMappings()
 
   require('plugins.legendary').mappings()
   require('plugins.fugitive').mappings()
-  require('plugins.coc-nvim').mappings()
+  require('plugins.lsps.coc-nvim').mappings()
   require('plugins.vim-win').mappings()
   require('plugins.telescope').mappings()
   require('plugins.spectre').mappings()

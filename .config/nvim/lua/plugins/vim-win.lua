@@ -29,4 +29,4 @@ function M.mappings()
   }, { mode = 'n', prefix = '<leader>' })
 end
 
-return M
+return {}
