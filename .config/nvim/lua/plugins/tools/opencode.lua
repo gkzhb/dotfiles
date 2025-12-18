@@ -289,7 +289,7 @@ M.keys = {
   {
     '<leader>ia',
     function()
-      require('opencode').ask('@cursor: ')
+      require('opencode').ask('@this: ')
     end,
     desc = 'Ask opencode about this',
   },
@@ -317,7 +317,7 @@ M.keys = {
   {
     '<leader>ie',
     function()
-      require('opencode').prompt('Explain @cursor and its context')
+      require('opencode').prompt('Explain @this and its context')
     end,
     desc = 'Explain this code',
   },
@@ -363,7 +363,7 @@ M.keys = {
   {
     '<leader>ia',
     function()
-      require('opencode').ask('@selection: ')
+      require('opencode').ask('@this: ')
     end,
     desc = 'Ask opencode about selection',
     mode = 'v',
