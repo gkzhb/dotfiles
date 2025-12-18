@@ -7,9 +7,9 @@ return {
   -- 移动增强
   {
     'ggandor/leap.nvim',
-    config = function()
-      vim.keymap.set({ 'n', 'x', 'o' }, 's', '<Plug>(leap)')
-    end,
+    keys = {
+      { 's', '<Plug>(leap)', mode = { 'n', 'x', 'o' } },
+    },
   },
 
   -- 窗口最大化
@@ -23,11 +23,13 @@ return {
     'numToStr/Navigator.nvim',
     config = function()
       require('Navigator').setup()
-      vim.keymap.set({ 'n', 't' }, '<C-h>', '<CMD>NavigatorLeft<CR>')
-      vim.keymap.set({ 'n', 't' }, '<C-l>', '<CMD>NavigatorRight<CR>')
-      vim.keymap.set({ 'n', 't' }, '<C-k>', '<CMD>NavigatorUp<CR>')
-      vim.keymap.set({ 'n', 't' }, '<C-j>', '<CMD>NavigatorDown<CR>')
     end,
+    keys = {
+      { '<C-h>', '<CMD>NavigatorLeft<CR>', mode = { 'n', 't' }, desc = 'Navigate left' },
+      { '<C-l>', '<CMD>NavigatorRight<CR>', mode = { 'n', 't' }, desc = 'Navigate right' },
+      { '<C-k>', '<CMD>NavigatorUp<CR>', mode = { 'n', 't' }, desc = 'Navigate up' },
+      { '<C-j>', '<CMD>NavigatorDown<CR>', mode = { 'n', 't' }, desc = 'Navigate down' },
+    },
   },
 
   -- 编辑增强
@@ -75,7 +77,7 @@ return {
   -- 单词移动增强
   {
     'chaoren/vim-wordmotion',
-    config = function()
+    init = function()
       -- do not replace default vim word motions, add prefix 'X' instead
       vim.g.wordmotion_prefix = 'X'
     end,
