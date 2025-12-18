@@ -33,7 +33,7 @@ Finally, run two bash scripts: `script/dotfiles/install.sh` and `script/dotfiles
 
 Dependencies required by Neovim plugins:
 
-* [Git](https://github.com/git/git) to install [packer.nvim](https://github.com/wbthomason/packer.nvim)
+* [Git](https://github.com/git/git) to install [lazy.nvim](https://github.com/folke/lazy.nvim)
 * [nodejs/node: Node.js JavaScript runtime](https://github.com/nodejs/node) for coc.nvim
 * [BurntSushi/ripgrep: ripgrep recursively searches directories for a regex pattern while respecting your gitignore](https://github.com/BurntSushi/ripgrep)
 * [sharkdp/fd: A simple, fast and user-friendly alternative to 'find'](https://github.com/sharkdp/fd)
@@ -69,14 +69,16 @@ as plugin manager.
 
 Details about my Neovim plugins: [gkzhb/dotfiles - Neovim configuration](https://dotfyle.com/gkzhb/dotfiles-config-nvim)
 
-See [init.lua](./.config/nvim/init.lua). Use [packer.nvim](https://github.com/wbthomason/packer.nvim)
+See [init.lua](./.config/nvim/init.lua). Use [lazy.nvim](https://github.com/folke/lazy.nvim)
 as plugin manager.
 
-Use [OneDarkPro.nvim](https://github.com/olimorris/onedarkpro.nvim) color theme and
+Use VSCode color theme and
 [coc.nvim](https://github.com/neoclide/coc.nvim) as the autocomplete tool which
 is also LSP client. Also I add plenty of coc extensions in the config file.
 
-### yabai & skhd (Mac OS only)
+### AeroSpace ~~yabai & skhd~~ (Mac OS only)
+
+[AeroSpace](https://github.com/nikitabobko/AeroSpace)
 
 [koekeishiya/yabai: A tiling window manager for macOS based on binary space partitioning](https://github.com/koekeishiya/yabai): [yabairc](./yabairc)
 
