@@ -6,6 +6,17 @@ if vim.g.vscode then
 end
 
 -- for Ordinary Neovim
+-- {{{1 hide which-key warnings
+-- from https://github.com/LazyVim/LazyVim/discussions/4008
+-- filter which-key warnings
+local orig_notify = vim.notify
+vim.notify = function(msg, level, opts)
+  if msg:match("which%-key") and level == vim.log.levels.WARN then
+    return
+  end
+  orig_notify(msg, level, opts)
+end
+
 -- {{{1 Load Local Configuration
 -- load local vim config file `.config/nvim/customize.vim`
 local utils = require('utils')

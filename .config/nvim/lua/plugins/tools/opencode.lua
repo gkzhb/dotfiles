@@ -1,9 +1,8 @@
 local M = {
   'NickvanDyke/opencode.nvim',
   dependencies = {
-    'folke/snacks.nvim',
     'numToStr/Navigator.nvim',
-    'neoclide/coc.nvim',
+    'folke/snacks.nvim',
   },
 }
 
@@ -203,22 +202,22 @@ function M.select_diagnostic_and_fix()
     local action_state = require('telescope.actions.state')
 
     pickers
-      .new({}, {
-        prompt_title = 'Select Diagnostic to Fix',
-        finder = finders.new_table({ results = items }),
-        sorter = conf.generic_sorter({}),
-        attach_mappings = function(prompt_bufnr, map)
-          actions.select_default:replace(function()
-            actions.close(prompt_bufnr)
-            local selection = action_state.get_selected_entry()
-            if selection then
-              on_select_diagnostic(selection[1])
-            end
-          end)
-          return true
-        end,
-      })
-      :find()
+        .new({}, {
+          prompt_title = 'Select Diagnostic to Fix',
+          finder = finders.new_table({ results = items }),
+          sorter = conf.generic_sorter({}),
+          attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+              actions.close(prompt_bufnr)
+              local selection = action_state.get_selected_entry()
+              if selection then
+                on_select_diagnostic(selection[1])
+              end
+            end)
+            return true
+          end,
+        })
+        :find()
   elseif has_fzf then
     fzf.fzf_exec(items, {
       prompt = 'Select Diagnostic to Fix> ',
@@ -243,15 +242,15 @@ function M.config()
         },
       },
     },
-    contexts = {
-      ['@diagnostic'] = {
-        description = 'lsp diagnostics',
-        value = function()
-          return M.get_coc_diagnostics(true)
-        end,
-      },
-      ['@diagnostics'] = { description = 'lsp diagnostics', value = M.get_coc_diagnostics },
-    },
+    -- contexts = {
+    --   ['@diagnostic'] = {
+    --     description = 'lsp diagnostics',
+    --     value = function()
+    --       return M.get_coc_diagnostics(true)
+    --     end,
+    --   },
+    --   ['@diagnostics'] = { description = 'lsp diagnostics', value = M.get_coc_diagnostics },
+    -- },
     prompts = {
       fix = {
         description = 'Fix the problem',
@@ -262,112 +261,121 @@ function M.config()
         prompt = '/refactor @@buffer',
       },
     },
+    events = {
+      permissions = {
+        enabled = false,
+      }
+    }
   }
 end
 
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    name = 'opencode',
-    g = {
-      function()
-        require('opencode').toggle()
-      end,
-      'Toggle opencode',
-    },
-    A = {
-      function()
-        require('opencode').ask()
-      end,
-      'Ask opencode',
-    },
-    a = {
-      function()
-        require('opencode').ask('@cursor: ')
-      end,
-      'Ask opencode about this',
-    },
-    n = {
-      function()
-        require('opencode').command('session_new')
-      end,
-      'New opencode session',
-    },
-    y = {
-      function()
-        require('opencode').command('messages_copy')
-      end,
-      'Copy last opencode response',
-    },
-    s = {
-      function()
-        require('opencode').select()
-      end,
-      'Select opencode prompt',
-    },
-    e = {
-      function()
-        require('opencode').prompt('Explain @cursor and its context')
-      end,
-      'Explain this code',
-    },
-    d = {
-      function()
-        M.select_diagnostic_and_fix()
-      end,
-      'Select diagnostic and fix',
-    },
-    p = {
-      function()
-        require('opencode').command('session_interrupt')
-      end,
-      'Interrupt current session',
-    },
-  }, { mode = 'n', prefix = '<leader>i' })
+-- Set keys after M module is defined to avoid reference issues
+M.keys = {
+  -- Main opencode commands
+  {
+    '<leader>ig',
+    function()
+      require('opencode').toggle()
+    end,
+    desc = 'Toggle opencode',
+  },
+  {
+    '<leader>iA',
+    function()
+      require('opencode').ask()
+    end,
+    desc = 'Ask opencode',
+  },
+  {
+    '<leader>ia',
+    function()
+      require('opencode').ask('@cursor: ')
+    end,
+    desc = 'Ask opencode about this',
+  },
+  {
+    '<leader>in',
+    function()
+      require('opencode').command('session_new')
+    end,
+    desc = 'New opencode session',
+  },
+  {
+    '<leader>iy',
+    function()
+      require('opencode').command('messages_copy')
+    end,
+    desc = 'Copy last opencode response',
+  },
+  {
+    '<leader>is',
+    function()
+      require('opencode').select()
+    end,
+    desc = 'Select opencode prompt',
+  },
+  {
+    '<leader>ie',
+    function()
+      require('opencode').prompt('Explain @cursor and its context')
+    end,
+    desc = 'Explain this code',
+  },
+  {
+    '<leader>id',
+    function()
+      M.select_diagnostic_and_fix()
+    end,
+    desc = 'Select diagnostic and fix',
+  },
+  {
+    '<leader>ip',
+    function()
+      require('opencode').command('session_interrupt')
+    end,
+    desc = 'Interrupt current session',
+  },
 
-  wk.register({
-    i = {
-      a = {
-        function()
-          require('opencode').ask('@selection: ')
-        end,
-        'Ask opencode about selection',
-      },
-      s = {
-        function()
-          require('opencode').select()
-        end,
-        'Select opencode prompt',
-      },
-    },
-  }, { mode = 'v', prefix = '<leader>' })
+  -- Scroll commands
+  {
+    '<leader>iou',
+    function()
+      require('opencode').command('messages_half_page_up')
+    end,
+    desc = 'Messages half page up',
+  },
+  {
+    '<leader>iod',
+    function()
+      require('opencode').command('messages_half_page_down')
+    end,
+    desc = 'Messages half page down',
+  },
+  {
+    '<leader>io<space>',
+    function()
+      require('which-key').show({ keys = '<leader>io', loop = true, delay = 3 })
+    end,
+    desc = 'Scroll page in hydra mode',
+  },
 
-  -- scroll opencode
-  wk.register({
-    description = 'scroll opencode',
-    u = {
-      function()
-        require('opencode').command('messages_half_page_up')
-      end,
-      'Messages half page up',
-    },
-    d = {
-      function()
-        require('opencode').command('messages_half_page_down')
-      end,
-      'Messages half page down',
-    },
-    [' '] = {
-      function()
-        wk.show({
-          keys = '<leader>io',
-          loop = true,
-          delay = 3,
-        })
-      end,
-      'Scroll page in hydra mode',
-    },
-  }, { mode = 'n', prefix = '<leader>io' })
-end
+  -- Visual mode commands
+  {
+    '<leader>ia',
+    function()
+      require('opencode').ask('@selection: ')
+    end,
+    desc = 'Ask opencode about selection',
+    mode = 'v',
+  },
+  {
+    '<leader>is',
+    function()
+      require('opencode').select()
+    end,
+    desc = 'Select opencode prompt',
+    mode = 'v',
+  },
+}
 
 return M

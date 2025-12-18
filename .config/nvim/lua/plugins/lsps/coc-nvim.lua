@@ -344,7 +344,7 @@ function M.mappings()
   wk.register({ f = { '<Plug>(coc-format)', 'format current file' } }, { mode = 'n', prefix = '<Leader>b' })
 
   wk.register({
-    f = { '<Plug>(coc-format-selected)', 'format selected code' },
+    -- f = { '<Plug>(coc-format-selected)', 'format selected code' },
     a = { '<Plug>(coc-codeaction-selected)', 'apply codeAction to selected region' },
     x = { '<Plug>(coc-convert-snippet)', 'convert selected code to snippet' }, -- coc-snippets
   }, { mode = 'x', prefix = '<Leader>' })

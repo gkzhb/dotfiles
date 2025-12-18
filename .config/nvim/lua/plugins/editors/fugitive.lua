@@ -46,16 +46,11 @@ function M.config()
   ]])
 end
 
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    g = {
-      name = 'git related',
-      s = { '<cmd>G<CR>', 'git status' },
-      b = { '<cmd>G blame<CR>', 'git blame' },
-      ['<Space>'] = { ':G<Space>', 'git command', silent = false },
-    },
-  }, { prefix = '<leader>' })
-end
+M.keys = {
+  { '<leader>g', group = 'git related' },
+  { '<leader>gs', '<cmd>G<CR>', desc = 'git status' },
+  { '<leader>gb', '<cmd>G blame<CR>', desc = 'git blame' },
+  { '<leader>g<Space>', ':G<Space>', desc = 'git command', silent = false },
+}
 
 return M

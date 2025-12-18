@@ -1,13 +1,9 @@
-local M = {
+return {
   'mrjones2014/legendary.nvim',
+  keys = {
+    { '<leader>si', '<cmd>Legendary<CR>', desc = 'search keymaps, cmds, autocmds' },
+  },
+  config = function()
+    require('legendary').setup({})
+  end,
 }
-function M.config()
-  require('legendary').setup({})
-end
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    si = { '<cmd>Legendary<CR>', 'search keymaps, cmds, autocmds' },
-  }, { prefix = '<leader>' })
-end
-return M

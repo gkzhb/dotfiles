@@ -3,8 +3,83 @@ local M = {
   dependencies = { 'nvim-lua/plenary.nvim' },
   cmd = 'Telescope',
   keys = {
-    { '<leader>ff', '<cmd>Telescope find_files<cr>', desc = 'Find Files' },
-    { '<leader>fg', '<cmd>Telescope live_grep<cr>', desc = 'Live Grep' },
+    -- Basic telescope commands
+    -- { '<leader>ff', '<cmd>Telescope find_files<cr>', desc = 'Find Files' },
+    -- { '<leader>fg', '<cmd>Telescope live_grep<cr>', desc = 'Live Grep' },
+
+    -- Telescope search menu
+    { '<leader>sa', '<cmd>lua require("telescope.builtin").commands()<cr>', desc = 'Search Commands' },
+    { '<leader>sb', '<cmd>lua require("telescope.builtin").buffers()<cr>', desc = 'Search Buffers' },
+    { '<leader>sf', '<cmd>lua require("telescope.builtin").find_files()<cr>', desc = 'Search Files' },
+    { '<leader>sg', '<cmd>lua require("telescope.builtin").live_grep()<cr>', desc = 'Search Grep Content' },
+    { '<leader>sh', '<cmd>lua require("telescope.builtin").help_tags()<cr>', desc = 'Search Help Tags' },
+    { '<leader>sj', '<cmd>lua require("telescope.builtin").jumplist()<cr>', desc = 'Search Jump List' },
+    { '<leader>sk', '<cmd>lua require("telescope.builtin").loclist()<cr>', desc = 'Search Location List' },
+    { '<leader>sl', '<cmd>lua require("telescope.builtin").resume()<cr>', desc = 'Search Last View' },
+    { '<leader>sz', '<cmd>lua require("telescope.builtin").autocommands()<cr>', desc = 'Search Autocommands' },
+
+    -- Git related
+    { '<leader>svc', '<cmd>lua require("telescope.builtin").git_commits()<cr>', desc = 'Search Git Commits' },
+    { '<leader>svb', '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', desc = "Search Buffer's Git Commits" },
+
+    -- Coc related
+    { '<leader>sca', '<cmd>lua require("telescope").extensions.coc.code_actions()<cr>', desc = 'Search Code Actions' },
+    { '<leader>scc', '<cmd>lua require("telescope").extensions.coc.commands({})<cr>', desc = 'Search Commands' },
+    { '<leader>sccc', '<cmd>lua require("telescope").extensions.coc.coc({})<cr>', desc = 'Search Coc Subcommands' },
+    { '<leader>scd', '<cmd>lua require("telescope").extensions.coc.definitions({})<cr>', desc = 'Search Definitions' },
+    { '<leader>scdd', '<cmd>lua require("telescope").extensions.coc.diagnostics({})<cr>', desc = 'Search Diagnostics' },
+    {
+      '<leader>scdw',
+      '<cmd>lua require("telescope").extensions.coc.workspace_diagnostics({})<cr>',
+      desc = 'Search Workspace Diagnostics',
+    },
+    {
+      '<leader>sci',
+      '<cmd>lua require("telescope").extensions.coc.implementations({})<cr>',
+      desc = 'Search Implementations',
+    },
+    { '<leader>scj', '<cmd>lua require("telescope").extensions.coc.locations({})<cr>', desc = 'Search Locations' },
+    { '<leader>scl', '<cmd>lua require("telescope").extensions.coc.links({})<cr>', desc = 'Search Links' },
+    {
+      '<leader>scs',
+      '<cmd>lua require("telescope").extensions.coc.document_symbols({})<cr>',
+      desc = 'Search Document Symbols',
+    },
+    {
+      '<leader>scsw',
+      '<cmd>lua require("telescope").extensions.coc.workspace_symbols({})<cr>',
+      desc = 'Search Workspace Symbols',
+    },
+    {
+      '<leader>scrr',
+      '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
+      desc = 'Search References',
+    },
+    {
+      '<leader>scru',
+      '<cmd>lua require("telescope").extensions.coc.references_used({})<cr>',
+      desc = 'Search References(Used)',
+    },
+    { '<leader>scre', '<cmd>lua require("telescope").extensions.coc.mru({})<cr>', desc = 'Search MRU' },
+
+    -- Extensions
+    {
+      '<leader>se',
+      '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>',
+      desc = 'Search Cheatsheet',
+    },
+    { '<leader>sn', '<cmd>lua require("telescope").extensions.notify.notify()<cr>', desc = 'Search Notifications' },
+    { '<leader>sp', '<cmd>lua require("telescope").extensions.project.project{}<cr>', desc = 'Search Project' },
+    { '<leader>sr', '<cmd>lua require("telescope").extensions.ast_grep.ast_grep()<cr>', desc = 'Search Recent Files' },
+    { '<leader>ss', '<cmd>SessionManager load_session<cr>', desc = 'Search Sessions' },
+    { '<leader>st', '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', desc = 'Search Tabs' },
+    { '<leader>sw', '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', desc = 'Search Tmux Windows' },
+    { '<leader>sy', '<cmd>lua require("telescope").extensions.neoclip.default()<cr>', desc = 'Search Clipboard' },
+
+    -- Deep search
+    { '<leader>sdb', '<cmd>lua require("telescope.builtin").builtin()<cr>', desc = 'Search Builtin Pickers' },
+    { '<leader>sdp', '<cmd>lua require("telescope.builtin").pickers()<cr>', desc = 'Search Previous Pickers' },
+    { '<leader>sdr', '<cmd>lua require("telescope.builtin").registers()<cr>', desc = 'Search Registers' },
   },
 }
 
@@ -101,72 +176,6 @@ function M.config()
       },
     },
   })
-end
-
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    s = {
-      name = 'telescope search',
-      a = { '<cmd>lua require("telescope.builtin").commands()<cr>', 'commands' },
-      b = { '<cmd>lua require("telescope.builtin").buffers()<cr>', 'buffers' },
-      f = { '<cmd>lua require("telescope.builtin").find_files()<cr>', 'files' },
-      g = { '<cmd>lua require("telescope.builtin").live_grep()<cr>', 'grep content' },
-      h = { '<cmd>lua require("telescope.builtin").help_tags()<cr>', 'help tags' },
-      j = { '<cmd>lua require("telescope.builtin").jumplist()<cr>', 'jump list entries' },
-      k = { '<cmd>lua require("telescope.builtin").loclist()<cr>', 'location list' },
-      l = { '<cmd>lua require("telescope.builtin").resume()<cr>', 'last view' },
-      -- git VCS pickers
-      v = {
-        name = 'git related',
-        c = { '<cmd>lua require("telescope.builtin").git_commits()<cr>', 'git commits' },
-        b = { '<cmd>lua require("telescope.builtin").git_bcommits()<cr>', "buffer's git commits" },
-      },
-      z = { '<cmd>lua require("telescope.builtin").autocommands()<cr>', 'autocommands' },
-
-      -- telescope-coc.nvim
-      c = {
-        name = 'coc related',
-        a = { '<cmd>lua require("telescope").extensions.coc.code_actions()<cr>', 'cursor code actions' },
-        c = { '<cmd>lua require("telescope").extensions.coc.commands({})<cr>', 'commands' },
-        cc = { '<cmd>lua require("telescope").extensions.coc.coc({})<cr>', 'coc subcommands' },
-        d = { '<cmd>lua require("telescope").extensions.coc.definitions({})<cr>', 'definitions' },
-        dd = { '<cmd>lua require("telescope").extensions.coc.diagnostics({})<cr>', 'diagnostics' },
-        dw = {
-          '<cmd>lua require("telescope").extensions.coc.workspace_diagnostics({})<cr>',
-          'workspace diagnostics',
-        },
-        i = { '<cmd>lua require("telescope").extensions.coc.implementations({})<cr>', 'implementations' },
-        j = { '<cmd>lua require("telescope").extensions.coc.locations({})<cr>', 'locations' },
-        l = { '<cmd>lua require("telescope").extensions.coc.links({})<cr>', 'links' },
-        s = { '<cmd>lua require("telescope").extensions.coc.document_symbols({})<cr>', 'document symbols' },
-        sw = { '<cmd>lua require("telescope").extensions.coc.workspace_symbols({})<cr>', 'workspace symbols' },
-        rr = {
-          '<cmd>lua require("telescope").extensions.coc.references({ initial_mode = "normal"})<cr>',
-          'references',
-        },
-        ru = { '<cmd>lua require("telescope").extensions.coc.references_used({})<cr>', 'references(used)' },
-        re = { '<cmd>lua require("telescope").extensions.coc.mru({})<cr>', 'mru' },
-      },
-
-      e = { '<cmd>lua require("telescope").extensions.cheatsheet.cheatsheet()<cr>', 'cheatsheet' },
-      n = { '<cmd>lua require("telescope").extensions.notify.notify()<cr>', 'notification history' },
-      p = { '<cmd>lua require("telescope").extensions.project.project{}<cr>', 'project' },
-      r = { '<cmd>lua require("telescope").extensions.ast_grep.ast_grep()<cr>', 'recent files' },
-      -- r = { '<cmd>lua require("telescope").extensions.frecency.frecency()<cr>', 'recent files' },
-      s = { '<cmd>SessionManager load_session<cr>', 'sessions' },
-      t = { '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', 'current tabs' },
-      w = { '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', 'tmux win' },
-      y = { '<cmd>lua require("telescope").extensions.neoclip.default()<cr>', 'clipboard' },
-
-      -- deep keymaps, default telescope pickers
-      d = {
-        b = { '<cmd>lua require("telescope.builtin").builtin()<cr>', 'builtin pickers' },
-        p = { '<cmd>lua require("telescope.builtin").pickers()<cr>', 'previous pickers' },
-        r = { '<cmd>lua require("telescope.builtin").registers()<cr>', 'list vim registers' },
-      },
-    },
-  }, { prefix = '<leader>' })
 end
 
 return M

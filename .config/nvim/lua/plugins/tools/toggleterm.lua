@@ -1,17 +1,13 @@
 local M = {
   'akinsho/toggleterm.nvim',
+  keys = {
+    { '<Leader>ot', '<cmd>exe v:count1 . "ToggleTerm"<CR>', desc = 'toggle term [n]', mode = 'n' },
+    { '<Leader>oa', '<cmd>ToggleTermToggleAll<CR>', desc = 'toggle all term', mode = 'n' },
+  },
 }
 
 function M.config()
   require('toggleterm').setup({})
-end
-
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    t = { '<cmd>exe v:count1 . "ToggleTerm"<CR>', 'toggle term [n]' },
-    a = { '<cmd>ToggleTermToggleAll<CR>', 'toggle all term' },
-  }, { mode = 'n', prefix = '<Leader>o' })
 end
 
 return M

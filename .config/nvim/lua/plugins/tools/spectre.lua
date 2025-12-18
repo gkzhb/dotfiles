@@ -6,11 +6,8 @@ local M = {
 
 function M.config() end
 
-function M.mappings()
-  local wk = require('which-key')
-  wk.register({
-    S = { '<cmd>lua require("spectre").toggle()<CR>', 'Search' },
-  }, { prefix = '<leader>', mode = 'n' })
-end
+M.keys = {
+  { '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', desc = 'Search', mode = 'n' },
+}
 
 return M

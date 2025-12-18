@@ -124,23 +124,8 @@ function M.setMappings()
     z = { '<cmd>MaximizerToggle<CR>', 'toggle maximizing current window' }, -- maximizer
   }, { prefix = '<leader>' })
 
-  require('plugins.legendary').mappings()
-  require('plugins.fugitive').mappings()
   require('plugins.lsps.coc-nvim').mappings()
-  require('plugins.vim-win').mappings()
-  require('plugins.telescope').mappings()
-  require('plugins.spectre').mappings()
-  require('plugins.notify').mappings()
-  require('plugins.toggleterm').mappings()
-  require('plugins.opencode').mappings()
-  wk.register({
-    ['/'] = { -- Neogen
-      name = 'generate doc comment',
-      f = { '<cmd>Neogen func<CR>', 'function doc comment' },
-      c = { '<cmd>Neogen class<CR>', 'class doc comment' },
-      t = { '<cmd>Neogen type<CR>', 'type doc comment' },
-    },
-  }, { mode = 'n', prefix = '<Leader>' })
+
   wk.register({ -- fzf-lua mappings
     name = 'fzf search',
     b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },

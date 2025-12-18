@@ -56,6 +56,12 @@ return {
       require('neogen').setup({})
     end,
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    keys = {
+      { '<leader>/', group = 'generate doc comment' },
+      { '<leader>/f', '<cmd>Neogen func<CR>', desc = 'function doc comment' },
+      { '<leader>/c', '<cmd>Neogen class<CR>', desc = 'class doc comment' },
+      { '<leader>/t', '<cmd>Neogen type<CR>', desc = 'type doc comment' },
+    },
   },
 
   -- 大小写转换

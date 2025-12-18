@@ -28,7 +28,11 @@ return {
   {
     'folke/snacks.nvim',
     config = function()
-      require('snacks').setup({ input = { enabled = true } })
+      require('snacks').setup({
+        input = { enabled = true },
+        picker = { enabled = true },
+        terminal = { enabled = true },
+      })
     end,
   },
 
