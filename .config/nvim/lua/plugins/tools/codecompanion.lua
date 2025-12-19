@@ -8,7 +8,16 @@ local M = {
   opts = {
     interactions = {
       chat = {
-        adapter = 'opencode',
+        adapter = 'claude_code',
+        opts = {
+          completion_provider = 'coc',
+        },
+      },
+    },
+    display = {
+      diff = {
+        enabled = true,
+        provider = 'split',
       },
     },
     adapters = {
@@ -16,6 +25,13 @@ local M = {
         opts = {
           -- show_presets = false,
         },
+        -- ['claude-code'] = function()
+        -- return require("codecompanion.adapters").extend("claude_code", {
+        --   env = {
+        -- -- ANTHROPIC_API_KEY = os.getenv("LITELLM_API_KEY"),
+        --   },
+        -- })
+        -- end,
         opencode = function()
           return require('codecompanion.adapters').extend('opencode', {
             commands = {
@@ -40,9 +56,9 @@ local M = {
           })
         end,
         codex = function()
-          return require("codecompanion.adapters").extend("codex", {
+          return require('codecompanion.adapters').extend('codex', {
             defaults = {
-              auth_method = "codex-api-key", -- "openai-api-key"|"codex-api-key"|"chatgpt"
+              auth_method = 'codex-api-key', -- "openai-api-key"|"codex-api-key"|"chatgpt"
             },
             env = {
               -- OPENAI_API_KEY = "my-api-key",
@@ -57,6 +73,13 @@ local M = {
         --   })
         -- end,
       },
+    },
+  },
+  keys = {
+    {
+      '<leader>ic',
+      '<cmd>CodeCompanionChat<CR>',
+      desc = 'Toggle opencode',
     },
   },
 }

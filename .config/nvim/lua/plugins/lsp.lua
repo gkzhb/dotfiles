@@ -6,10 +6,25 @@ return {
   {
     'windwp/nvim-ts-autotag',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {
+      enable_close_on_slash = false,
+    },
   },
   -- Treesitter文本对象
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
+    branch = 'main',
+    init = function()
+      -- Disable entire built-in ftplugin mappings to avoid conflicts.
+      -- See https://github.com/neovim/neovim/tree/master/runtime/ftplugin for built-in ftplugins.
+      vim.g.no_plugin_maps = true
+
+      -- Or, disable per filetype (add as you like)
+      -- vim.g.no_python_maps = true
+      -- vim.g.no_ruby_maps = true
+      -- vim.g.no_rust_maps = true
+      -- vim.g.no_go_maps = true
+    end,
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
   -- 上下文注释
@@ -26,19 +41,30 @@ return {
   {
     'andymass/vim-matchup',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {
+      treesitter = {
+        stopline = 800,
+      },
+    },
   },
 
-  -- Treesitter重构
+  -- @deprecated Treesitter重构
+  -- {
+  --   'nvim-treesitter/nvim-treesitter-refactor',
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  -- },
+
+  -- @deprecated Rainbow括号
+  -- {
+  --   'p00f/nvim-ts-rainbow',
+  --   dependencies = { 'nvim-treesitter/nvim-treesitter' },
+  -- },
+
   {
-    'nvim-treesitter/nvim-treesitter-refactor',
+    'https://gitlab.com/HiPhish/rainbow-delimiters.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
   },
 
-  -- Rainbow括号
-  {
-    'p00f/nvim-ts-rainbow',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-  },
   -- 撤销树
   {
     'mbbill/undotree',

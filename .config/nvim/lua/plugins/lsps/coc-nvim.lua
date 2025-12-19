@@ -222,6 +222,25 @@ function M.config()
       autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
     augroup end
   ]])
+
+  local function disable_coc_for_type()
+    do
+      return
+    end
+    -- TODO not working
+    -- Disable coc for files with vscodediff protocol prefix
+    if vim.fn.expand('<afile>:p'):sub(1, 11) == 'vscodediff:' then
+      vim.b.coc_enabled = 0
+      return
+    end
+  end
+
+  -- Create augroup
+  local coc_group = vim.api.nvim_create_augroup('CocGroup', { clear = true })
+  vim.api.nvim_create_autocmd({ 'BufNew', 'BufRead', 'BufEnter' }, {
+    group = coc_group,
+    callback = disable_coc_for_type,
+  })
 end
 
 function M.mappings()
@@ -480,7 +499,9 @@ function _G.CocEnterConfirm()
   if vim.fn['coc#pum#visible']() ~= 0 then
     return vim.fn['coc#_select_confirm']()
   end
-  return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
+  local npairs = require('nvim-autopairs')
+  return npairs.autopairs_cr()
+  -- return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
 end
 
 function _G.CocAction(cmd, ...)
@@ -534,4 +555,5 @@ function _G.CocSnippetsExpandJump()
   end
   vim.fn['coc#rpc#request']('doKeymap', { 'snippets-expand-jump', '' })
 end
+
 return M

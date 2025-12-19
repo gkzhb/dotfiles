@@ -5,6 +5,7 @@ return {
     { '<leader>nl', '<cmd>Notifications<CR>', desc = 'list all notifications' },
     { '<leader>n', group = 'notifications' },
   },
+  lazy = false,
   config = function()
     local notify = require('notify')
     notify.setup({
