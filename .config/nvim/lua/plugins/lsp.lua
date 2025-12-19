@@ -2,6 +2,7 @@ return {
   -- lsps目录下的插件配置
   require('plugins.lsps.coc-nvim'),
   require('plugins.lsps.nvim-treesitter'),
+  require('plugins.lsps.treesitter-modules'),
   -- 自动标签
   {
     'windwp/nvim-ts-autotag',

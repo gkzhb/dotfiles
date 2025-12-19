@@ -1,50 +1,58 @@
+local langs = {
+  'bash',
+  'c',
+  'cpp',
+  'cmake',
+  'comment',
+  'css',
+  'dockerfile',
+  'fish',
+  'git_rebase',
+  'gitattributes',
+  'gitcommit',
+  'gitignore',
+  'go',
+  'html',
+  'java',
+  'javascript',
+  'jsdoc',
+  'jsonc',
+  'latex',
+  'lua',
+  -- 'org',
+  'php',
+  'python',
+  'query',
+  'rust',
+  'scss',
+  'thrift',
+  'toml',
+  'tsx',
+  'typescript',
+  'vim',
+  'vue',
+  'yaml',
+  'markdown',
+}
 -- Treesitter
 local M = {
   'nvim-treesitter/nvim-treesitter',
   lazy = false,
   build = ':TSUpdate',
   branch = 'main',
+  keys = {
+    {
+      '<leader>tct',
+      function()
+        local ts = require('nvim-treesitter')
+        ts.install(langs)
+      end,
+      desc = 'Install TreeSitter parsers',
+    },
+  }
 }
 
 function M.config()
-  local ts = require('nvim-treesitter')
-  local langs = {
-    'bash',
-    'c',
-    'cpp',
-    'cmake',
-    'comment',
-    'css',
-    'dockerfile',
-    'fish',
-    'git_rebase',
-    'gitattributes',
-    'gitcommit',
-    'gitignore',
-    'go',
-    'html',
-    'java',
-    'javascript',
-    'jsdoc',
-    'jsonc',
-    'latex',
-    'lua',
-    -- 'org',
-    'php',
-    'python',
-    'query',
-    'rust',
-    'scss',
-    'thrift',
-    'toml',
-    'tsx',
-    'typescript',
-    'vim',
-    'vue',
-    'yaml',
-    'markdown',
-  }
-  ts.install(langs)
   -- require('nvim-treesitter.configs').setup({
   --   ensure_installed = {
   --   },                   -- one of "all", "maintained" (parsers with maintainers), or a list of languages

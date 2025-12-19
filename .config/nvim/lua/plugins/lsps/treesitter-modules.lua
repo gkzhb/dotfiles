@@ -1,13 +1,51 @@
+local langs = {
+  'bash',
+  'c',
+  'cpp',
+  'cmake',
+  'comment',
+  'css',
+  'dockerfile',
+  'fish',
+  'git_rebase',
+  'gitattributes',
+  'gitcommit',
+  'gitignore',
+  'go',
+  'html',
+  'java',
+  'javascript',
+  'jsdoc',
+  'jsonc',
+  'latex',
+  'lua',
+  -- 'org',
+  'php',
+  'python',
+  'query',
+  'rust',
+  'scss',
+  'thrift',
+  'toml',
+  'tsx',
+  'typescript',
+  'vim',
+  'vue',
+  'yaml',
+  'markdown',
+}
 local M = {
   'MeanderingProgrammer/treesitter-modules.nvim',
   dependencies = { 'nvim-treesitter/nvim-treesitter' },
   ---@module 'treesitter-modules'
   ---@type ts.mod.UserConfig
   opts = {
+    ensure_installed = langs,
+    auto_install= true,
     fold = { enable = true },
     highlight = { enable = true },
     indent = { enable = true },
     incremental_selection = { enable = true },
   },
 }
-return {}
+return M
