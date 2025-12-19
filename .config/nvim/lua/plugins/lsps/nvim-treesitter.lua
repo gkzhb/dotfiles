@@ -49,7 +49,7 @@ local M = {
       end,
       desc = 'Install TreeSitter parsers',
     },
-  }
+  },
 }
 
 function M.config()

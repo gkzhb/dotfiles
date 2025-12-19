@@ -41,7 +41,7 @@ local M = {
   ---@type ts.mod.UserConfig
   opts = {
     ensure_installed = langs,
-    auto_install= true,
+    auto_install = true,
     fold = { enable = true },
     highlight = { enable = true },
     indent = { enable = true },
