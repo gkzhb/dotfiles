@@ -40,8 +40,8 @@ local M = {
   ---@module 'treesitter-modules'
   ---@type ts.mod.UserConfig
   opts = {
-    ensure_installed = langs,
-    auto_install = true,
+    -- ensure_installed = langs,
+    auto_install = false,
     fold = { enable = true },
     highlight = { enable = true },
     indent = { enable = true },
