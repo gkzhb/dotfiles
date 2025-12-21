@@ -1,0 +1,24 @@
+model = "kimi-k2-250905"
+
+# Model used by the /review feature (code reviews). Default: "gpt-5.1-codex-max".
+review_model = "kimi-k2-250905"
+
+model_context_window = 128000
+
+# Provider id selected from [model_providers]. Default: "openai".
+model_provider = "volc"
+
+approval_policy = "never"
+
+[model_providers]
+[model_providers.volc]
+name = "Volcengine"
+base_url = "https://ark.cn-beijing.volces.com/api/v3"
+wire_api = "chat"
+env_key = "VOLCENGINE_API_KEY"
+
+[profiles]
+[profiles.default]
+model = "kimi-k2-250905"
+model_provider = "volc"
+
