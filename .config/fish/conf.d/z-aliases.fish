@@ -14,6 +14,7 @@ if status is-login
   # systemd
   if  type -q systemctl
     alias s="sudo systemctl"
+    alias us="systemctl --user"
   end
   alias g=git
   alias v=nvim
