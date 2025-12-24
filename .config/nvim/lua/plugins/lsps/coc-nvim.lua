@@ -29,7 +29,7 @@ function M.config()
     'coc-git',
     'coc-go',
     'coc-highlight',
-    'coc-jedi',
+    '@yaegassy/coc-ty', -- python lsp
     'coc-json',
     'coc-lists',
     'coc-markdownlint',
