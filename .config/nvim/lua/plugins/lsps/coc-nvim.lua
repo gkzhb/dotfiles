@@ -30,6 +30,7 @@ function M.config()
     'coc-go',
     'coc-highlight',
     '@yaegassy/coc-ty', -- python lsp
+    '@yaegassy/coc-ruff', -- python lint and format lsp
     'coc-json',
     'coc-lists',
     'coc-markdownlint',
