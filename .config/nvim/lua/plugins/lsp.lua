@@ -9,6 +9,7 @@ return {
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {
       enable_close_on_slash = false,
+      enable_rename = false,
     },
   },
   -- Treesitter文本对象
