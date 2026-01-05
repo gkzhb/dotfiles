@@ -14,14 +14,14 @@ rev = "e95c7b3"
 hash = "63b6c222bf2103b3023389dde5e2ecfe"
 
 [[plugin.deps]]
-use = "imsi32/yatline"
-rev = "88bd1c5"
-hash = "981acbe9b758b1af3a8154c932bb936d"
+use = "XshubhamG/yatline-githead"
+rev = "88a508c"
+hash = "6915e57a389a41b4d709f456cb3c1d6f"
 
 [[plugin.deps]]
-use = "imsi32/yatline-githead"
-rev = "f8f969e"
-hash = "4d441b38138ce6492a4e10fa349fd65"
+use = "carlosedp/yatline"
+rev = "61d3a3a"
+hash = "37fe452b2406df3f24e33b429ef699c2"
 
 [flavor]
 deps = []

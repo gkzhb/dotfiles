@@ -17,7 +17,7 @@ require("yatline"):setup({
       section_b = {
       },
       section_c = {
-        { type = "coloreds", custom = false, name = "githead" },
+        -- { type = "coloreds", custom = false, name = "githead" },
       }
     },
     right = {

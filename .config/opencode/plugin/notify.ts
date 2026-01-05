@@ -15,7 +15,7 @@ export const NotificationPlugin: Plugin = async ({
           path: { id: event.properties.sessionID },
         });
         const sessionTitle = session?.data?.title ?? "";
-        
+
         // Check if terminal-notifier exists before executing
         try {
           await $`which terminal-notifier`.quiet();
