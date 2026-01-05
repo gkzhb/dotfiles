@@ -36,4 +36,8 @@ if status is-login
     fish_add_path $HOME/.bun/bin/
   end
 
+  if type -q go
+    fish_add_path $HOME/go/bin/
+  end
+
 end
