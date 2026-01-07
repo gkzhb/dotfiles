@@ -15,6 +15,7 @@ return {
   require('plugins.cores.vscode'),
   require('plugins.cores.which-key'),
   require('plugins.cores.windline'),
+  require('plugins.cores.yazi'),
 
   -- 终端颜色高亮
   {
@@ -102,6 +103,6 @@ return {
       "MunifTanjim/nui.nvim",
       "nvim-tree/nvim-web-devicons", -- optional, but recommended
     },
-    lazy = false, -- neo-tree will lazily load itself
+    lazy = false,                    -- neo-tree will lazily load itself
   },
 }

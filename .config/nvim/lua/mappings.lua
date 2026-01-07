@@ -91,10 +91,6 @@ function M.setMappings()
         p = { '<cmd>Lazy profile<CR>', 'profile plugins' },
       },
     },
-    -- d = { '<cmd>lua require("fm-nvim").Lf(vim.fn.filereadable(vim.fn.expand("%:p")) > 0 and vim.api.nvim_buf_get_name(0) or "")<CR>', 'open lf with current buffer file selected' }, -- lf, select current buffer file
-    -- D = { '<cmd>lua require("fm-nvim").Lf()<CR>', 'open lf' }, -- lf, open cwd
-    d = { '<cmd>Yazi<CR>', 'open yazi' },
-    D = { '<cmd>Yazi cwd<CR>', 'open yazi cwd' },
     h = { -- highlight related
       name = 'show highlight',
       s = { '<cmd>lua SynGroup()<CR>', 'get SynGroup' },
