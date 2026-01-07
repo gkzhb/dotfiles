@@ -18,8 +18,14 @@ export const NotificationPlugin: Plugin = async ({
       const session = await client.session.get({
         path: { id: sid },
       });
+      const msgs = await client.session.messages({ path: { id: sid } });
       // Check this is the main session that user talks to.
-      const isMainChatSession = !session.data?.parentID;
+      const isMainChatSession =
+        // top session
+        !session.data?.parentID ||
+        // has more than one user message
+        (msgs.data?.filter((message) => message.info.role === "user").length ??
+          0) > 1;
       if (!isMainChatSession) {
         return;
       }
