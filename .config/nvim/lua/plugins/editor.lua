@@ -50,7 +50,9 @@ return {
   },
 
   -- 代码片段
-  'honza/vim-snippets',
+  -- 'honza/vim-snippets',
+  -- React 代码片段
+  'mlaursen/vim-react-snippets',
 
   -- 文档生成
   {
