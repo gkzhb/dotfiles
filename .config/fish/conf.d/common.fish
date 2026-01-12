@@ -1,5 +1,7 @@
 # vim: set fdm=marker: 
 # {{{1 environment
+# add custom path
+fish_add_path $HOME/.local/bin
 
 # set neovim as default editor
 # and u can use `sudoedit` to edit file with root permissions while using ur nvim config
