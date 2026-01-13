@@ -280,7 +280,7 @@ automatically-unhide-macos-hidden-apps = false
 
 [[on-window-detected]]
   if.app-id = 'com.electron.lark.iron'
-  run = 'move-node-to-workspace M'
+  run = 'layout floating'
 
 # Disable management for licecap (screen recording)
 [[on-window-detected]]
