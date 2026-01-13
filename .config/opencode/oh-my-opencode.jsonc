@@ -1,0 +1,44 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "sisyphus_agent": {
+    "disabled": true,
+  },
+  "agents": {
+    "Sisyphus": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "librarian": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "explore": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "oracle": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "frontend-ui-ux-engineer": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "document-writer": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+    "multimodal-looker": {
+      "model": "volcengine/kimi-k2-250905",
+    },
+  },
+  "disabled_hooks": [
+    "auto-update-checker",
+    "session-notification",
+    "background-notification",
+  ],
+  "disabled_mcps": ["websearch", "context7", "grep_app"],
+  "disabled_skills": ["playwright"],
+  "claude_code": {
+    "mcp": false,
+    "commands": false,
+    "skills": false,
+    "agents": false,
+    "hooks": false,
+    "plugins": false,
+  },
+}
