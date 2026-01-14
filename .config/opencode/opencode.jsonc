@@ -46,6 +46,11 @@
             "context": 200000,
             "output": 100000,
           },
+          "cost": {
+            "input": 4,
+            "output": 16,
+            "cache_read": 0.8,
+          },
           "variants": {
             "thinking": {
               "thinking": { "type": "enabled" },
@@ -114,33 +119,37 @@
   "instructions": ["CLAUDE.md"],
   "tools": {
     "webfetch": false,
-    "chrome_devtools_*": false,
+    // disable string replace tool but preserve other file edit tools
+    "edit": false,
+    // "multiedit": true,
+    "patch": true,
+    "write": true,
   },
   "mcp": {
     "chrome-devtools": {
-      "enabled": true,
+      "enabled": false,
       "type": "local",
-      "command": ["pnpx", "chrome-devtools-mcp@latest"],
+      "command": [
+        "pnpx",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9222",
+      ],
     },
-    "coding": {
-      "type": "local",
-      "command": ["uvx", "minimax-coding-plan-mcp"],
-      "environment": {
-        "MINIMAX_API_HOST": "https://api.minimaxi.com",
-      },
-    },
+    // "coding": {
+    //   "type": "local",
+    //   "command": ["uvx", "minimax-coding-plan-mcp"],
+    //   "environment": {
+    //     "MINIMAX_API_HOST": "https://api.minimaxi.com",
+    //   },
+    // },
   },
   "agent": {
     // set default primary agent tools
     "build": {
-      "tools": {
-        "chrome_devtools_*": false,
-      },
+      "tools": {},
     },
     "plan": {
-      "tools": {
-        "chrome_devtools_*": false,
-      },
+      "tools": {},
     },
   },
   "share": "disabled",

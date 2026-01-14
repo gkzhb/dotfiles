@@ -12,7 +12,7 @@ if status is-login
   alias lc=lfcd
 
   # systemd
-  if  type -q systemctl
+  if type -q systemctl
     alias s="sudo systemctl"
     alias us="systemctl --user"
   end
@@ -21,6 +21,8 @@ if status is-login
   
   # npm registry
   alias npmjs='npm --registry https://registry.npmjs.org/'
+  alias cnpm='npm --registry https://registry.npmmirror.com/'
+  
 
   # dotfiles
   alias cfg='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
