@@ -4,11 +4,13 @@ return {
   require('plugins.tools.fzf'),
   require('plugins.tools.neoclip'),
   require('plugins.tools.opencode'),
+  require('plugins.tools.codebridge'),
   require('plugins.tools.session-manager'),
   require('plugins.tools.spectre'),
   require('plugins.tools.telescope'),
   require('plugins.tools.toggleterm'),
   require('plugins.tools.orgmode'),
+  require('plugins.tools.window-picker'),
 
   -- Grug Far
   {

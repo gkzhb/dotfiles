@@ -7,7 +7,7 @@ local M = {
 }
 
 M.keys = {
-  { '<leader>d', '<cmd>Yazi<CR>',          desc = 'open yazi' },
+  { '<leader>d', '<cmd>Yazi<CR>', desc = 'open yazi' },
   { '<leader>D', '<cmd>Yazi cwd<CR>', desc = 'open yazi' },
 }
 return M

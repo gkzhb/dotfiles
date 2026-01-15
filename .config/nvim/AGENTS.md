@@ -1,5 +1,7 @@
 # AGENTS.md - Neovim Lua Configuration
 
+This neovim config uses lazy.nvim plugin manager, which-key.nvim.
+
 ## Build/Lint/Test Commands
 - **Format code**: `stylua .` (formats all Lua files)
 - **Install plugins**: `:Lazy install` (in Neovim)
