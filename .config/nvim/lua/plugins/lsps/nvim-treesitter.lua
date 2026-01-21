@@ -18,7 +18,7 @@ local langs = {
   'jsdoc',
   'jsonc',
   'latex',
-  'lua',
+  -- 'lua',
   -- 'org',
   'php',
   'python',

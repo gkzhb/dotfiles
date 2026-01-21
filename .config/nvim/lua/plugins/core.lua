@@ -10,7 +10,7 @@ return {
   require('plugins.cores.indent-blankline'),
   require('plugins.cores.legendary'),
   require('plugins.cores.marks'),
-  require('plugins.cores.notify'),
+  -- require('plugins.cores.notify'),
   require('plugins.cores.ufo'),
   require('plugins.cores.vscode'),
   require('plugins.cores.which-key'),
