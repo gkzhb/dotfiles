@@ -42,4 +42,8 @@ if status is-login
     fish_add_path $HOME/go/bin/
   end
 
+  if type -q nvim
+    alias vi='nvim -u NORC'
+  end
+
 end
