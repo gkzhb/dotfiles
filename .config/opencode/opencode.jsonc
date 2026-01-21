@@ -113,18 +113,13 @@
   "small_model": "volcengine/kimi-k2-250905",
   "permission": {
     "edit": "ask",
+    "patch": "ask",
+    "write": "ask",
     "bash": "ask",
+    "webfetch": "deny",
   },
   // include memory from other agent files
   "instructions": ["CLAUDE.md"],
-  "tools": {
-    "webfetch": false,
-    // disable string replace tool but preserve other file edit tools
-    "edit": false,
-    // "multiedit": true,
-    "patch": true,
-    "write": true,
-  },
   "mcp": {
     "chrome-devtools": {
       "enabled": false,

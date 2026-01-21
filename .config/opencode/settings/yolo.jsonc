@@ -3,8 +3,7 @@
   "permission": {
     "edit": "allow",
     "bash": {
-      "*": "deny",
-      // "fish -c": "allow",
+      "*": "allow",
       "git push": "deny",
       "git status": "allow",
       "git diff": "allow",
@@ -14,5 +13,15 @@
       "cat": "allow",
     },
   },
-  "mcp": {},
+  "mcp": {
+    "chrome-devtools": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "pnpx",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9222",
+      ],
+    },
+  },
 }
