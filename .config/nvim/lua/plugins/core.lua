@@ -10,7 +10,7 @@ return {
   require('plugins.cores.indent-blankline'),
   require('plugins.cores.legendary'),
   require('plugins.cores.marks'),
-  -- require('plugins.cores.notify'),
+  require('plugins.cores.notify'),
   require('plugins.cores.ufo'),
   require('plugins.cores.vscode'),
   require('plugins.cores.which-key'),
@@ -102,8 +102,8 @@ return {
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons', -- optional, but recommended
-      's1n7ax/nvim-window-picker', -- optional, but recommended
+      's1n7ax/nvim-window-picker',   -- optional, but recommended
     },
-    lazy = false, -- neo-tree will lazily load itself
+    lazy = false,                    -- neo-tree will lazily load itself
   },
 }

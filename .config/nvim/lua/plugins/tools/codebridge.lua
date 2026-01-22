@@ -13,6 +13,7 @@ local M = {
     { '<leader>ca', '<cmd>CodeBridgeTmux<CR>',            desc = 'Send to Coco' },
     { '<leader>ci', '<cmd>CodeBridgeTmuxInteractive<CR>', desc = 'Send to Coco',     mode = { 'n', 'v' } },
     { '<leader>cd', '<cmd>CodeBridgeTmuxDiff<CR>',        desc = 'Send diff to Coco' },
+    { '<leader>cr', '<cmd>CodeBridgeResumePrompt<CR>',    desc = 'Resume chat input' },
   },
 }
 return M

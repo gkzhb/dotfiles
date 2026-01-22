@@ -2,8 +2,8 @@ return {
   'rcarriga/nvim-notify',
   keys = {
     { '<leader>nc', '<cmd>lua require("notify").dismiss()<CR>', desc = 'close all notifications' },
-    { '<leader>nl', '<cmd>Notifications<CR>', desc = 'list all notifications' },
-    { '<leader>n', group = 'notifications' },
+    { '<leader>nl', '<cmd>Notifications<CR>',                   desc = 'list all notifications' },
+    { '<leader>n',  group = 'notifications' },
   },
   lazy = false,
   config = function()

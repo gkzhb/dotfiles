@@ -170,8 +170,8 @@
     "messages_page_down": "pagedown",
     "messages_half_page_up": "ctrl+u",
     "messages_half_page_down": "ctrl+s", // if using ctrl+d will trigger permission reject
-    "messages_first": "home",
-    "messages_last": "end",
+    "messages_first": "<leader>home",
+    "messages_last": "<leader>end",
     "messages_copy": "<leader>y",
     "messages_undo": "<leader>u",
     "messages_redo": "<leader>r",
