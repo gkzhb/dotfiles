@@ -27,6 +27,7 @@ log/
 /CONVENTIONS.md
 # Serena
 .serena
-# Promptx
+# codenomad
+.codenomad/
 
 **/.claude/settings.local.json
