@@ -44,7 +44,6 @@ function M.config()
     'coc-sumneko-lua',
     'coc-stylua',
     'coc-tabnine',
-    'coc-thrift-syntax-support',
     'coc-tsserver',
     'coc-vetur', -- Vue.js
     'coc-vimlsp',
@@ -142,6 +141,8 @@ function M.config()
     },
   })
   vim.g.coc_default_semantic_highlight_groups = 1
+
+  -- {{{4 thrift-ls config in coc-settings.json
 
   -- {{{4 coc rust
   vim.fn['coc#config']('rust-analyzer', {

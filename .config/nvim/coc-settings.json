@@ -1,0 +1,12 @@
+{
+  "snippets.ultisnips.pythonPrompt": true,
+  "languageserver": {
+    "thrift": {
+      "command": "thrift-ls",
+      "filetypes": ["thrift"],
+      "rootPatterns": [".git", "package.json", "thrift.config.js"],
+      "initializationOptions": {},
+      "settings": {}
+    }
+  }
+}
