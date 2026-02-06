@@ -20,6 +20,7 @@ function M.config()
   -- coc-extension list
   vim.g.coc_global_extensions = {
     'coc-browser',
+    'coc-biome',
     'coc-clangd',
     'coc-css',
     'coc-cssmodules',
