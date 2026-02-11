@@ -4,12 +4,11 @@ if status is-login
   alias tn='tmux new'
   alias tsn='tmux display-message'
 
+  alias wssh='env TERM=xterm-256color ssh'
+
   alias oc=opencode
   # edit opencode configs
   alias occ='cd ~/.config/opencode; opencode'
-
-  # lf @deprecated
-  alias lc=lfcd
 
   # systemd
   if type -q systemctl
