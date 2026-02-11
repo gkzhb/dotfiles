@@ -7,7 +7,7 @@ local config = {
   -- 字体配置
   font = wezterm.font_with_fallback({
     "RobotoMono Nerd Font",
-    "Noto Sans CJK SC Regular",
+    "Noto Sans CJK SC",
   }),
   font_size = 14,
 

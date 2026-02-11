@@ -215,6 +215,7 @@ automatically-unhide-macos-hidden-apps = false
 
     # open apps
     alt-t = 'exec-and-forget ${HOME}/scripts/yabai/open-kitty.sh'
+    alt-shift-t = 'exec-and-forget ${HOME}/scripts/yabai/open-wezterm.fish'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
