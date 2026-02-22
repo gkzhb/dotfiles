@@ -214,8 +214,8 @@ automatically-unhide-macos-hidden-apps = false
     # alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
     # open apps
-    alt-t = 'exec-and-forget ${HOME}/scripts/yabai/open-kitty.sh'
-    alt-shift-t = 'exec-and-forget ${HOME}/scripts/yabai/open-wezterm.fish'
+    alt-shift-t = 'exec-and-forget ${HOME}/scripts/yabai/open-kitty.sh'
+    alt-t = 'exec-and-forget ${HOME}/scripts/yabai/open-wezterm.fish'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'

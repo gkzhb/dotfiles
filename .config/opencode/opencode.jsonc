@@ -4,7 +4,7 @@
     // "opencode-pty",
     // "oh-my-opencode",
   ],
-  "disabled_providers": ["openrouter", "opencode"],
+  "disabled_providers": ["opencode"],
   "provider": {
     "volcengine": {
       "npm": "@ai-sdk/openai-compatible",
@@ -120,8 +120,23 @@
         "apiKey": "{env:NVIDIA_NIM_API_KEY}",
       },
       "models": {
-        "minimaxai/minimax-m2": {
-          "name": "MiniMax M2",
+        "moonshotai/kimi-k2.5": {
+          "name": "Kimi K2.5",
+          "modalities": { "input": ["image", "text"], "output": ["text"] },
+          "limit": {
+            "context": 256000,
+            "output": 32000,
+          },
+        },
+        "minimaxai/minimax-m2.1": {
+          "name": "MiniMax M2.1",
+        },
+        "z-ai/glm-5": {
+          "name": "GLM5",
+          "limit": {
+            "context": 205000,
+            "output": 32000,
+          },
         },
       },
     },
@@ -140,7 +155,7 @@
       "grep": "allow",
       "cat": "allow",
       "head": "allow",
-    }
+    },
   },
   // include memory from other agent files
   "instructions": ["CLAUDE.md"],
