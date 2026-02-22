@@ -7,6 +7,16 @@
       "rootPatterns": [".git", "package.json", "thrift.config.js"],
       "initializationOptions": {},
       "settings": {}
+    },
+    "nix": {
+      "command": "nil",
+      "filetypes": ["nix"],
+      "rootPatterns":  ["flake.nix"],
+      "settings": {
+        "nil": {
+          "formatting": { "command": ["nixfmt"] }
+        }
+      }
     }
   }
 }
