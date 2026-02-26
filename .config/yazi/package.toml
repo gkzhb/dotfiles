@@ -23,5 +23,10 @@ use = "carlosedp/yatline"
 rev = "61d3a3a"
 hash = "37fe452b2406df3f24e33b429ef699c2"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "b224ddf"
+hash = "815dd20e682dec52bb92864037fa5f53"
+
 [flavor]
 deps = []

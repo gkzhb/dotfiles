@@ -8,6 +8,11 @@ desc = "Enter the child directory, or open the file"
 on = "<C-p>"
 run = 'shell -- open -a Preview "$@"'
 
+[[mgr.prepend_keymap]]
+on   = [ "c", "m" ]
+run  = "plugin chmod"
+desc = "Chmod on selected files"
+
 # cd to the root of current git repo
 [[mgr.prepend_keymap]]
 on = [ "g", "r" ]
