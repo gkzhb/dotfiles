@@ -28,6 +28,7 @@ return {
   -- snacks.nvim
   {
     'folke/snacks.nvim',
+    lazy = false,
     config = function()
       require('snacks').setup({
         input = { enabled = true },

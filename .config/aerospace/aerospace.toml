@@ -219,6 +219,7 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
+    alt-shift-quote = 'mode open_app'
 
     alt-ctrl-1 = "exec-and-forget aerospace-scratchpad show Finder"
     alt-ctrl-o = "exec-and-forget aerospace-scratchpad show Obsidian"
@@ -254,6 +255,11 @@ automatically-unhide-macos-hidden-apps = false
     # down = 'volume down'
     # up = 'volume up'
     # shift-down = ['volume set 0', 'mode main']
+[mode.open_app.binding]
+    esc = ['reload-config', 'mode main']
+    o = ['exec-and-forget open -a Obsidian --args --remote-debugging-port=9223', 'mode main']
+    c = ['exec-and-forget ${HOME}/scripts/mcps/chrome.fish', 'mode main']
+
 
 [workspace-to-monitor-force-assignment]
 '1_chat' = 'main'
