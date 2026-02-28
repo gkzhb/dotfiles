@@ -243,6 +243,7 @@
     "patch": "ask",
     "write": "ask",
     "webfetch": "deny",
+    "websearch": "deny",
     "bash": {
       "*": "ask",
       "ls*": "allow",
@@ -281,6 +282,14 @@
     "tmux": {
       "type": "remote",
       "url": "http://127.0.0.1:8615/mcp",
+    },
+    "web": {
+      "type": "remote",
+      "url": "https://mcp.gkzhb.top/mcp",
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:MY_MCP_API_KEY}",
+      },
     },
     // "coding": {
     //   "type": "local",
