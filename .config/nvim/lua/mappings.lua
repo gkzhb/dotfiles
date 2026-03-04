@@ -47,35 +47,43 @@ end
 
 function _G.CopyFileLocation()
   local file_path = vim.fn.expand('%:.')
+  local buf = vim.api.nvim_get_current_buf()
 
   -- Check current mode
   local current_mode = vim.api.nvim_get_mode().mode
 
   if current_mode:find('[vV]') then
-    -- Visual mode: get selection range
-    local start_pos, end_pos
-
-    start_pos = vim.fn.getpos('v')
-    end_pos = vim.fn.getpos('.')
-
-    -- Determine which position comes first and assign accordingly
-    if start_pos[2] > end_pos[2] or (start_pos[2] == end_pos[2] and start_pos[3] > end_pos[3]) then
-      -- start_pos is after end_pos, swap them
-      start_pos, end_pos = end_pos, start_pos
+    -- Visual mode: get selection range using nvim-cursor.md approach
+    local mode = vim.fn.mode()
+    local kind = (mode == "V" and "line") or (mode == "v" and "char") or (mode == "\22" and "block")
+    
+    -- Exit visual mode to get consistent marks
+    if vim.fn.mode():match("[vV\22]") then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<esc>", true, false, true), "x", true)
     end
-    local line_start = start_pos[2]
-    local line_end = end_pos[2]
-    local col_start = start_pos[3]
-    local col_end = end_pos[3]
 
-    if current_mode == 'V' then
-      -- Line selection mode, whole line selection, use xxx-xxxx format
+    local from = vim.api.nvim_buf_get_mark(buf, "<")
+    local to = vim.api.nvim_buf_get_mark(buf, ">")
+    
+    -- Handle reverse selection
+    if from[1] > to[1] or (from[1] == to[1] and from[2] > to[2]) then
+      from, to = to, from
+    end
+
+    local line_start = from[1]
+    local line_end = to[1]
+    local col_start = from[2] + 1  -- nvim uses 0-based column
+    local col_end = to[2] + 1      -- nvim uses 0-based column
+
+    if kind == "line" then
+      -- Line selection mode, whole line selection
       local location = string.format('%s:%d-%d', file_path, line_start, line_end)
       vim.fn.setreg('+', location)
       print('Copied: ' .. location)
       return
     end
 
+    -- Character/block selection
     local location = string.format('%s:%d:%d-%d:%d', file_path, line_start, col_start, line_end, col_end)
     vim.fn.setreg('+', location)
     print('Copied: ' .. location)
