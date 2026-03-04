@@ -6,12 +6,13 @@ review_model = "kimi-k2-250905"
 model_context_window = 128000
 
 # Provider id selected from [model_providers]. Default: "openai".
-model_provider = "litellm2"
+model_provider = "litellm"
 
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
 
 web_search = "disabled"
+personality = "pragmatic"
 
 [defaults]
 network_access = "enabled"
@@ -22,26 +23,22 @@ network_access = true
 [features]
 
 [model_providers]
+# not working
 [model_providers.volc]
 name = "Volcengine"
 base_url = "https://ark.cn-beijing.volces.com/api/v3"
-wire_api = "chat"
+wire_api = "responses"
 env_key = "VOLCENGINE_API_KEY"
 
-[model_providers.litellm2]
-name = "Volcengine"
-base_url = "https://cc-proxy.gkzhb.top"
-wire_api = "chat"
-env_key = "LITELLM_API_KEY"
-
+# not working
 [model_providers.litellm]
-name = "Volcengine"
-base_url = "https://cc-proxy.gkzhb.top"
+name = "LiteLLM"
+base_url = "https://llm-proxy.gkzhb.top"
 wire_api = "responses"
 env_key = "LITELLM_API_KEY"
 
 [profiles]
 [profiles.default]
 model = "kimi-k2-250905"
-model_provider = "litellm2"
+model_provider = "volc"
 

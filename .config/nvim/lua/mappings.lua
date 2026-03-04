@@ -44,12 +44,60 @@ end
 function _G.CopyBufFilePath()
   vim.fn.setreg('+', vim.fn.expand('%:.'))
 end
+
+function _G.CopyFileLocation()
+  local file_path = vim.fn.expand('%:.')
+
+  -- Check current mode
+  local current_mode = vim.api.nvim_get_mode().mode
+
+  if current_mode:find('[vV]') then
+    -- Visual mode: get selection range
+    local start_pos, end_pos
+
+    start_pos = vim.fn.getpos('v')
+    end_pos = vim.fn.getpos('.')
+
+    -- Determine which position comes first and assign accordingly
+    if start_pos[2] > end_pos[2] or (start_pos[2] == end_pos[2] and start_pos[3] > end_pos[3]) then
+      -- start_pos is after end_pos, swap them
+      start_pos, end_pos = end_pos, start_pos
+    end
+    local line_start = start_pos[2]
+    local line_end = end_pos[2]
+    local col_start = start_pos[3]
+    local col_end = end_pos[3]
+
+    if current_mode == 'V' then
+      -- Line selection mode, whole line selection, use xxx-xxxx format
+      local location = string.format('%s:%d-%d', file_path, line_start, line_end)
+      vim.fn.setreg('+', location)
+      print('Copied: ' .. location)
+      return
+    end
+
+    local location = string.format('%s:%d:%d-%d:%d', file_path, line_start, col_start, line_end, col_end)
+    vim.fn.setreg('+', location)
+    print('Copied: ' .. location)
+    return
+  else
+    -- Normal mode: current cursor position
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local line = cursor[1]
+    local col = cursor[2] + 1 -- nvim uses 0-based column
+    local location = string.format('%s:%d:%d', file_path, line, col)
+    vim.fn.setreg('+', location)
+    print('Copied: ' .. location)
+  end
+end
+
 function M.setMappings()
   local wk = require('which-key')
 
   -- set yank to system clipboard
   wk.register({
     y = { '"+y', 'yank to clipboard' },
+    Y = { '<cmd>lua CopyFileLocation()<CR>', 'copy file location' },
   }, { mode = { 'n', 'v' }, prefix = '<leader>' })
   -- remap <C-a> incremeting number
   wk.register({
@@ -75,6 +123,7 @@ function M.setMappings()
       d = { '<cmd>bd<CR>', 'close buffer' },
       s = { '<cmd>w<CR>', 'save buffer' },
       y = { '<cmd>lua CopyBufFilePath()<CR>', 'copy file path' },
+      l = { '<cmd>lua CopyFileLocation()<CR>', 'copy file location' },
     },
     t = {
       name = 'toggle config',
