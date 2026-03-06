@@ -1,0 +1,25 @@
+{
+  "providers": {
+    "volc": {
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "api": "openai-completions",
+      "apiKey": "VOLCENGINE_API_KEY",
+      "models": [
+        {
+          "id": "kimi-k2-5-260127",
+          "name": "Kimi K2.5",
+          "contextWindow": 256000,
+          "maxTokens": 32000,
+          "reasoning": false
+        },
+        {
+          "id": "glm-4-7-251222",
+          "name": "Kimi K2.5",
+          "contextWindow": 200000,
+          "maxTokens": 128000,
+          "reasoning": false
+        }
+      ]
+    }
+  }
+}
