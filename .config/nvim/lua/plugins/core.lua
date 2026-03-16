@@ -89,13 +89,6 @@ return {
     end,
   },
 
-  -- nvim-tree
-  {
-    'kyazdani42/nvim-tree.lua',
-    config = function()
-      -- require('nvim-tree').setup({})
-    end,
-  },
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
@@ -104,6 +97,11 @@ return {
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons', -- optional, but recommended
       's1n7ax/nvim-window-picker', -- optional, but recommended
+    },
+    opts = {
+      filesystem = {
+        bind_to_cwd = false,
+      },
     },
     lazy = false, -- neo-tree will lazily load itself
   },

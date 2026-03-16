@@ -121,7 +121,7 @@ local config = {
   front_end = "WebGpu",
 
   -- Shell 配置
-  default_prog = {"/opt/homebrew/bin/fish", "-l"},
+  default_prog = {"/run/current-system/sw/bin/fish", "-l"},
 
   -- 终端类型
   term = "wezterm",

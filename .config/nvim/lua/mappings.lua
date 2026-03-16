@@ -55,16 +55,16 @@ function _G.CopyFileLocation()
   if current_mode:find('[vV]') then
     -- Visual mode: get selection range using nvim-cursor.md approach
     local mode = vim.fn.mode()
-    local kind = (mode == "V" and "line") or (mode == "v" and "char") or (mode == "\22" and "block")
-    
+    local kind = (mode == 'V' and 'line') or (mode == 'v' and 'char') or (mode == '\22' and 'block')
+
     -- Exit visual mode to get consistent marks
-    if vim.fn.mode():match("[vV\22]") then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<esc>", true, false, true), "x", true)
+    if vim.fn.mode():match('[vV\22]') then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<esc>', true, false, true), 'x', true)
     end
 
-    local from = vim.api.nvim_buf_get_mark(buf, "<")
-    local to = vim.api.nvim_buf_get_mark(buf, ">")
-    
+    local from = vim.api.nvim_buf_get_mark(buf, '<')
+    local to = vim.api.nvim_buf_get_mark(buf, '>')
+
     -- Handle reverse selection
     if from[1] > to[1] or (from[1] == to[1] and from[2] > to[2]) then
       from, to = to, from
@@ -72,10 +72,10 @@ function _G.CopyFileLocation()
 
     local line_start = from[1]
     local line_end = to[1]
-    local col_start = from[2] + 1  -- nvim uses 0-based column
-    local col_end = to[2] + 1      -- nvim uses 0-based column
+    local col_start = from[2] + 1 -- nvim uses 0-based column
+    local col_end = to[2] + 1 -- nvim uses 0-based column
 
-    if kind == "line" then
+    if kind == 'line' then
       -- Line selection mode, whole line selection
       local location = string.format('%s:%d-%d', file_path, line_start, line_end)
       vim.fn.setreg('+', location)
@@ -163,7 +163,7 @@ function M.setMappings()
     o = {
       name = 'open',
       d = {
-        '<cmd>NvimTreeToggle<CR>',
+        '<cmd>Neotree<CR>',
         'toggle nvim tree',
       },
     },
