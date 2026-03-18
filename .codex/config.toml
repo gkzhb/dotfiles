@@ -1,12 +1,12 @@
-model = "kimi-k2-250905"
+model = "MiniMax-M2.5"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5.1-codex-max".
-review_model = "kimi-k2-250905"
+review_model = "kimi-k2.5"
 
 model_context_window = 128000
 
 # Provider id selected from [model_providers]. Default: "openai".
-model_provider = "litellm"
+model_provider = "newapi"
 
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
@@ -31,11 +31,12 @@ wire_api = "responses"
 env_key = "VOLCENGINE_API_KEY"
 
 # not working
-[model_providers.litellm]
-name = "LiteLLM"
-base_url = "https://llm-proxy.gkzhb.top"
-wire_api = "responses"
-env_key = "LITELLM_API_KEY"
+[model_providers.newapi]
+name = "NewAPI"
+base_url = "https://newapi.gkzhb.top/v1"
+# wire_api = "responses"
+wire_api = "chat"
+env_key = "NEWAPI_API_KEY"
 
 [profiles]
 [profiles.default]
