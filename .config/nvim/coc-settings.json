@@ -1,5 +1,5 @@
 {
-  "snippets.ultisnips.pythonPrompt": true,
+  "snippets.ultisnips.pythonPrompt": false,
   "languageserver": {
     "thrift": {
       "command": "thrift-ls",

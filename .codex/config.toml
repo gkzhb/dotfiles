@@ -1,7 +1,7 @@
-model = "MiniMax-M2.5"
+model = "MiniMax-M2.7"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5.1-codex-max".
-review_model = "kimi-k2.5"
+review_model = "MiniMax-M2.7"
 
 model_context_window = 128000
 
