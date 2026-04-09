@@ -41,6 +41,9 @@ return {
       require('telescope').load_extension('fzf')
     end,
   },
+  {
+    "alexpasmantier/tv.nvim",
+  },
 
   {
     'TC72/telescope-tele-tabby.nvim',
