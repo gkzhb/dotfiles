@@ -20,6 +20,20 @@
           "reasoning": false
         }
       ]
+    },
+    "newapi": {
+      "baseUrl": "https://newapi.gkzhb.top/v1",
+      "api": "openai-completions",
+      "apiKey": "NEWAPI_API_KEY",
+      "models": [
+        {
+          "id": "MiniMax-M2.7",
+          "name": "MiniMax M2.7",
+          "contextWindow": 200000,
+          "maxTokens": 32000,
+          "reasoning": false
+        }
+      ]
     }
   }
 }
