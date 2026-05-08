@@ -81,18 +81,6 @@
         },
       },
     },
-    "minimax": {
-      "npm": "@ai-sdk/anthropic",
-      "options": {
-        "baseURL": "https://api.minimaxi.com/anthropic/v1",
-        "apiKey": "{env:MINIMAX_API_KEY}",
-      },
-      "models": {
-        "MiniMax-M2.1": {
-          "name": "MiniMax M2.1",
-        },
-      },
-    },
     "nvidia": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
@@ -127,6 +115,15 @@
         "apiKey": "{env:NEWAPI_API_KEY}",
       },
       "models": {
+        "gpt-5.3-codex": {
+          "name": "GPT-5.3 Codex",
+        },
+        "gpt-5.5": {
+          "name": "GPT-5.5",
+        },
+        "gpt-5.4": {
+          "name": "GPT-5.4",
+        },
         "MiniMax-M2.7": {
           "name": "MiniMax M2.7",
           "limit": {
@@ -247,12 +244,20 @@
     "chrome-devtools": {
       "enabled": false,
       "type": "local",
-      "command": ["pnpx", "chrome-devtools-mcp@latest", "--browser-url=http://127.0.0.1:9222"],
+      "command": [
+        "pnpx",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9222",
+      ],
     },
     "obsidian": {
       "enabled": false,
       "type": "local",
-      "command": ["pnpx", "chrome-devtools-mcp@latest", "--browser-url=http://127.0.0.1:9223"],
+      "command": [
+        "pnpx",
+        "chrome-devtools-mcp@latest",
+        "--browser-url=http://127.0.0.1:9223",
+      ],
     },
     "tmux": {
       "type": "remote",
