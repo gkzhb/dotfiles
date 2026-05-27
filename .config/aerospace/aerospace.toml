@@ -239,6 +239,8 @@ automatically-unhide-macos-hidden-apps = false
     # alt-shift-t = ['layout tiling', 'mode main']
     s = ['layout v_accordion', 'mode main']
     a = ['layout accordion', 'mode main']
+    # reset workspaces to its monitor
+    w = ['exec-and-forget ${HOME}/.config/aerospace/move-workspace.fish', 'mode main']
     # backspace = ['close-all-windows-but-current', 'mode main']
 
     # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
