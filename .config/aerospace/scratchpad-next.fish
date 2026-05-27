@@ -1,11 +1,16 @@
 #!/usr/bin/env fish
 
+# Get the currently focused workspace and the scratchpad window list for the current monitor.
+# The scratchpad CLI supports structured output, so we read JSON and extract only the fields we need.
 set current_workspace (aerospace list-workspaces --focused)
 set scratchpad_lines (aerospace-scratchpad list -m current -o json)
 
+# all_ids preserves the scratchpad iteration order returned by aerospace-scratchpad list.
+# visible_ids tracks scratchpad windows that are currently shown in the focused workspace.
 set all_ids
 set visible_ids
 
+# Build the ordered scratchpad window list and collect the subset that is visible right now.
 for line in $scratchpad_lines
     set window_id (string match -rg '"window_id":([0-9]+)' -- $line)[1]
     set workspace (string match -rg '"workspace":"([^"]*)"' -- $line)[1]
@@ -21,10 +26,13 @@ for line in $scratchpad_lines
     end
 end
 
+# Nothing to rotate if the scratchpad is empty.
 if test (count $all_ids) -eq 0
     exit 0
 end
 
+# Hide every scratchpad window currently shown in this workspace.
+# The last visible one becomes the anchor that decides which window should be shown next.
 set anchor_id ''
 if test (count $visible_ids) -gt 0
     set anchor_id $visible_ids[-1]
@@ -35,6 +43,10 @@ if test (count $visible_ids) -gt 0
     end
 end
 
+# If we just hid a visible scratchpad window, show the window that comes after it.
+# When the hidden window was already the last one in the ordered list, stop here and let
+# the next invocation restart from the first scratchpad window.
+# If nothing was visible before this invocation, start from the first window in the list.
 set next_id ''
 if test -n "$anchor_id"
     for index in (seq (count $all_ids))
@@ -50,13 +62,18 @@ else
     set next_id $all_ids[1]
 end
 
+# If there is no next window to show, this invocation only hides the current one.
 if test -z "$next_id"
     exit 0
 end
 
+# Show the selected scratchpad window by exact window-id match.
 set next_filter (string join '' 'window-id=^' $next_id '$')
 aerospace-scratchpad show . -F "$next_filter"
 
+# After showing the next window, clamp its size so its bottom-right corner stays inside
+# the current screen bounds. This is done via AppleScript because AeroSpace does not expose
+# window geometry fields like x/y/width/height through its CLI.
 set applescript_source '
 tell application "Finder"
     set {screenLeft, screenTop, screenRight, screenBottom} to bounds of window of desktop
