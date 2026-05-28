@@ -29,5 +29,7 @@ log/
 .serena
 # codenomad
 .codenomad/
+# codegraph
+.codegraph/
 
 **/.claude/settings.local.json
