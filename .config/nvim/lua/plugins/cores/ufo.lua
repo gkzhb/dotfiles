@@ -43,10 +43,11 @@ end
 
 function M.init()
   local opts = {
-    -- INFO: Uncomment to use treeitter as fold provider, otherwise nvim lsp is used
-    -- provider_selector = function(bufnr, filetype, buftype)
-    --   return { "treesitter", "indent" }
-    -- end,
+    provider_selector = function(bufnr, filetype, buftype)
+      if vim.b[bufnr].fugitive_type then
+        return ''
+      end
+    end,
     open_fold_hl_timeout = 400,
     close_fold_kinds_for_ft = { default = { 'imports', 'comment' } },
     preview = {
