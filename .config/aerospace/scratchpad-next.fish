@@ -3,7 +3,7 @@
 # Get the currently focused workspace and the scratchpad window list for the current monitor.
 # The scratchpad CLI supports structured output, so we read JSON and extract only the fields we need.
 set current_workspace (aerospace list-workspaces --focused)
-set scratchpad_lines (aerospace-scratchpad list -m current -o json)
+set scratchpad_lines (aerospace-scratchpad list -m all -o json)
 
 # all_ids preserves the scratchpad iteration order returned by aerospace-scratchpad list.
 # visible_ids tracks scratchpad windows that are currently shown in the focused workspace.
@@ -12,8 +12,8 @@ set visible_ids
 
 # Build the ordered scratchpad window list and collect the subset that is visible right now.
 for line in $scratchpad_lines
-    set window_id (string match -rg '"window_id":([0-9]+)' -- $line)[1]
-    set workspace (string match -rg '"workspace":"([^"]*)"' -- $line)[1]
+    set window_id (printf '%s\n' "$line" | jq -r '.window_id // empty')
+    set workspace (printf '%s\n' "$line" | jq -r '.workspace // empty')
 
     if test -z "$window_id"
         continue
