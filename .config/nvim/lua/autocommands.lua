@@ -15,6 +15,14 @@ vim.cmd([[
   augroup END
 ]])
 
+vim.api.nvim_create_autocmd('User', {
+  pattern = { 'FugitiveCommit', 'FugitiveTag', 'FugitiveTree', 'FugitiveBlob' },
+  callback = function()
+    vim.opt_local.foldmethod = 'syntax'
+    vim.opt_local.foldexpr = '0'
+  end,
+})
+
 -- file type
 vim.cmd([[
   autocmd BufNewFile,BufRead *.mdx :set filetype=markdown
