@@ -6,6 +6,14 @@
       "apiKey": "NEWAPI_API_KEY",
       "models": [
         {
+          "id": "gpt-5.4",
+          "name": "GPT 5.4",
+          "input": ["text", "image"],
+          "contextWindow": 270000,
+          "maxTokens": 32000,
+          "reasoning": false
+        },
+        {
           "id": "MiniMax-M2.7",
           "name": "MiniMax M2.7",
           "contextWindow": 200000,
@@ -13,9 +21,10 @@
           "reasoning": false
         },
         {
-          "id": "MiniMax-M2.5",
-          "name": "MiniMax M2.5",
-          "contextWindow": 200000,
+          "id": "MiniMax-M3",
+          "name": "MiniMax M3",
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
           "maxTokens": 32000,
           "reasoning": false
         },
