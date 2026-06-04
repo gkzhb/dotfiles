@@ -57,10 +57,11 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
       if fugitive_type == 'commit' then
         vim.wo.foldmethod = 'expr'
         vim.wo.foldexpr = 'v:lua.fugitive_commit_foldexpr(v:lnum)'
-      elseif fugitive_type == 'tag' or fugitive_type == 'tree' or fugitive_type == 'blob' then
+      elseif fugitive_type == 'tag' or fugitive_type == 'tree' then
         vim.wo.foldmethod = 'syntax'
         vim.wo.foldexpr = '0'
       end
+      -- file diff view is blob fugitive_type, do not override foldmethod
     end)
   end,
 })
