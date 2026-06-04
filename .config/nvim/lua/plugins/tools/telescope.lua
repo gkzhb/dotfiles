@@ -72,7 +72,7 @@ local M = {
     { '<leader>sp', '<cmd>lua require("telescope").extensions.project.project{}<cr>', desc = 'Search Project' },
     { '<leader>sr', '<cmd>lua require("telescope").extensions.ast_grep.ast_grep()<cr>', desc = 'Search Recent Files' },
     { '<leader>ss', '<cmd>SessionManager load_session<cr>', desc = 'Search Sessions' },
-    { '<leader>st', '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', desc = 'Search Tabs' },
+    -- { '<leader>st', '<cmd>lua require("telescope").extensions.tele_tabby.list()<cr>', desc = 'Search Tabs' },
     { '<leader>sw', '<cmd>lua require("telescope").extensions.tmux.windows({})<cr>', desc = 'Search Tmux Windows' },
     { '<leader>sy', '<cmd>lua require("telescope").extensions.neoclip.default()<cr>', desc = 'Search Clipboard' },
 

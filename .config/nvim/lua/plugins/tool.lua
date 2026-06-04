@@ -16,8 +16,13 @@ return {
   {
     'MagicDuck/grug-far.nvim',
     config = function()
-      require('grug-far').setup({})
+      require('grug-far').setup({
+        startInInsertMode = false,
+      })
     end,
+    keys = {
+      { '<leader>st', '<cmd>lua require("grug-far").open()<CR>', desc = 'GrugFar Search' },
+    },
   },
 
   -- Telescope扩展

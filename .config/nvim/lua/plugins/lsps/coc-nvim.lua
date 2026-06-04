@@ -167,11 +167,11 @@ function M.config()
   end
 
   -- use post hook from coc-explorer
-  vim.cmd([[
-    function! CocExplorerInited(filetype, bufnr)
-      call v:lua.CocExplorerInited(a:bufnr)
-    endfunction
-  ]])
+  -- vim.cmd([[
+  --   function! CocExplorerInited(filetype, bufnr)
+  --     call v:lua.CocExplorerInited(a:bufnr)
+  --   endfunction
+  -- ]])
 
   function _G.CocExplorerCurDir()
     local nodeInfo = vim.fn.CocAction('runCommand', 'explorer.getNodeInfo', 0)
@@ -199,14 +199,14 @@ function M.config()
     bMap(0, 'n', '<Leader>ft', ':call v:lua.CocExecCurDir("FloatermNew --wintype=floating")<CR>', { noremap = true })
   end
 
-  vim.cmd([[
-    augroup CocExplorerCustom
-      autocmd!
-      " autocmd BufEnter * call <SID>enter_explorer()
-      autocmd FileType coc-explorer call v:lua.CocInitExplorer()
-      autocmd User CocExplorerOpenPost call v:lua.CocExplorerInited()
-    augroup END
-  ]])
+  -- vim.cmd([[
+  --   augroup CocExplorerCustom
+  --     autocmd!
+  --     " autocmd BufEnter * call <SID>enter_explorer()
+  --     autocmd FileType coc-explorer call v:lua.CocInitExplorer()
+  --     autocmd User CocExplorerOpenPost call v:lua.CocExplorerInited()
+  --   augroup END
+  -- ]])
 
   vim.g.coc_explorer_global_presets = {
     workspace = {
@@ -340,6 +340,7 @@ function M.mappings()
     a = vim.deepcopy(actionMappings),
     d = { '<Plug>(coc-diagnostic-info)', 'diagnostic info' },
     da = { CocCodeActionMapping('diagnosticList'), 'diagnostic list' },
+    e = { '<cmd>CocCommand explorer<CR>', 'toggle coc explorer' },
     fc = { '<Plug>(coc-float-hide)', 'close all coc float window' },
     o = { CocCodeActionMapping('showOutline'), 'show coc outline', noremap = true },
     v = {
@@ -500,11 +501,11 @@ end
 
 function _G.CocEnterConfirm()
   if vim.fn['coc#pum#visible']() ~= 0 then
-    return vim.fn['coc#_select_confirm']()
+    return vim.fn['coc#pum#confirm']()
   end
-  local npairs = require('nvim-autopairs')
-  return npairs.autopairs_cr()
-  -- return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
+  -- local npairs = require('nvim-autopairs')
+  -- return npairs.autopairs_cr()
+  return utils.esc('<C-g>u<CR><C-r>=coc#on_enter()<CR>')
 end
 
 function _G.CocAction(cmd, ...)
