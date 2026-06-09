@@ -116,6 +116,7 @@ function M.config()
   vim.fn['coc#config']('tsserver', {
     enable = true,
     useLocalTsdk = true,
+    maxTsServerMemory = 8000,
   })
   vim.fn['coc#config']('typescript', {
     inlayHints = {
