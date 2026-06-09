@@ -44,9 +44,14 @@ return {
   {
     'andymass/vim-matchup',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    init = function()
+      -- Fix conflicts with coc.nvim
+      -- Refer to https://github.com/andymass/vim-matchup/issues/67
+      vim.g.matchup_matchparen_nomode = 'i'
+    end,
     opts = {
       treesitter = {
-        stopline = 800,
+        stopline = 2000,
       },
     },
   },

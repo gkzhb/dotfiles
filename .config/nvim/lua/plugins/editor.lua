@@ -38,17 +38,17 @@ return {
   'tpope/vim-repeat',
   'tpope/vim-commentary',
 
-  -- {
-  --   'windwp/nvim-autopairs',
-  --   config = function()
-  --     require('nvim-autopairs').setup({
-  --       enable_check_bracket_line = false,
-  --       check_ts = true,
-  --       map_cr = false,
-  --       ts_config = {},
-  --     })
-  --   end,
-  -- },
+  {
+    'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({
+        enable_check_bracket_line = false,
+        check_ts = true,
+        map_cr = false,
+        ts_config = {},
+      })
+    end,
+  },
 
   -- 代码片段
   -- 'honza/vim-snippets',
