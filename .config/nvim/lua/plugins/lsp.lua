@@ -3,13 +3,52 @@ return {
   require('plugins.lsps.coc-nvim'),
   require('plugins.lsps.nvim-treesitter'),
   require('plugins.lsps.treesitter-modules'),
-  -- 自动标签
+  -- 自动 tag 标签配对补全
+  -- Refer to https://github.com/Rekwass/Dotfiles/blob/da25b84a33eb785480abc5b54e0e610c3358fa0c/nvim/lua/plugins/ts-autotag.nvim.lua
   {
-    'windwp/nvim-ts-autotag',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    'tronikelis/ts-autotag.nvim',
+    lazy = false,
     opts = {
-      enable_close_on_slash = false,
-      enable_rename = false,
+      opening_node_types = {
+        -- templ
+        'tag_start',
+        -- xml,
+        'STag',
+        -- html
+        'start_tag',
+        -- jsx
+        'jsx_opening_element',
+      },
+      identifier_node_types = {
+        -- html
+        'tag_name',
+        'erroneous_end_tag_name',
+        -- xml,
+        'Name',
+        -- jsx
+        'member_expression',
+        'identifier',
+        -- templ
+        'element_identifier',
+      },
+      disable_in_macro = true,
+      auto_close = {
+        enabled = true,
+      },
+      auto_rename = {
+        enabled = true,
+        closing_node_types = {
+          -- jsx
+          'jsx_closing_element',
+          -- xml,
+          'Etag',
+          -- html
+          'end_tag',
+          'erroneous_end_tag',
+          -- templ
+          'tag_end',
+        },
+      },
     },
   },
   -- Treesitter文本对象

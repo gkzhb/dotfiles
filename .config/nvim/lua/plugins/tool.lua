@@ -47,7 +47,7 @@ return {
   --   end,
   -- },
   {
-    "alexpasmantier/tv.nvim",
+    'alexpasmantier/tv.nvim',
   },
 
   {

@@ -30,7 +30,7 @@ function M.config()
     'coc-git',
     'coc-go',
     'coc-highlight',
-    '@yaegassy/coc-ty',   -- python lsp
+    '@yaegassy/coc-ty', -- python lsp
     '@yaegassy/coc-ruff', -- python lint and format lsp
     'coc-json',
     'coc-lists',
@@ -74,8 +74,7 @@ function M.config()
   vim.fn['coc#config']('explorer', {
     ['buffer.root.template'] = '[icon & 1] BUFFERS',
     ['file.root.template'] = '[icon & 1] PROJECT ([root]) [fullpath]',
-    ['file.child.template'] =
-    '[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]',
+    ['file.child.template'] = '[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1][modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]',
     ['file.showHiddenFiles'] = true,
     ['file.auto'] = false,
     ['icon.enableVimDevicons'] = false,
