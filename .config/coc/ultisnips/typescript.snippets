@@ -59,9 +59,9 @@ import clsx from 'classnames';
 endsnippet
 
 snippet uch "React Custom Hook" b
-export interface `!p snip.rv=capitalize_first(t[1])`Props {
+export interface ${1/^(.)(.*)$/\u$1$2/}Props {
 }
-export const $1 = (props: `!p snip.rv=capitalize_first(t[1])`Props) => {
+export const $1 = (props: ${1/^(.)(.*)$/\u$1$2/}Props) => {
 	const {} = props;
 	return {};
 };
