@@ -3,6 +3,17 @@ return {
   require('plugins.lsps.coc-nvim'),
   require('plugins.lsps.nvim-treesitter'),
   require('plugins.lsps.treesitter-modules'),
+  {
+    'windwp/nvim-autopairs',
+    config = function()
+      require('nvim-autopairs').setup({
+        enable_check_bracket_line = false,
+        check_ts = true,
+        map_cr = false,
+        ts_config = {},
+      })
+    end,
+  },
   -- 自动 tag 标签配对补全
   -- Refer to https://github.com/Rekwass/Dotfiles/blob/da25b84a33eb785480abc5b54e0e610c3358fa0c/nvim/lua/plugins/ts-autotag.nvim.lua
   {
