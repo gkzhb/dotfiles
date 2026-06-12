@@ -14,7 +14,12 @@
       "rootPatterns":  ["flake.nix"],
       "settings": {
         "nil": {
-          "formatting": { "command": ["nixfmt"] }
+          "formatting": { "command": ["nixfmt"] },
+          "nix": {
+            "flake": {
+              "autoArchive": false
+            }
+          }
         }
       }
     }
