@@ -48,6 +48,10 @@ return {
   -- },
   {
     'alexpasmantier/tv.nvim',
+    keys = {
+      { '<leader>tv',  ':Tv<Space>',                      desc = 'Television cli' },
+      { '<leader>fvd', '<cmd>Tv git-changed-files<CR>', desc = "Git changed files" },
+    }
   },
 
   {

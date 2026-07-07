@@ -1,6 +1,9 @@
 local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
+-- load custom lua function
+require('mappings')
+
 --- Call VSCode command
 local function vsc_action(cmd)
   return string.format("<cmd>lua require'vscode'.action('%s')<CR>", cmd)
@@ -8,7 +11,7 @@ end
 -- remap leader key
 keymap('n', '<Space>', '', opts)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 
 -- configs
 vim.o.cmdheight = 1
@@ -18,6 +21,9 @@ vim.o.ttimeout = true
 -- clipboard related
 -- yank to system clipboard
 keymap({ 'n', 'v' }, '<leader>y', '"+y', opts)
+keymap({ 'n', 'v' }, '<leader>Y', '<cmd>lua CopyFileLocation()<CR>', opts)
+keymap({ 'n' }, '<leader>by', '<cmd>lua CopyBufFilePath()<CR>', opts)
+
 -- paste from system clipboard
 keymap({ 'n', 'v' }, '<leader>p', '"+p', opts)
 

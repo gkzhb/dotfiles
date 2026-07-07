@@ -180,7 +180,7 @@ function M.setMappings()
   require('plugins.lsps.coc-nvim').mappings()
 
   wk.register({ -- fzf-lua mappings
-    name = 'fzf search',
+    name = 'search',
     b = { '<cmd>lua require("fzf-lua").buffers()<CR>', 'find buffers' },
     f = { '<cmd>lua require("fzf-lua").files()<CR>', 'find files' },
     g = { '<cmd>lua require("fzf-lua").grep()<CR>', 'grep' },
@@ -189,7 +189,7 @@ function M.setMappings()
     gp = { '<cmd>lua require("fzf-lua").live_grep()<CR>', 'live grep current project' },
     l = { '<cmd>lua require("fzf-lua").resume()<CR>', 'resume last findings' },
     a = { '<cmd>lua require("fzf-lua").commands()<CR>', 'search commands' },
-    c = { '<cmd>lua require("fzf-lua").changes()<CR>', 'search changes' },
+    -- c = { '<cmd>lua require("fzf-lua").changes()<CR>', 'search changes' },
     m = { '<cmd>lua require("fzf-lua").marks()<CR>', 'search marks' },
     k = { '<cmd>lua require("fzf-lua").keymaps()<CR>', 'search keymaps' },
     j = { '<cmd>lua require("fzf-lua").jumps()<CR>', 'search jumps' },
