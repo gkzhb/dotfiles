@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.79.0",
+  "lastChangelogVersion": "0.80.6",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-5.6-terra",
   "defaultThinkingLevel": "off",
@@ -9,5 +9,6 @@
   "enabledModels": [
     "MiniMax-*",
     "gpt-*"
-  ]
+  ],
+  "theme": "dark"
 }
