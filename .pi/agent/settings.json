@@ -10,5 +10,18 @@
     "MiniMax-*",
     "gpt-*"
   ],
-  "theme": "dark"
+  "theme": "dark",
+  "packages": [
+    "npm:pi-subagents",
+    "npm:pi-roles",
+    "npm:pi-messenger-bridge",
+    "npm:pi-mcp-adapter"
+  ],
+  "pi-roles": {
+    "roleScope": "both",
+    "defaultRole": "default",
+    "intercomMode": "off",
+    "titleModel": "newapi/MiniMax-M3",
+    "warnOnMissingMcp": true
+  }
 }

@@ -37,3 +37,6 @@ log/
 .beads-credential-key
 
 **/.claude/settings.local.json
+
+# pi agent
+.pi-subagents/
