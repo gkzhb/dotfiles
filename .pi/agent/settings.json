@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.80.6",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-5.6-terra",
-  "defaultThinkingLevel": "off",
+  "defaultThinkingLevel": "high",
   "quietStartup": true,
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
@@ -13,7 +13,7 @@
   "theme": "dark",
   "packages": [
     "npm:pi-subagents",
-    "npm:pi-roles",
+    "npm:@gkzhb/pi-roles",
     "npm:pi-messenger-bridge",
     "npm:pi-mcp-adapter"
   ],
@@ -21,6 +21,7 @@
     "roleScope": "both",
     "defaultRole": "default",
     "intercomMode": "off",
+    "preserveRoleOnNewSession": true,
     "titleModel": "newapi/MiniMax-M3",
     "warnOnMissingMcp": true
   }

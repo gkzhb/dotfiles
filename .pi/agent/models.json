@@ -14,7 +14,7 @@
           ],
           "contextWindow": 500000,
           "maxTokens": 32000,
-          "reasoning": false
+          "reasoning": true
         },
         {
           "id": "MiniMax-M3",
@@ -25,7 +25,7 @@
           ],
           "contextWindow": 1000000,
           "maxTokens": 32000,
-          "reasoning": false
+          "reasoning": true
         }
       ]
     }
