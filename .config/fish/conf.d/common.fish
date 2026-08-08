@@ -7,6 +7,9 @@ fish_add_path $HOME/.local/bin
 # and u can use `sudoedit` to edit file with root permissions while using ur nvim config
 set -gx EDITOR nvim
 
+# disable pi startup network operations
+set -gx PI_OFFLINE 1
+
 # use vi key bindings in fish
 fish_vi_key_bindings
 
