@@ -14,8 +14,11 @@
   "packages": [
     "npm:pi-subagents",
     "npm:@gkzhb/pi-roles",
-    "npm:pi-messenger-bridge",
-    "npm:pi-mcp-adapter"
+    "npm:pi-mcp-adapter",
+    "npm:pi-goal",
+    "npm:pi-metrics",
+    "npm:pi-copy-message",
+    "npm:pi-background-tasks"
   ],
   "pi-roles": {
     "roleScope": "both",
