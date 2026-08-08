@@ -14,7 +14,7 @@ type TermuxBatteryStatus = {
 
 type BatteryPayload = {
   battery: number;
-  charging: boolean;
+  charging: 0 | 1;
   temperature?: number;
 };
 
@@ -83,7 +83,7 @@ async function main(): Promise<void> {
   const batteryStatus = await readBatteryStatus();
   const payload: BatteryPayload = {
     battery: parseBatteryLevel(batteryStatus),
-    charging: isCharging(batteryStatus),
+    charging: isCharging(batteryStatus) ? 1 : 0,
   };
 
   const temperature = parseTemperature(batteryStatus.temperature);
