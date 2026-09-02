@@ -28,11 +28,15 @@
     "agentOverrides": {
       "scout": {
         "model": "MiniMax-M3",
-        "fallbackModels": ["gpt-5.6-terra"]
+        "fallbackModels": [
+          "gpt-5.6-terra"
+        ]
       },
       "worker": {
         "model": "MiniMax-M3",
-        "fallbackModels": ["gpt-5.6-terra"]
+        "fallbackModels": [
+          "gpt-5.6-terra"
+        ]
       }
     }
   }

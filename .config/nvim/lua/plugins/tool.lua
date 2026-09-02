@@ -20,6 +20,7 @@ return {
         startInInsertMode = false,
       })
     end,
+    lazy = false,
     keys = {
       { '<leader>st', '<cmd>lua require("grug-far").open()<CR>', desc = 'GrugFar Search' },
     },
