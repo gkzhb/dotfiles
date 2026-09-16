@@ -1,0 +1,13 @@
+onboarding = false
+[[keys.command]]
+key = "prefix+e"
+type = "shell"
+command = "code \"$HERDR_ACTIVE_PANE_CWD\""
+description = "open workspace in VS Code"
+
+[ui.toast]
+delivery = "system"
+
+[update]
+version_check = false
+manifest_check = false
