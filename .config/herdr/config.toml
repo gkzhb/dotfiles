@@ -5,6 +5,12 @@ type = "shell"
 command = "code \"$HERDR_ACTIVE_PANE_CWD\""
 description = "open workspace in VS Code"
 
+[[keys.command]]
+key = "prefix+shift+k"
+type = "shell"
+command = "\"${HERDR_BIN_PATH}\" server stop"
+description = "stop herdr server"
+
 [ui.toast]
 delivery = "system"
 
