@@ -8,7 +8,7 @@ fish_add_path $HOME/.local/bin
 set -gx EDITOR nvim
 
 # disable pi startup network operations
-set -gx PI_OFFLINE 1
+# set -gx PI_OFFLINE 1
 
 # use vi key bindings in fish
 fish_vi_key_bindings
