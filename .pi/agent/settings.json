@@ -51,12 +51,10 @@
   "subagents": {
     "agentOverrides": {
       "scout": {
-        "model": "MiniMax-M3",
-        "fallbackModels": ["gpt-5.6-terra"]
+        "model": "MiniMax-M3"
       },
       "worker": {
-        "model": "MiniMax-M3",
-        "fallbackModels": ["gpt-5.6-terra"]
+        "model": "gpt-6-sol"
       }
     }
   }
