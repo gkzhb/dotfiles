@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.80.6",
+  "lastChangelogVersion": "0.82.1",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6-astra",
   "defaultThinkingLevel": "medium",
@@ -61,4 +61,3 @@
     }
   }
 }
-
