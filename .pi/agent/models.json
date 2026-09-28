@@ -8,46 +8,69 @@
         {
           "id": "gpt-6-astra",
           "name": "GPT 6 Astra",
-          "input": [
-            "text",
-            "image"
-          ],
+          "input": ["text", "image"],
           "contextWindow": 500000,
           "maxTokens": 32000,
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": "minimal",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          }
         },
         {
           "id": "gpt-5.6-sol",
           "name": "GPT 5.6 Sol",
-          "input": [
-            "text",
-            "image"
-          ],
+          "input": ["text", "image"],
           "contextWindow": 500000,
           "maxTokens": 32000,
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": "minimal",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          }
         },
         {
           "id": "gpt-6-sol",
           "name": "GPT 6 Sol",
-          "input": [
-            "text",
-            "image"
-          ],
+          "input": ["text", "image"],
           "contextWindow": 500000,
           "maxTokens": 32000,
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "none",
+            "minimal": "minimal",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          }
         },
         {
           "id": "MiniMax-M3",
           "name": "MiniMax M3",
-          "input": [
-            "text",
-            "image"
-          ],
+          "input": ["text", "image"],
           "contextWindow": 1000000,
           "maxTokens": 32000,
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": "low",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": "max"
+          }
         }
       ]
     }
