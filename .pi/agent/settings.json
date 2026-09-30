@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.82.1",
+  "lastChangelogVersion": "0.99.1",
   "defaultProvider": "newapi",
-  "defaultModel": "gpt-6-astra",
-  "defaultThinkingLevel": "medium",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "xhigh",
   "quietStartup": true,
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
@@ -54,7 +54,7 @@
         "model": "MiniMax-M3"
       },
       "worker": {
-        "model": "gpt-6-sol"
+        "model": "gpt-6.1-sol"
       }
     }
   }
