@@ -17,3 +17,6 @@ delivery = "system"
 [update]
 version_check = false
 manifest_check = false
+
+[ui]
+agent_panel_sort = "spaces"

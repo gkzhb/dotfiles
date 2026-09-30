@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.99.1",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
   "quietStartup": true,
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
@@ -15,7 +15,8 @@
     "npm:pi-copy-message",
     "npm:pi-background-tasks",
     "npm:pi-custom-system-prompt",
-    "npm:@furbyhaxx/pi-session-naming"
+    "npm:@furbyhaxx/pi-session-naming",
+    "npm:@fitchmultz/pi-stash"
   ],
   "session": {
     "titleGeneration": {
