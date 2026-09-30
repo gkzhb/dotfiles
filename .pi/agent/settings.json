@@ -57,5 +57,7 @@
         "model": "gpt-6.1-sol"
       }
     }
-  }
+  },
+  "outputPad": 0,
+  "tuiMode": "fullscreen"
 }
