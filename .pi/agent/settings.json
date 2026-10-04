@@ -1,21 +1,20 @@
 {
-  "lastChangelogVersion": "0.99.1",
+  "lastChangelogVersion": "1.0.2",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
   "quietStartup": true,
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
   "packages": [
-    "npm:pi-subagents",
-    "npm:pi-mcp-adapter",
     "npm:pi-goal",
     "npm:pi-metrics",
     "npm:pi-copy-message",
     "npm:pi-background-tasks",
     "npm:pi-custom-system-prompt",
-    "npm:@furbyhaxx/pi-session-naming"
+    "npm:@furbyhaxx/pi-session-naming",
+    "npm:pi-herdr-agents"
   ],
   "session": {
     "titleGeneration": {
