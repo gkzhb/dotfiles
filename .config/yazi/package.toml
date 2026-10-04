@@ -1,12 +1,12 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "bb758e2"
+rev = "7200d73"
 hash = "187cc58ba7ac3befd49c342129e6f1b6"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "bb758e2"
-hash = "88e56a64b7ce7c4314427452343fef17"
+rev = "7200d73"
+hash = "347cc6b190eb0c2fd60513cc7ae37412"
 
 [[plugin.deps]]
 use = "XshubhamG/yatline-githead"
@@ -20,8 +20,8 @@ hash = "37fe452b2406df3f24e33b429ef699c2"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "bb758e2"
-hash = "5b1c276b75cae91cbbdbe7863f39a540"
+rev = "7200d73"
+hash = "87472b05a8c420100f6a2b9cde1e7746"
 
 [[plugin.deps]]
 use = "Jormala/relative-motions"

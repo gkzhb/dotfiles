@@ -14,7 +14,8 @@
     "npm:pi-background-tasks",
     "npm:pi-custom-system-prompt",
     "npm:@furbyhaxx/pi-session-naming",
-    "npm:pi-herdr-agents"
+    "npm:pi-herdr-agents",
+    "npm:@fitchmultz/pi-stash"
   ],
   "session": {
     "titleGeneration": {
