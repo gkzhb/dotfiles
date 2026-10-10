@@ -4,6 +4,7 @@
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
   "quietStartup": true,
+  "enabledModels": ["newapi/**"],
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
