@@ -11,6 +11,7 @@ set -gx EDITOR nvim
 # set -gx PI_OFFLINE 1
 # disable bg task extension update check https://github.com/ismailsaleekh/pi-background-tasks/blob/main/docs/operations/configuration.md
 set -gx PI_BG_DISABLE_UPDATE_CHECK 1
+set -gx PI_BG_FEATURES process
 
 # use vi key bindings in fish
 fish_vi_key_bindings
