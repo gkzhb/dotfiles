@@ -20,7 +20,9 @@
     "npm:pi-herdr-agents",
     "npm:@fitchmultz/pi-stash",
     "https://github.com/monotykamary/pi-retry",
-    "npm:@gkzhb/pi-ui-extension"
+    "npm:@gkzhb/pi-ui-extension",
+    "npm:@narumitw/pi-stamp",
+    "npm:pi-paster"
   ],
   "session": {
     "titleGeneration": {
@@ -64,5 +66,6 @@
     }
   },
   "outputPad": 0,
-  "tuiMode": "fullscreen"
+  "tuiMode": "fullscreen",
+  "hideThinkingBlock": true
 }
