@@ -71,6 +71,14 @@
             "xhigh": null,
             "max": "max"
           }
+        },
+        {
+          "id": "ds-v4-flash",
+          "name": "DeepSeek V4.1 flash",
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
+          "maxTokens": 380000,
+          "reasoning": true
         }
       ]
     }

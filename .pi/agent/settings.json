@@ -4,7 +4,9 @@
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
   "quietStartup": true,
-  "enabledModels": ["newapi/**"],
+  "enabledModels": [
+    "newapi/**"
+  ],
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
@@ -16,7 +18,9 @@
     "npm:pi-custom-system-prompt",
     "npm:@furbyhaxx/pi-session-naming",
     "npm:pi-herdr-agents",
-    "npm:@fitchmultz/pi-stash"
+    "npm:@fitchmultz/pi-stash",
+    "https://github.com/monotykamary/pi-retry",
+    "npm:@gkzhb/pi-ui-extension"
   ],
   "session": {
     "titleGeneration": {

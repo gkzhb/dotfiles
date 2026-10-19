@@ -38,5 +38,7 @@ log/
 
 **/.claude/settings.local.json
 
-# pi agent
+# pi related
 .pi-subagents/
+.pi/tasks/
+.pi/delegate/
