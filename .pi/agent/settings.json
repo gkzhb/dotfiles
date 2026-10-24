@@ -20,9 +20,11 @@
     "npm:pi-herdr-agents",
     "npm:@fitchmultz/pi-stash",
     "https://github.com/monotykamary/pi-retry",
-    "npm:@gkzhb/pi-ui-extension",
     "npm:@narumitw/pi-stamp",
-    "npm:pi-paster"
+    "npm:pi-paster",
+    "npm:pi-tidy",
+    "npm:@narumitw/pi-herdr",
+    "npm:@narumitw/pi-tool"
   ],
   "session": {
     "titleGeneration": {

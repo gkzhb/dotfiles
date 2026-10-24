@@ -20,3 +20,6 @@ manifest_check = false
 
 [ui]
 agent_panel_sort = "spaces"
+
+[remote]
+manage_ssh_config = true
