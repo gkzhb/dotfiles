@@ -1,0 +1,13 @@
+{
+	"showSeconds": false,
+	"dateContext": "always",
+	"locale": "zh-CN",
+	"responseTiming": "detailed",
+	"showOutputThroughput": true,
+	"showExactTimeline": true,
+	"assistantMetadata": "compact",
+	"showTimeSinceUser": true,
+	"showCostSinceUser": false,
+	"toolStamps": false,
+	"showThinkingLevel": false
+}
