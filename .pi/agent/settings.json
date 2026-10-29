@@ -1,12 +1,11 @@
 {
-  "lastChangelogVersion": "1.0.2",
+  "lastChangelogVersion": "1.3.0",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
+  "defaultTools": ["+codemode"],
   "quietStartup": true,
-  "enabledModels": [
-    "newapi/**"
-  ],
+  "enabledModels": ["newapi/**"],
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
@@ -24,7 +23,8 @@
     "npm:pi-paster",
     "npm:pi-tidy",
     "npm:@narumitw/pi-herdr",
-    "npm:@narumitw/pi-tool"
+    "npm:@narumitw/pi-tool",
+    "npm:pi-context-view"
   ],
   "session": {
     "titleGeneration": {
