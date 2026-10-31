@@ -1,0 +1,10 @@
+{
+	"description": "Read-only review",
+	"blocking": true,
+	"model": "newapi/gpt-6.1-sol",
+	"thinking": "xhigh",
+	"prompt": "prompt.md",
+	"prepare": "prepare.mjs",
+	"accepts": ["base"],
+	"pi_args": []
+}

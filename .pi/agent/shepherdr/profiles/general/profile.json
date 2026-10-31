@@ -1,0 +1,8 @@
+{
+	"description": "General implementation",
+	"model": "newapi/gpt-6.1-sol",
+	"thinking": "high",
+	"prompt": "prompt.md",
+	"accepts": [],
+	"pi_args": []
+}

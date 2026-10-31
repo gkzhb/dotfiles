@@ -16,7 +16,6 @@
     "npm:pi-background-tasks",
     "npm:pi-custom-system-prompt",
     "npm:@furbyhaxx/pi-session-naming",
-    "npm:pi-herdr-agents",
     "npm:@fitchmultz/pi-stash",
     "https://github.com/monotykamary/pi-retry",
     "npm:@narumitw/pi-stamp",
@@ -24,7 +23,9 @@
     "npm:pi-tidy",
     "npm:@narumitw/pi-herdr",
     "npm:@narumitw/pi-tool",
-    "npm:pi-context-view"
+    "npm:pi-context-view",
+    "npm:@howaboua/pi-shepherdr",
+    "npm:@howaboua/pi-agent-board"
   ],
   "session": {
     "titleGeneration": {
