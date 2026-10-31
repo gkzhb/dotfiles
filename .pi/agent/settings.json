@@ -3,9 +3,13 @@
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "quietStartup": true,
-  "enabledModels": ["newapi/**"],
+  "enabledModels": [
+    "newapi/**"
+  ],
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
@@ -25,7 +29,8 @@
     "npm:@narumitw/pi-tool",
     "npm:pi-context-view",
     "npm:@howaboua/pi-shepherdr",
-    "npm:@howaboua/pi-agent-board"
+    "npm:@howaboua/pi-agent-board",
+    "npm:@99percentpeople/pi-ssh-remote"
   ],
   "session": {
     "titleGeneration": {
