@@ -35,6 +35,7 @@ log/
 .dolt/
 *.db
 .beads-credential-key
+*.gate.lock*
 
 **/.claude/settings.local.json
 
