@@ -1,3 +1,6 @@
+local isTuios = vim.env.TUIOS_ENV == '1'
+local isTmux = vim.env.TMUX ~= nil and vim.env.TMUX ~= ''
+
 return {
   -- editors目录下的插件配置
   require('plugins.editors.fugitive'),
@@ -19,9 +22,10 @@ return {
   -- 导航增强
   'tpope/vim-unimpaired',
 
-  -- Tmux导航
+  -- Tmux导航（TUIOS优先；cond保留未加载插件的安装）
   {
     'numToStr/Navigator.nvim',
+    cond = isTmux and not isTuios,
     config = function()
       require('Navigator').setup()
     end,
@@ -31,6 +35,21 @@ return {
       { '<C-k>', '<CMD>NavigatorUp<CR>', mode = { 'n', 't' }, desc = 'Navigate up' },
       { '<C-j>', '<CMD>NavigatorDown<CR>', mode = { 'n', 't' }, desc = 'Navigate down' },
     },
+  },
+  -- TUIOS导航
+  {
+    'Tim4c/tuios-nvim-navigator',
+    cond = isTuios,
+    config = function()
+      require('tuios-nvim-navigator').setup({
+        keymaps = {
+          left = '<C-h>',
+          down = '<C-j>',
+          up = '<C-k>',
+          right = '<C-l>',
+        },
+      })
+    end,
   },
 
   -- 编辑增强

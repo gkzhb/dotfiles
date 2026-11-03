@@ -3,7 +3,6 @@ return {
   require('plugins.tools.cheatsheet'),
   require('plugins.tools.fzf'),
   require('plugins.tools.neoclip'),
-  require('plugins.tools.opencode'),
   require('plugins.tools.codebridge'),
   require('plugins.tools.session-manager'),
   require('plugins.tools.spectre'),

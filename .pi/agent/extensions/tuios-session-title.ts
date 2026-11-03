@@ -18,12 +18,63 @@ export default function (pi: ExtensionAPI) {
   let pending: string | undefined;
   let sending: Promise<void> | undefined;
 
+  // The rail's agent row gives the note line about 22 cells beside the context
+  // usage, and a token that does not fit is dropped whole rather than cut. So a
+  // reported title is clamped to what fits; the pane title bar, which comes
+  // from Pi's own OSC title, keeps the whole thing. Set
+  // TUIOS_SESSION_TITLE_MAX_CELLS to change the room, e.g. after widening the
+  // rail with appearance.sidebar.width.
+  const maxCells = Number.parseInt(process.env.TUIOS_SESSION_TITLE_MAX_CELLS ?? "", 10) > 0
+    ? Number.parseInt(process.env.TUIOS_SESSION_TITLE_MAX_CELLS!, 10)
+    : 22;
+
+  // Display width: a CJK or emoji cell is two columns in a terminal, which is
+  // what decides whether the rail keeps a token.
+  function charCells(ch: string): number {
+    const cp = ch.codePointAt(0)!;
+    if (cp === 0x200d || cp === 0xfe0f || (cp >= 0x0300 && cp <= 0x036f)) return 0;
+    if (
+      (cp >= 0x1100 && cp <= 0x115f) ||
+      (cp >= 0x2e80 && cp <= 0x303e) ||
+      (cp >= 0x3041 && cp <= 0x33ff) ||
+      (cp >= 0x3400 && cp <= 0x4dbf) ||
+      (cp >= 0x4e00 && cp <= 0xa4cf) ||
+      (cp >= 0xa960 && cp <= 0xa97f) ||
+      (cp >= 0xac00 && cp <= 0xd7a3) ||
+      (cp >= 0xf900 && cp <= 0xfaff) ||
+      (cp >= 0xfe10 && cp <= 0xfe19) ||
+      (cp >= 0xfe30 && cp <= 0xfe6f) ||
+      (cp >= 0xff00 && cp <= 0xff60) ||
+      (cp >= 0xffe0 && cp <= 0xffe6) ||
+      (cp >= 0x1f300 && cp <= 0x1f64f) ||
+      (cp >= 0x1f900 && cp <= 0x1f9ff) ||
+      (cp >= 0x20000 && cp <= 0x3fffd)
+    ) return 2;
+    return 1;
+  }
+
+  function clampCells(text: string, max: number): string {
+    if ([...text].reduce((w, ch) => w + charCells(ch), 0) <= max) return text;
+    const budget = Math.max(1, max - 1); // one cell for the ellipsis
+    let out = "";
+    let width = 0;
+    for (const ch of text) {
+      const w = charCells(ch);
+      if (width + w > budget) break;
+      out += ch;
+      width += w;
+    }
+    return `${out.replace(/\s+$/, "")}\u2026`;
+  }
+
   function normalize(name: string | undefined): string {
     const clean = stripVTControlCharacters(name ?? "")
       .replace(/[\u0000-\u001f\u007f-\u009f]/g, " ")
       .replace(/\s+/g, " ")
       .trim();
-    return [...clean].slice(0, 80).join("");
+    const cut = clampCells(clean, maxCells);
+    // tuios cuts a value at 80 characters of its own; this is the same floor.
+    return [...cut].slice(0, 80).join("");
   }
 
   function write(title: string): Promise<void> {

@@ -123,6 +123,7 @@ motion = "none"
 hide_window_buttons = true
 border_focused_color = "white"
 border_unfocused_color = "bright_black"
+nvim_navigation = true
 
 [appearance.sidebar]
 enabled = true
@@ -132,16 +133,17 @@ show_glyphs = true
 # Keep session, agent and terminal lists on the right.
 sections = "sessions:25,spacer:2,agents:25,spacer:2,terminals:25"
 
-# Show the focused pane's file list on a separate left rail.
+# The focused pane's file list on a separate left rail. Hidden by default;
+# Ctrl+F H (prefix_toggle_other_rail) brings it back at this width.
 [appearance.sidebar.left]
-enabled = true
+enabled = false
 width = 32
 sections = "files"
 
 [appearance.sidebar.agent_row]
 # session is the TUIOS session; session_title is the Pi conversation title.
 # Use raw metadata tokens so context usage is also visible below 80%.
-tokens = ["session", "state", "$context_usage", "$session_title"]
+tokens = ["name", "state", "$session_title", "$context_usage"]
 
 [startup]
 tiled = true
