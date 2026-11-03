@@ -28,5 +28,10 @@ use = "Jormala/relative-motions"
 rev = "d4f2003"
 hash = "e0017cae4c0772dd41b7e7c259a6e683"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:rclone"
+rev = "603fa36"
+hash = "1e1aaa1396d3cb51249308b7be761904"
+
 [flavor]
 deps = []
