@@ -28,9 +28,9 @@
     "npm:@narumitw/pi-herdr",
     "npm:@narumitw/pi-tool",
     "npm:pi-context-view",
-    "npm:@howaboua/pi-shepherdr",
     "npm:@howaboua/pi-agent-board",
-    "npm:@99percentpeople/pi-ssh-remote"
+    "npm:@99percentpeople/pi-ssh-remote",
+    "npm:@gkzhb/pi-shepherdr"
   ],
   "session": {
     "titleGeneration": {
