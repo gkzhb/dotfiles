@@ -1,7 +1,7 @@
-# tmux aliases
-alias t=tmux
-alias tn='tmux new'
-alias tsn='tmux display-message'
+# tuios aliases
+alias t=tuios
+alias tn='tuios new'
+alias tsn='tuios run-command ShowNotification'
 
 # systemd
 if type -q systemctl
