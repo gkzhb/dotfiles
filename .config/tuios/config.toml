@@ -182,6 +182,8 @@ move_and_follow_9 = ["ctrl+alt+shift+9"]
 
 # Replace the default leader+digit pane selectors with workspace selectors.
 [keybindings.prefix_mode]
+# Reserve Ctrl+F a for Ask Pi; the launcher remains available on Alt+Space.
+launcher = []
 # Ctrl+F c opens the first empty workspace; Ctrl+F w creates a window.
 new_workspace = ["c"]
 prefix_new_window = ["w"]
@@ -241,3 +243,10 @@ enabled = false
 
 [workspaces]
 new_window_when_empty = true
+
+# Ctrl+F a opens the shared Pi; initialize it only on the first invocation.
+[[keybindings.command]]
+key = "prefix+a"
+type = "popup"
+command = "fish ~/.config/tuios/pi-popup.fish --view"
+description = "Ask Pi"
