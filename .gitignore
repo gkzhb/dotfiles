@@ -2,6 +2,7 @@
 
 # local configs
 /.config/kitty/others.conf
+/.config/doom/custom.el
 
 # Local agent state and generated runtime files are not portable dotfiles.
 .claude/
