@@ -1,0 +1,30 @@
+[metadata]
+name = "git-changed-files"
+description = "List changed files in the current git repository"
+requirements = [ "git", "awk",]
+
+[source]
+command = "{ git diff --name-only; git diff --cached --name-only; git ls-files --others --exclude-standard; } | awk '!seen[$0]++'"
+
+[preview]
+command = "git status --short -- '{}' && echo && git diff --color=always -- '{}' && git diff --cached --color=always -- '{}'"
+
+[keybindings]
+ctrl-e = "actions:edit"
+ctrl-o = "actions:open-shell"
+ctrl-r = "actions:restore"
+
+[actions.edit]
+description = "Open the selected file in $EDITOR"
+command = "${EDITOR:-nvim} '{}'"
+mode = "execute"
+
+[actions.open-shell]
+description = "Open a shell in the file directory"
+command = "cd \"$(dirname '{}')\" && $SHELL"
+mode = "execute"
+
+[actions.restore]
+description = "Restore unstaged changes in the selected file"
+command = "git restore -- '{}'"
+mode = "execute"

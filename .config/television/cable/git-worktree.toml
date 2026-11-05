@@ -1,0 +1,83 @@
+# ~/.config/television/cable/git-worktrees.toml
+
+[metadata]
+name = "git-worktrees"
+description = "Browse and enter Git worktrees"
+requirements = ["git"]
+
+[source]
+command = """
+git worktree list --porcelain | awk '
+BEGIN {
+  path = ""
+  branch = ""
+  head = ""
+  detached = 0
+}
+
+$1 == "worktree" {
+  path = substr($0, 10)
+}
+
+$1 == "HEAD" {
+  head = $2
+}
+
+$1 == "branch" {
+  branch = $2
+  sub("^refs/heads/", "", branch)
+}
+
+$1 == "detached" {
+  detached = 1
+}
+
+/^$/ {
+  if (path != "") {
+    n = split(path, parts, "/")
+    dir = parts[n]
+
+    if (detached) {
+      branch = "(detached " substr(head, 1, 8) ")"
+    } else if (branch == "") {
+      branch = "(unknown)"
+    }
+
+    printf "%s\\t%s\\t%s\\n", path, branch, dir
+  }
+
+  path = ""
+  branch = ""
+  head = ""
+  detached = 0
+}
+
+END {
+  if (path != "") {
+    n = split(path, parts, "/")
+    dir = parts[n]
+
+    if (detached) {
+      branch = "(detached " substr(head, 1, 8) ")"
+    } else if (branch == "") {
+      branch = "(unknown)"
+    }
+
+    printf "%s\\t%s\\t%s\\n", path, branch, dir
+  }
+}
+'
+"""
+
+display = "{split:\\t:1}    {split:\\t:2}"
+output = "{split:\\t:0}"
+
+[preview]
+command = """
+cd '{split:\\t:0}' &&
+printf '\\033[1mBranch:\\033[0m %s\\n' '{split:\\t:1}' &&
+printf '\\033[1mPath:\\033[0m   %s\\n\\n' '{split:\\t:0}' &&
+git status --short --branch &&
+printf '\\n\\033[1mRecent commits:\\033[0m\\n' &&
+git log --oneline --decorate --graph -10 --color=always
+"""

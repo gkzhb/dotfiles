@@ -1,0 +1,34 @@
+[metadata]
+name = "git-log"
+description = "A channel to select from git log entries"
+requirements = ["git"]
+
+[source]
+command = "git log --pretty=format:'%C(green)%h %C(red)%s %C(blue)(%an)%C(reset)' --color=always -n 200"
+output = "{strip_ansi|split: :0}"
+ansi = true
+no_sort = true
+frecency = false
+
+[preview]
+command = "git show -p --stat --pretty=fuller --color=always '{strip_ansi|split: :0}' | head -n 1000"
+
+[keybindings]
+ctrl-y = "actions:copy"
+ctrl-c = "actions:cherry-pick"
+ctrl-o = "actions:checkout"
+
+[actions.copy]
+description = "Copy commit hash to clipboard"
+command = "tmux set-buffer '{strip_ansi|split: :0}'"
+mode = "execute"
+
+[actions.checkout]
+description = "Checkout the selected commit"
+command = "git checkout '{strip_ansi|split: :0}'"
+mode = "execute"
+
+[actions.cherry-pick]
+description = "Cherry-pick the selected commit"
+command = "git cherry-pick '{strip_ansi|split: :0}'"
+mode = "execute"
