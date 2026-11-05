@@ -152,6 +152,12 @@ daemon = true
 [keybindings]
 leader_key = "ctrl+f"
 
+# Switch sessions with Ctrl+F s, or return to the last one with Ctrl+F Tab.
+[keybindings.window_management]
+focus_sidebar = ["e"]
+next_session = []
+prev_session = []
+
 # Reserve Option+digits and Option+Shift+digits for AeroSpace.
 # Switch workspaces with the leader (Ctrl+F), then 1-9 instead.
 [keybindings.workspaces]
@@ -180,8 +186,15 @@ move_and_follow_9 = ["ctrl+alt+shift+9"]
 new_workspace = ["c"]
 prefix_new_window = ["w"]
 prefix_workspace = []
-# Return to the last session with Ctrl+F Tab; keep next-window on Ctrl+F n.
+# Ctrl+F s opens the session switcher; leave uppercase S unbound.
+prefix_session_switcher = ["s"]
+prefix_scrollback = []
 last_session = ["tab"]
+# Focus/leave the sidebar from either mode with Ctrl+F e.
+prefix_explore = ["e"]
+next_session = []
+prev_session = []
+# Keep next-window on Ctrl+F n.
 prefix_next_window = ["n"]
 prefix_select_1 = []
 prefix_select_2 = []
@@ -202,6 +215,11 @@ switch_workspace_7 = ["7"]
 switch_workspace_8 = ["8"]
 switch_workspace_9 = ["9"]
 
+# Use e to leave the sidebar, matching e to focus it in window mode.
+[keybindings.sidebar]
+exit = ["esc", "e"]
+switch_edge = []
+
 # Navigate between windows with Ctrl+hjkl; leave Alt+arrows to applications.
 [keybindings.terminal_mode]
 terminal_focus_left = ["ctrl+h"]
@@ -211,6 +229,8 @@ terminal_focus_right = ["ctrl+l"]
 
 # Do not intercept Alt+arrows in the native GUI either.
 [keybindings.gui]
+next_session = []
+prev_session = []
 terminal_focus_left = []
 terminal_focus_down = []
 terminal_focus_up = []
