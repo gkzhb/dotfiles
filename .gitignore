@@ -1,2 +1,17 @@
 .dotfiles
-packer_compiled.lua
+
+# local configs
+/.config/kitty/others.conf
+
+# Local agent state and generated runtime files are not portable dotfiles.
+.claude/
+__pycache__/
+*.pyc
+
+# Installed tools/plugins and caches: retained locally, not versioned.
+/.config/nvim/lua/projects/
+/.config/nvim/lazy-lock.json
+
+# Machine-specific Git includes may contain private organization settings.
+/.config/git/*.gitconfig
+/.config/git/*.gitignore
