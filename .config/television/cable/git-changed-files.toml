@@ -1,30 +1,33 @@
 [metadata]
 name = "git-changed-files"
-description = "List changed files in the current git repository"
-requirements = [ "git", "awk",]
+description = "Browse changed files safely; restore requires confirmation"
+requirements = ["git", "python3"]
 
 [source]
-command = "{ git diff --name-only; git diff --cached --name-only; git ls-files --others --exclude-standard; } | awk '!seen[$0]++'"
+command = 'python3 "$HOME/.config/television/tv-helper.py" changed-list'
+display = '{split:\t:1}'
+# Opaque selection token; never emit a lossy/shell-interpreted path or label.
+output = '{split:\t:0}'
 
 [preview]
-command = "git status --short -- '{}' && echo && git diff --color=always -- '{}' && git diff --cached --color=always -- '{}'"
+command = 'python3 "$HOME/.config/television/tv-helper.py" changed-preview {split:\t:0}'
 
 [keybindings]
 ctrl-e = "actions:edit"
 ctrl-o = "actions:open-shell"
-ctrl-r = "actions:restore"
+alt-r = "actions:restore"
 
 [actions.edit]
-description = "Open the selected file in $EDITOR"
-command = "${EDITOR:-nvim} '{}'"
+description = "Edit the existing file (EDITOR, default nvim)"
+command = 'python3 "$HOME/.config/television/tv-helper.py" changed-edit {split:\t:0}'
 mode = "execute"
 
 [actions.open-shell]
-description = "Open a shell in the file directory"
-command = "cd \"$(dirname '{}')\" && $SHELL"
+description = "Open a child shell in the file directory"
+command = 'python3 "$HOME/.config/television/tv-helper.py" changed-shell {split:\t:0}'
 mode = "execute"
 
 [actions.restore]
-description = "Restore unstaged changes in the selected file"
-command = "git restore -- '{}'"
+description = "Discard unstaged changes (type RESTORE to confirm)"
+command = 'python3 "$HOME/.config/television/tv-helper.py" changed-restore {split:\t:0}'
 mode = "execute"
