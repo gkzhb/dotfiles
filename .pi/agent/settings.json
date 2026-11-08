@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.3.0",
+  "lastChangelogVersion": "1.4.0",
   "defaultProvider": "newapi",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "high",
@@ -8,7 +8,8 @@
   ],
   "quietStartup": true,
   "enabledModels": [
-    "newapi/**"
+    "newapi/**",
+    "magpie/**"
   ],
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
@@ -28,7 +29,8 @@
     "npm:@narumitw/pi-tool",
     "npm:pi-context-view",
     "npm:@99percentpeople/pi-ssh-remote",
-    "npm:@gkzhb/pi-shepherdr"
+    "npm:@gkzhb/pi-shepherdr",
+    "npm:@gkzhb/pi-ntfy"
   ],
   "session": {
     "titleGeneration": {
