@@ -36,7 +36,7 @@
     "titleGeneration": {
       "enabled": true,
       "language": "auto",
-      "model": "MiniMax-M3",
+      "model": "MiniMax-M3.1-Flash",
       "retries": 3,
       "emojis": false,
       "maxLength": 52,
@@ -61,16 +61,6 @@
       "enabled": true,
       "command": "rename",
       "interactiveWhenEmpty": true
-    }
-  },
-  "subagents": {
-    "agentOverrides": {
-      "scout": {
-        "model": "MiniMax-M3"
-      },
-      "worker": {
-        "model": "gpt-6.1-sol"
-      }
     }
   },
   "outputPad": 0,
