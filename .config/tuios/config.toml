@@ -130,8 +130,15 @@ enabled = true
 position = "right"
 width = 32
 show_glyphs = true
+show_counts = true
+show_numbers = true
+# style = "flat"
 # Keep session, agent and terminal lists on the right.
 sections = "sessions:25,spacer:2,agents:25,spacer:2,terminals:25"
+group_main = true
+
+# [panes]
+# navigator_layout = "tree"
 
 # The focused pane's file list on a separate left rail. Hidden by default;
 # Ctrl+F H (prefix_toggle_other_rail) brings it back at this width.
