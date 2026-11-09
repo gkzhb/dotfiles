@@ -188,8 +188,8 @@ launcher = []
 new_workspace = ["c"]
 prefix_new_window = ["w"]
 prefix_workspace = []
-# Ctrl+F s opens the session switcher; leave uppercase S unbound.
-prefix_session_switcher = ["s"]
+# Ctrl+F s uses the fzf popup command below; disable the native list.
+prefix_session_switcher = []
 prefix_scrollback = []
 last_session = ["tab"]
 # Focus/leave the sidebar from either mode with Ctrl+F e.
@@ -250,3 +250,10 @@ key = "prefix+a"
 type = "popup"
 command = "fish ~/.config/tuios/pi-popup.fish --view"
 description = "Ask Pi"
+
+# Search sessions by name, directory and Git branch/commit.
+[[keybindings.command]]
+key = "prefix+s"
+type = "popup"
+command = "python3 ~/.config/tuios/session-switcher.py --inline"
+description = "Sessions (fzf · directory · Git)"
