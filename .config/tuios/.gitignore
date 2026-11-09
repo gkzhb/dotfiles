@@ -1,0 +1,3 @@
+# Tuios machine-local configuration and agent runtime must stay unversioned.
+config.d/*.local.toml
+web-password
