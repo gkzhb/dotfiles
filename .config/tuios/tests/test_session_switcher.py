@@ -42,20 +42,36 @@ class PickerTests(unittest.TestCase):
         with patch.object(picker, 'tuios_json', side_effect=[sessions, {'panes': panes}]), patch.object(picker, 'git_info', side_effect=repo), patch.dict(os.environ, {'TUIOS_WINDOW_ID': 'popup'}):
             records = picker.collect('source', 'original')
         self.assertEqual([r['name'] for r in records], ['other', 'source'])
-        self.assertEqual(records[1]['fields'][2:5], ['repo', 'live-branch', '1'])
+        self.assertEqual(records[1]['fields'][2:6], ['repo', 'repo', 'live-branch', '1'])
         self.assertNotIn('/wrong', records[1]['preview'])
         self.assertIn('/repo', records[1]['preview'])
+
+    def test_subdirectory_displays_git_repository_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / 'my-project'
+            cwd = root / 'src' / 'components'
+            cwd.mkdir(parents=True)
+            subprocess.run(['git', '-C', str(root), 'init', '-b', 'main'],
+                           check=True, capture_output=True)
+            sessions = [{'name': 's'}]
+            panes = {'panes': [{'session': 's', 'cwd': str(cwd), 'focused': True}]}
+            with patch.object(picker, 'tuios_json', side_effect=[sessions, panes]):
+                records = picker.collect()
+        self.assertEqual(records[0]['fields'][2:5], ['components', 'my-project', 'main'])
+        header, display = picker.rows(records)
+        self.assertIn('GIT REPOSITORY', header)
+        self.assertIn('my-project', display[0])
 
     def test_non_repo_does_not_use_stale_branch(self):
         sessions = [{'name': 's', 'branch': 'stale'}]
         panes = {'panes': [{'session': 's', 'cwd': '/plain', 'focused': True}]}
         with patch.object(picker, 'tuios_json', side_effect=[sessions, panes]), patch.object(picker, 'git_info', return_value=(None, 'not a repository')):
-            self.assertEqual(picker.collect()[0]['fields'][3], '—')
+            self.assertEqual(picker.collect()[0]['fields'][3:5], ['—', '—'])
 
     def test_missing_cwd_uses_explicit_cached_metadata(self):
         sessions = [{'name': 's', 'dir': 'repo', 'branch': 'cached-branch'}]
         with patch.object(picker, 'tuios_json', side_effect=[sessions, {'panes': []}]), patch.object(picker, 'git_info', return_value=(None, 'unavailable')):
-            self.assertEqual(picker.collect()[0]['fields'][2:4], ['repo', 'cached-branch (cached)'])
+            self.assertEqual(picker.collect()[0]['fields'][2:5], ['repo', '—', 'cached-branch (cached)'])
 
     def test_sanitizes_display_but_preserves_exact_name(self):
         name = 'a\t";echo unsafe\n\x1b[31m\u202e'
@@ -77,7 +93,7 @@ class PickerTests(unittest.TestCase):
                 picker.collect()
 
     def test_fzf_contract_and_safe_preview(self):
-        records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'dir', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
+        records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'dir', 'repo', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
         def fzf(args, **kwargs):
             self.assertIn('--read0', args)
             self.assertNotIn('FZF_DEFAULT_OPTS', kwargs['env'])

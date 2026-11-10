@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""fzf session picker for tuios 0.10+: live pane directories and Git refs.
+"""fzf session picker for tuios 0.10+: live pane directories, Git repositories and refs.
 
 Default: open a popup from a tuios pane. --inline: use this terminal (also
 for type="popup" keybindings). --list: read-only table, useful for diagnosis.
@@ -104,8 +104,9 @@ def collect(source="", active_pane=""):
             if cached:
                 ref = f"{cached} (cached)"
         directory = (Path(cwd).name or cwd) if cwd else session.get("dir") or "—"
+        repository = (Path(repo["root"]).name or repo["root"]) if repo else "—"
         state = "current" if name == source else "attached" if session.get("attached") else "detached"
-        fields = ["*" if name == source else " ", name, directory, ref, str(len(panes)), state]
+        fields = ["*" if name == source else " ", name, directory, repository, ref, str(len(panes)), state]
         lines = [
             f"Session: {name}", f"Status: {state}", f"Directory: {cwd or 'unknown'}",
             f"Repository: {repo['root'] if repo else reason}",
@@ -125,7 +126,7 @@ def collect(source="", active_pane=""):
 
 
 def rows(records):
-    header = ["", "SESSION", "DIRECTORY", "GIT BRANCH / COMMIT", "PANES", "STATUS"]
+    header = ["", "SESSION", "DIRECTORY", "GIT REPOSITORY", "GIT BRANCH / COMMIT", "PANES", "STATUS"]
     widths = [max(len(record["fields"][i]) for record in records + [{"fields": header}]) for i in range(len(header))]
 
     def render(fields):
