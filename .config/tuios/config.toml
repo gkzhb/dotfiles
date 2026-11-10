@@ -258,7 +258,7 @@ type = "popup"
 command = "fish ~/.config/tuios/pi-popup.fish --view"
 description = "Ask Pi"
 
-# Search sessions by name, directory, Git repository and branch/commit.
+# Match tuios repository groups first; add the selected pane directory/ref.
 [[keybindings.command]]
 key = "prefix+s"
 type = "popup"

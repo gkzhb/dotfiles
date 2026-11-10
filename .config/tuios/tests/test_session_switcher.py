@@ -42,7 +42,7 @@ class PickerTests(unittest.TestCase):
         with patch.object(picker, 'tuios_json', side_effect=[sessions, {'panes': panes}]), patch.object(picker, 'git_info', side_effect=repo), patch.dict(os.environ, {'TUIOS_WINDOW_ID': 'popup'}):
             records = picker.collect('source', 'original')
         self.assertEqual([r['name'] for r in records], ['other', 'source'])
-        self.assertEqual(records[1]['fields'][2:6], ['repo', 'repo', 'live-branch', '1'])
+        self.assertEqual(records[1]['fields'][2:7], ['repo', 'live-branch', 'repo', 'live-branch', '1'])
         self.assertNotIn('/wrong', records[1]['preview'])
         self.assertIn('/repo', records[1]['preview'])
 
@@ -57,7 +57,7 @@ class PickerTests(unittest.TestCase):
             panes = {'panes': [{'session': 's', 'cwd': str(cwd), 'focused': True}]}
             with patch.object(picker, 'tuios_json', side_effect=[sessions, panes]):
                 records = picker.collect()
-        self.assertEqual(records[0]['fields'][2:5], ['components', 'my-project', 'main'])
+        self.assertEqual(records[0]['fields'][2:6], ['my-project', 'main', 'components', 'main'])
         header, display = picker.rows(records)
         self.assertIn('GIT REPOSITORY', header)
         self.assertIn('my-project', display[0])
@@ -66,12 +66,82 @@ class PickerTests(unittest.TestCase):
         sessions = [{'name': 's', 'branch': 'stale'}]
         panes = {'panes': [{'session': 's', 'cwd': '/plain', 'focused': True}]}
         with patch.object(picker, 'tuios_json', side_effect=[sessions, panes]), patch.object(picker, 'git_info', return_value=(None, 'not a repository')):
-            self.assertEqual(picker.collect()[0]['fields'][3:5], ['—', '—'])
+            self.assertEqual(picker.collect()[0]['fields'][2:6], ['—', '—', 'plain', '—'])
 
     def test_missing_cwd_uses_explicit_cached_metadata(self):
         sessions = [{'name': 's', 'dir': 'repo', 'branch': 'cached-branch'}]
         with patch.object(picker, 'tuios_json', side_effect=[sessions, {'panes': []}]), patch.object(picker, 'git_info', return_value=(None, 'unavailable')):
-            self.assertEqual(picker.collect()[0]['fields'][2:5], ['repo', '—', 'cached-branch (cached)'])
+            self.assertEqual(picker.collect()[0]['fields'][2:6], ['—', 'cached-branch (cached)', '—', '—'])
+
+    def test_worktree_metadata_wins_over_live_pane(self):
+        for extra in ({'main': True}, {'managed': True}, {'gone': True}, {}):
+            with self.subTest(extra=extra):
+                worktree = dict(repo='canonical-project', branch='group-branch',
+                                path='/worktrees/task', repo_root='/repos/project', **extra)
+                sessions = [{'name': 's', 'branch': 'daemon-branch', 'worktree': worktree}]
+                panes = {'panes': [{'session': 's', 'cwd': '/other/src', 'focused': True}]}
+                repo = {'root': '/other', 'ref': 'pane-branch', 'commit': 'abcdef'}
+                with patch.object(picker, 'tuios_json', side_effect=[sessions, panes]), patch.object(picker, 'git_info', return_value=(repo, '')):
+                    record = picker.collect()[0]
+                self.assertEqual(record['fields'][2:6],
+                                 ['canonical-project', 'group-branch', 'src', 'pane-branch'])
+                self.assertIn('Project source: tuios worktree metadata', record['preview'])
+                self.assertIn('Project directory: /worktrees/task', record['preview'])
+                self.assertIn('Repository root: /repos/project', record['preview'])
+                self.assertIn('Pane directory: /other/src', record['preview'])
+                self.assertIn('Pane repository: /other', record['preview'])
+                self.assertIn(f'Worktree directory gone: {bool(extra.get("gone"))}', record['preview'])
+
+    def test_focus_changes_only_pane_context_when_grouped(self):
+        session = {'name': 's', 'worktree': {'repo': 'project', 'branch': 'group'}}
+        for focused in ('a', 'b'):
+            with self.subTest(focused=focused):
+                panes = [{'session': 's', 'window_id': name, 'cwd': '/' + name,
+                          'focused': name == focused} for name in ('a', 'b')]
+                def repo(cwd):
+                    return {'root': cwd, 'ref': 'branch-' + cwd[1:], 'commit': ''}, ''
+                with patch.dict(os.environ, {'TUIOS_WINDOW_ID': ''}), patch.object(picker, 'tuios_json', side_effect=[[session], {'panes': panes}]), patch.object(picker, 'git_info', side_effect=repo):
+                    fields = picker.collect()[0]['fields']
+                self.assertEqual(fields[2:4], ['project', 'group'])
+                self.assertEqual(fields[4:6], [focused, 'branch-' + focused])
+
+    def test_group_metadata_does_not_fabricate_missing_pane_context(self):
+        session = {'name': 's', 'worktree': {'repo': 'project', 'branch': 'main',
+                                           'path': '/project'}}
+        with patch.object(picker, 'tuios_json', side_effect=[[session], {'panes': []}]), patch.object(picker, 'git_info', return_value=(None, 'unavailable')) as git:
+            record = picker.collect()[0]
+        self.assertEqual(record['fields'][2:6], ['project', 'main', '—', '—'])
+        self.assertIn('Pane directory: unknown', record['preview'])
+        git.assert_called_once_with('')
+
+    def test_partial_worktree_metadata_does_not_mix_with_pane(self):
+        for worktree, expected in (({'repo': 'group'}, ['group', '—']),
+                                   ({'branch': 'group-branch'}, ['—', 'group-branch'])):
+            with self.subTest(worktree=worktree):
+                session = {'name': 's', 'worktree': worktree}
+                panes = {'panes': [{'session': 's', 'cwd': '/other', 'focused': True}]}
+                repo = {'root': '/other', 'ref': 'pane-branch', 'commit': ''}
+                with patch.object(picker, 'tuios_json', side_effect=[[session], panes]), patch.object(picker, 'git_info', return_value=(repo, '')):
+                    fields = picker.collect()[0]['fields']
+                self.assertEqual(fields[2:4], expected)
+                self.assertEqual(fields[4:6], ['other', 'pane-branch'])
+
+    def test_focused_pane_without_cwd_is_not_replaced_by_another_pane(self):
+        session = {'name': 's', 'worktree': {'repo': 'project', 'branch': 'main'}}
+        panes = {'panes': [{'session': 's', 'window_id': 'focused', 'focused': True},
+                           {'session': 's', 'window_id': 'other', 'cwd': '/other'}]}
+        with patch.dict(os.environ, {'TUIOS_WINDOW_ID': ''}), patch.object(picker, 'tuios_json', side_effect=[[session], panes]), patch.object(picker, 'git_info', return_value=(None, 'unavailable')):
+            record = picker.collect()[0]
+        self.assertEqual(record['fields'][4:6], ['—', '—'])
+        self.assertIn('Selected pane: focused', record['preview'])
+
+    def test_group_metadata_is_sanitized_for_display(self):
+        session = {'name': 's', 'worktree': {'repo': 'repo\t\x1b', 'branch': 'branch\n\u202e'}}
+        with patch.object(picker, 'tuios_json', side_effect=[[session], {'panes': []}]):
+            record = picker.collect()[0]
+        self.assertEqual(record['fields'][2:4], ['repo  ', 'branch  '])
+        self.assertNotIn('\x1b', record['preview'])
+        self.assertNotIn('\u202e', record['preview'])
 
     def test_sanitizes_display_but_preserves_exact_name(self):
         name = 'a\t";echo unsafe\n\x1b[31m\u202e'
@@ -93,7 +163,7 @@ class PickerTests(unittest.TestCase):
                 picker.collect()
 
     def test_fzf_contract_and_safe_preview(self):
-        records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'dir', 'repo', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
+        records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'repo', 'main', 'dir', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
         def fzf(args, **kwargs):
             self.assertIn('--read0', args)
             self.assertNotIn('FZF_DEFAULT_OPTS', kwargs['env'])

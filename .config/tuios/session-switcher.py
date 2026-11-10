@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""fzf session picker for tuios 0.10+: live pane directories, Git repositories and refs.
+"""fzf session picker: tuios repository groups first, live pane context second.
 
 Default: open a popup from a tuios pane. --inline: use this terminal (also
 for type="popup" keybindings). --list: read-only table, useful for diagnosis.
@@ -91,26 +91,48 @@ def collect(source="", active_pane=""):
         # Popup focus should not replace the pane the key was invoked from.
         panes = [p for p in panes if p.get("window_id") != popup_id or popup_id == active_pane]
         primary = next((p for p in panes if name == source and p.get("window_id") == active_pane), None)
-        primary = primary or next((p for p in panes if p.get("focused") and p.get("cwd")), None)
+        primary = primary or next((p for p in panes if p.get("focused")), None)
         primary = primary or next((p for p in panes if p.get("cwd")), {})
-        cwd = primary.get("cwd") or (session.get("worktree") or {}).get("path") or ""
+        # Keep pane context separate: a worktree path is not this pane's CWD.
+        cwd = primary.get("cwd") or ""
         if cwd not in git_cache:
             git_cache[cwd] = git_info(cwd)
         repo, reason = git_cache[cwd]
-        # Only fall back to daemon metadata when the real path cannot be read.
-        ref = repo["ref"] if repo else "—"
-        if not repo and reason != "not a repository":
-            cached = session.get("branch") or (session.get("worktree") or {}).get("branch")
-            if cached:
-                ref = f"{cached} (cached)"
-        directory = (Path(cwd).name or cwd) if cwd else session.get("dir") or "—"
-        repository = (Path(repo["root"]).name or repo["root"]) if repo else "—"
+        directory = (Path(cwd).name or cwd) if cwd else "—"
+        pane_repository = (Path(repo["root"]).name or repo["root"]) if repo else "—"
+        pane_ref = repo["ref"] if repo else "—"
+        worktree = session.get("worktree") or {}
+        if worktree:
+            # These are exactly the repository/branch used by tuios grouping.
+            # Do not replace missing or stale group fields with another pane's
+            # Git context: the pane may be in a completely different checkout.
+            repository = worktree.get("repo") or "—"
+            ref = worktree.get("branch") or "—"
+            project_path = worktree.get("path") or "unknown"
+            project_root = worktree.get("repo_root") or "unknown"
+            project_source = "tuios worktree metadata"
+        else:
+            repository, ref = pane_repository, pane_ref
+            project_path = project_root = repo["root"] if repo else "unknown"
+            project_source = "selected pane Git" if repo else "unavailable"
+            # Old daemons or unreadable paths can still offer a cached branch.
+            # It belongs to the project fallback, never the live pane column.
+            if not repo and reason != "not a repository" and session.get("branch"):
+                ref = f"{session['branch']} (cached)"
+                project_source = "daemon branch fallback"
         state = "current" if name == source else "attached" if session.get("attached") else "detached"
-        fields = ["*" if name == source else " ", name, directory, repository, ref, str(len(panes)), state]
+        fields = ["*" if name == source else " ", name, repository, ref, directory, pane_ref, str(len(panes)), state]
         lines = [
-            f"Session: {name}", f"Status: {state}", f"Directory: {cwd or 'unknown'}",
-            f"Repository: {repo['root'] if repo else reason}",
-            f"Git ref: {ref}", f"Commit: {repo['commit'] if repo else '—'}", "", "Panes:",
+            f"Session: {name}", f"Status: {state}",
+            f"Project source: {project_source}", f"Repository: {repository}",
+            f"Project branch/ref: {ref}", f"Project directory: {project_path}",
+            f"Repository root: {project_root}",
+            f"Worktree directory gone: {bool(worktree.get('gone'))}", "",
+            f"Selected pane: {primary.get('window_id') or 'unknown'}",
+            f"Pane directory: {cwd or 'unknown'}",
+            f"Pane repository: {repo['root'] if repo else reason}",
+            f"Pane Git ref: {pane_ref}", f"Pane commit: {repo['commit'] if repo else '—'}",
+            "", "Panes:",
         ]
         for pane in panes:
             pane_cwd = pane.get("cwd") or ""
@@ -126,7 +148,7 @@ def collect(source="", active_pane=""):
 
 
 def rows(records):
-    header = ["", "SESSION", "DIRECTORY", "GIT REPOSITORY", "GIT BRANCH / COMMIT", "PANES", "STATUS"]
+    header = ["", "SESSION", "GIT REPOSITORY", "PROJECT BRANCH / REF", "PANE DIR", "PANE BRANCH / COMMIT", "PANES", "STATUS"]
     widths = [max(len(record["fields"][i]) for record in records + [{"fields": header}]) for i in range(len(header))]
 
     def render(fields):
