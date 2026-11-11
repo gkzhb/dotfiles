@@ -2,7 +2,28 @@
 
 脚本：`~/.config/tuios/session-switcher.py`。依赖 Python 3、tuios、fzf、git。
 
-当前按 **Ctrl+F s** 打开（`prefix+s` 的 popup 绑定）。Enter 切换，Esc / Ctrl+C 取消，Ctrl+/ 切换预览。脚本不创建或 attach session，不修改 Git。
+当前按 **Ctrl+F s** 打开（`prefix+s` 的 popup 绑定）。Enter 切换，Esc / Ctrl+C 取消，Ctrl+/ 切换预览，**Ctrl+R 删除所选 session（需确认）**。脚本不创建或 attach session，不修改 Git。
+
+## 自动进入 terminal mode
+
+Ctrl+F s 的 popup 绑定显式传入 `--inline --terminal-mode`。脚本在 popup 中启动后，先对源 session 执行 `TerminalMode`，再打开 fzf，因此从 window mode 呼出后可直接输入搜索，无需再手动按 i。不修改全局 `auto_enter_terminal_on_focus` 设置。
+
+直接运行脚本创建的 popup 同样会传入该选项；普通 `--inline` 不改变模式，`--list` 始终只读。模式命令需要现有权限；拒绝时直接报错，不调整授权。当前 tuios 按 session 路由模式命令，为避免改到其他客户端，只允许恰好一个客户端显示源 session；多个客户端时停止并报错。关闭 popup 后不强制恢复 window mode。
+
+## 删除 session
+
+Ctrl+R 打开二次确认，明确说明会终止 session 的全部窗口／进程并断开客户端。默认选中 **Cancel**；按 Down 选择 Kill，再按 Enter 才执行。直接 Enter、Esc / Ctrl+C 均不删除。确认取消或删除成功后重新读取列表；失败／超时退出并报错，不自动重试。
+
+- 禁止在弹窗内删除弹窗所属的当前 session；请从另一个 session 打开选择器。
+- 删除前及确认后均校验 daemon UUID 和原始名称，拒绝已消失、重命名或同名重建的目标。没有 UUID 的旧 daemon 不支持该删除入口。
+- 删除使用 `tuios call kill-session` 的 JSON 参数，名称不进入 shell 命令或 host/session 解析，不执行 eval。
+- daemon 删除 API 仍以名称寻址，校验与执行间的极短竞争窗口无法完全消除；如删除返回未知结果，请先检查状态，不盲目重试。
+
+## 颜色
+
+fzf 使用 `--ansi`：session 名加粗、仓库青色、项目分支紫色、pane 目录蓝色、pane 分支黄色、当前／attached 状态绿色，缺失值与 detached 状态弱化。字段先清洗控制字符，再添加脚本自己的 ANSI；颜色不参与列宽计算，中文宽字符和组合符有专门处理。
+
+`--list` 始终输出纯文本。在环境中设置 `NO_COLOR=1`，或使用 `TERM=dumb`，可关闭 fzf 颜色。
 
 ## 列表字段
 
@@ -23,7 +44,7 @@ SESSION  GIT REPOSITORY  PROJECT BRANCH / REF  PANE DIR  PANE BRANCH / COMMIT  P
 
 ```sh
 python3 ~/.config/tuios/session-switcher.py --list
-python3 -m unittest discover -s ~/.config/tuios/tests -p 'test_session_switcher.py' -v
+python3 -m unittest discover -s ~/.config/tuios/tests -p 'test_session_switcher*.py' -v
 ```
 
-`--list` 只读取 session/pane 元数据和 Git，不打开弹窗、不切换客户端。测试使用替身及一次性临时 Git 仓库，不操作现有 session。
+`--list` 只读取 session/pane 元数据和 Git，不打开弹窗、不切换客户端。测试使用替身及一次性临时 Git 仓库；PTY 测试只启动真实 fzf 验证 Enter / Ctrl+R 和确认默认取消，不调用 tuios 或操作现有 session。

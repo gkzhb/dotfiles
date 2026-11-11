@@ -262,5 +262,5 @@ description = "Ask Pi"
 [[keybindings.command]]
 key = "prefix+s"
 type = "popup"
-command = "python3 ~/.config/tuios/session-switcher.py --inline"
+command = "python3 ~/.config/tuios/session-switcher.py --inline --terminal-mode"
 description = "Sessions (fzf · directory · Git)"

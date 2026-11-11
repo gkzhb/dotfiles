@@ -166,13 +166,15 @@ class PickerTests(unittest.TestCase):
         records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'repo', 'main', 'dir', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
         def fzf(args, **kwargs):
             self.assertIn('--read0', args)
+            self.assertIn('--ansi', args)
+            self.assertIn('--expect=enter,ctrl-r', args)
             self.assertNotIn('FZF_DEFAULT_OPTS', kwargs['env'])
             self.assertEqual(kwargs['input'].split(b'\t')[0], b'0')
             self.assertTrue(kwargs['input'].endswith(b'\0'))
             preview = next(a.split('=', 1)[1] for a in args if a.startswith('--preview='))
             result = subprocess.run([kwargs['env']['SHELL'], '-c', preview.replace('{1}', '0')], capture_output=True, text=True, check=True)
             self.assertEqual(result.stdout.strip(), 'FULL PATH')
-            return subprocess.CompletedProcess(args, 0, b'0\twhatever\0')
+            return subprocess.CompletedProcess(args, 0, b'enter\x000\twhatever\0')
         real_run = subprocess.run
         def dispatch(args, **kwargs):
             if args[0] == 'fzf':
@@ -180,7 +182,98 @@ class PickerTests(unittest.TestCase):
                     return fzf(args, **kwargs)
             return real_run(args, **kwargs)
         with patch.dict(os.environ, {'FZF_DEFAULT_OPTS': '--multi'}), patch.object(picker.subprocess, 'run', side_effect=dispatch):
-            self.assertEqual(picker.choose(records), records[0]['name'])
+            self.assertEqual(picker.choose(records), ('switch', records[0]))
+
+    def test_colored_rows_preserve_alignment_and_sanitize(self):
+        record = {'fields': ['*', '会话\x1b\n', 'repo', 'main', '目录', 'dev', '1', 'current']}
+        plain_header, plain_rows = picker.rows([record])
+        header, rows = picker.rows([record], colored=True)
+        import re
+        strip = lambda s: re.sub(r'\x1b\[[0-9;]*m', '', s)
+        self.assertEqual(strip(header), plain_header)
+        self.assertEqual(strip(rows[0]), plain_rows[0])
+        self.assertIn('\x1b[36mrepo', rows[0])
+        self.assertIn('\x1b[35mmain', rows[0])
+        self.assertIn('\x1b[34m目录', rows[0])
+        self.assertIn('\x1b[33mdev', rows[0])
+        self.assertEqual(picker.display_width('目录'), 4)
+        self.assertEqual(picker.display_width('e\u0301'), 1)
+        self.assertNotIn('\x1b', plain_rows[0])
+
+    def test_no_color_and_kill_action_keep_exact_record(self):
+        record = {'name': 'name', 'fields': [' ', 'name', 'repo', 'main', 'dir', 'dev', '1', 'detached'], 'preview': ''}
+        with patch.dict(os.environ, {'NO_COLOR': '1'}), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'ctrl-r\x000\tignored\0')) as run:
+            self.assertEqual(picker.choose([record]), ('kill', record))
+        self.assertIn('--no-color', run.call_args.args[0])
+        self.assertNotIn(b'\x1b', run.call_args.kwargs['input'])
+
+    def test_malformed_selection_is_rejected(self):
+        record = {'name': 's', 'fields': [' ', 's', 'r', 'b', 'd', 'b', '1', 'detached'], 'preview': ''}
+        for output in (b'enter\x00-1\trow\0', b'enter\x0099\trow\0',
+                       b'unknown\x000\trow\0', b'0\trow\0'):
+            with self.subTest(output=output), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, output)):
+                with self.assertRaises(picker.PickerError):
+                    picker.choose([record])
+
+    def test_kill_uses_exact_json_name_and_checks_twice(self):
+        record = {'name': '-name \"; $(bad) @host\n', 'id': '12345678-1234-1234-1234-123456789abc'}
+        with patch.object(picker, 'tuios_json', side_effect=[[record], [record], {'type': 'ok'}]) as api, patch.object(picker, 'confirm_kill', return_value=True):
+            self.assertTrue(picker.kill_selected(record, 'source'))
+        self.assertEqual(api.call_args_list[0].args, ('ls',))
+        self.assertEqual(api.call_args_list[1].args, ('ls',))
+        args = api.call_args_list[2].args
+        self.assertEqual(args[:2], ('call', 'kill-session'))
+        self.assertEqual(json.loads(args[2]), {'session': record['name']})
+
+    def test_kill_confirmation_cancel_never_calls_kill(self):
+        record = {'name': 'target', 'id': '12345678-1234-1234-1234-123456789abc'}
+        with patch.object(picker, 'tuios_json', return_value=[record]) as api, patch.object(picker, 'confirm_kill', return_value=False):
+            self.assertFalse(picker.kill_selected(record, 'source'))
+        api.assert_called_once_with('ls')
+
+    def test_current_session_missing_id_and_replacement_are_refused(self):
+        record = {'name': 'target', 'id': '12345678-1234-1234-1234-123456789abc'}
+        cases = [(record, [record], 'target'),
+                 ({'name': 'target'}, [record], 'source'),
+                 (record, [dict(record, id='87654321-1234-1234-1234-123456789abc')], 'source'),
+                 (record, [dict(record, name='renamed')], 'source')]
+        for selected, listing, source in cases:
+            with self.subTest(selected=selected, listing=listing, source=source), patch.object(picker, 'tuios_json', return_value=listing) as api, patch.object(picker, 'confirm_kill') as confirm:
+                with self.assertRaises(picker.PickerError):
+                    picker.kill_selected(selected, source)
+                confirm.assert_not_called()
+                self.assertTrue(all(c.args == ('ls',) for c in api.call_args_list))
+
+    def test_session_replaced_during_confirmation_is_not_killed(self):
+        record = {'name': 'target', 'id': '12345678-1234-1234-1234-123456789abc'}
+        replacement = dict(record, id='87654321-1234-1234-1234-123456789abc')
+        with patch.object(picker, 'tuios_json', side_effect=[[record], [replacement]]) as api, patch.object(picker, 'confirm_kill', return_value=True):
+            with self.assertRaises(picker.PickerError):
+                picker.kill_selected(record, 'source')
+        self.assertEqual(api.call_count, 2)
+
+    def test_confirmation_requires_explicit_kill_selection(self):
+        for code, output, confirmed in ((0, b'0\tCancel\0', False), (0, b'1\tKill\0', True), (130, b'', False)):
+            with self.subTest(code=code, output=output), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], code, output)) as run:
+                self.assertEqual(picker.confirm_kill({'name': 'unsafe\n\x1b'}), confirmed)
+                payload = run.call_args.kwargs['input']
+                self.assertTrue(payload.startswith(b'0\tCancel'))
+                self.assertNotIn(b'\x1b', payload)
+
+    def test_kill_refreshes_and_never_switches(self):
+        record = {'name': 'target'}
+        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', side_effect=[[record], []]) as collect, patch.object(picker, 'choose', return_value=('kill', record)), patch.object(picker, 'kill_selected', return_value=True) as kill, patch.object(picker.subprocess, 'call') as switch:
+            self.assertEqual(picker.main(['--inline', '--source', 'source']), 0)
+        kill.assert_called_once_with(record, 'source')
+        self.assertEqual(collect.call_count, 2)
+        switch.assert_not_called()
+
+    def test_kill_error_is_not_retried_or_switched(self):
+        record = {'name': 'target', 'id': '12345678-1234-1234-1234-123456789abc'}
+        with patch.object(picker, 'tuios_json', side_effect=[[record], [record], picker.PickerError('forbidden')]) as api, patch.object(picker, 'confirm_kill', return_value=True):
+            with self.assertRaisesRegex(picker.PickerError, 'forbidden'):
+                picker.kill_selected(record, 'source')
+        self.assertEqual(api.call_count, 3)
 
     def test_cancel_does_not_switch(self):
         with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[{}]), patch.object(picker, 'choose', return_value=None), patch.object(picker.subprocess, 'call') as switch:
@@ -189,12 +282,12 @@ class PickerTests(unittest.TestCase):
 
     def test_exact_session_argv_no_attach(self):
         target = '-target "with spaces"'
-        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[{}]), patch.object(picker, 'choose', return_value=target), patch.object(picker.subprocess, 'call', return_value=0) as switch:
+        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[{}]), patch.object(picker, 'choose', return_value=('switch', {'name': target})), patch.object(picker.subprocess, 'call', return_value=0) as switch:
             self.assertEqual(picker.main(['--inline', '--source', 'source']), 0)
             switch.assert_called_once_with(['tuios', 'switch-session', '-s', 'source', '--', target])
 
     def test_selecting_current_session_does_not_switch(self):
-        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[{}]), patch.object(picker, 'choose', return_value='source'), patch.object(picker.subprocess, 'call') as switch:
+        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[{}]), patch.object(picker, 'choose', return_value=('switch', {'name': 'source'})), patch.object(picker.subprocess, 'call') as switch:
             self.assertEqual(picker.main(['--inline', '--source', 'source']), 0)
             switch.assert_not_called()
 
@@ -203,7 +296,38 @@ class PickerTests(unittest.TestCase):
             self.assertEqual(picker.main(['--source', 'source', '--active-pane', 'original']), 0)
             argv = popup.call_args.args[0]
             self.assertEqual(argv[:4], ['tuios', 'popup', '-s', 'source'])
+            self.assertIn('--terminal-mode', argv)
             self.assertEqual(argv[-4:], ['--source', 'source', '--active-pane', 'original'])
+
+    def test_popup_terminal_mode_routes_exact_session(self):
+        source = '-source @literal'
+        with patch.object(picker, 'tuios_json', side_effect=[[{'session': source}, {'session': 'other'}], {'routed': True}]) as api:
+            picker.enter_popup_terminal_mode(source)
+        self.assertEqual(api.call_args_list[0].args, ('list-clients',))
+        args = api.call_args_list[1].args
+        self.assertEqual(args[:2], ('call', 'run-command'))
+        self.assertEqual(json.loads(args[2]), {'session': source, 'command': 'TerminalMode'})
+
+    def test_popup_terminal_mode_refuses_ambiguous_client(self):
+        for listing in ([], [{'session': 's'}, {'session': 's'}], {}):
+            with self.subTest(listing=listing), patch.object(picker, 'tuios_json', return_value=listing) as api:
+                with self.assertRaises(picker.PickerError):
+                    picker.enter_popup_terminal_mode('s')
+                api.assert_called_once_with('list-clients')
+
+    def test_terminal_mode_runs_before_picker_only_when_explicit(self):
+        events = []
+        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'enter_popup_terminal_mode', side_effect=lambda s: events.append(('mode', s))), patch.object(picker, 'collect', side_effect=lambda *a: events.append(('collect',)) or []):
+            self.assertEqual(picker.main(['--inline', '--terminal-mode', '--source', 's']), 0)
+        self.assertEqual(events, [('mode', 's'), ('collect',)])
+
+    def test_plain_inline_and_list_do_not_change_terminal_mode(self):
+        for argv in (['--inline'], ['--list']):
+            with self.subTest(argv=argv), patch.object(picker.shutil, 'which', return_value='/bin/tool'), patch.object(picker, 'collect', return_value=[]), patch.object(picker, 'enter_popup_terminal_mode') as mode:
+                self.assertEqual(picker.main(argv), 0)
+                mode.assert_not_called()
+        with self.assertRaises(picker.PickerError):
+            picker.main(['--list', '--terminal-mode'])
 
     def test_daemon_failure_is_not_empty_list(self):
         with patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], 3, '[]', 'daemon stopped')):

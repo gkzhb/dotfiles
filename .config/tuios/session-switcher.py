@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import shutil
 import subprocess
@@ -143,52 +144,153 @@ def collect(source="", active_pane=""):
             focus = "*" if pane is primary else " "
             lines.append(f" {focus} ws{pane.get('workspace', '?')}  {pane.get('command') or pane.get('title') or pane.get('name') or 'shell'}")
             lines.append(f"     {pane_cwd or 'unknown'}{pane_ref}")
-        records.append({"name": name, "fields": list(map(text, fields)), "preview": "\n".join(map(text, lines))})
+        records.append({"name": name, "id": session.get("id"), "fields": list(map(text, fields)), "preview": "\n".join(map(text, lines))})
     return records
 
 
-def rows(records):
+def display_width(value):
+    return sum(
+        0 if unicodedata.combining(c) else
+        2 if unicodedata.east_asian_width(c) in ("W", "F") else 1
+        for c in value
+    )
+
+
+def colors_enabled():
+    return "NO_COLOR" not in os.environ and os.environ.get("TERM") != "dumb"
+
+
+def color(value, style, enabled):
+    return f"\x1b[{style}m{value}\x1b[0m" if enabled else value
+
+
+def rows(records, colored=False):
     header = ["", "SESSION", "GIT REPOSITORY", "PROJECT BRANCH / REF", "PANE DIR", "PANE BRANCH / COMMIT", "PANES", "STATUS"]
-    widths = [max(len(record["fields"][i]) for record in records + [{"fields": header}]) for i in range(len(header))]
+    # Sanitize before adding our own ANSI; untrusted names never supply escapes.
+    fields = [list(map(text, record["fields"])) for record in records]
+    widths = [max(display_width(row[i]) for row in fields + [header]) for i in range(len(header))]
 
-    def render(fields):
-        return "  ".join(field.ljust(width) for field, width in zip(fields, widths)).rstrip()
+    def render(row, heading=False):
+        styles = ["1;32", "1", "36", "35", "34", "33", "2", "2"]
+        styles[-1] = {"current": "1;32", "attached": "32", "detached": "2"}.get(row[-1], "2")
+        cells = []
+        for i, field in enumerate(row):
+            style = "1;36" if heading else "2" if field == "—" else styles[i]
+            cells.append(color(field, style, colored) + " " * (widths[i] - display_width(field)))
+        return "  ".join(cells).rstrip()
 
-    return render(header), [render(record["fields"]) for record in records]
+    return render(header, True), [render(row) for row in fields]
+
+
+def fzf_env():
+    env = dict(os.environ)
+    for key in ("FZF_DEFAULT_OPTS", "FZF_DEFAULT_OPTS_FILE", "FZF_DEFAULT_COMMAND"):
+        env.pop(key, None)
+    env["SHELL"] = shutil.which("sh") or "/bin/sh"
+    return env
+
+
+def fzf_output(result):
+    if result.returncode in (1, 130):
+        return None
+    if result.returncode:
+        raise PickerError(f"fzf exited {result.returncode}")
+    return result.stdout.rstrip(b"\0").split(b"\0")
 
 
 def choose(records):
-    header, display = rows(records)
+    colored = colors_enabled()
+    header, display = rows(records, colored=colored)
     with tempfile.TemporaryDirectory(prefix="tuios-sessions-") as directory:
         snapshot = Path(directory) / "preview.json"
         snapshot.write_text(json.dumps([r["preview"] for r in records]), encoding="utf-8")
         snapshot.chmod(0o600)
         preview = " ".join(map(shlex.quote, [sys.executable, str(Path(__file__).resolve()), "--preview", str(snapshot)])) + " {1}"
         payload = b"\0".join(f"{i}\t{row}".encode() for i, row in enumerate(display)) + b"\0"
-        env = dict(os.environ)
-        # Options such as --expect/--multi or custom shell bindings would change
-        # the output contract. This picker deliberately owns its fzf options.
-        for key in ("FZF_DEFAULT_OPTS", "FZF_DEFAULT_OPTS_FILE", "FZF_DEFAULT_COMMAND"):
-            env.pop(key, None)
-        env["SHELL"] = shutil.which("sh") or "/bin/sh"
+        env = fzf_env()
+        # This picker owns its fzf options and action/selection output contract.
         result = subprocess.run(
             ["fzf", "--read0", "--print0", "--delimiter=\t", "--with-nth=2..",
-             "--no-multi", "--no-sort", "--layout=reverse", "--border", "--prompt=Session> ",
-             "--header=" + "Enter: switch · Esc/Ctrl-C: cancel · Ctrl-/: preview\n" + header,
+             "--ansi", *([] if colored else ["--no-color"]),
+             "--expect=enter,ctrl-r", "--no-multi", "--no-sort",
+             "--layout=reverse", "--border", "--prompt=Session> ",
+             "--header=" + "Enter: switch · Ctrl+R: kill (confirm) · Esc: cancel · Ctrl-/: preview\n" + header,
              "--preview=" + preview, "--preview-window=down,45%,wrap", "--bind=ctrl-/:toggle-preview"],
             input=payload, stdout=subprocess.PIPE, env=env,
         )
-    if result.returncode in (1, 130):
+    parts = fzf_output(result)
+    if parts is None:
         return None
-    if result.returncode:
-        raise PickerError(f"fzf exited {result.returncode}")
     try:
-        index = int(result.stdout.split(b"\t", 1)[0])
+        if len(parts) != 2 or parts[0] not in (b"enter", b"ctrl-r"):
+            raise ValueError()
+        index = int(parts[1].split(b"\t", 1)[0])
         if index < 0:
             raise ValueError()
-        return records[index]["name"]
+        return ("kill" if parts[0] == b"ctrl-r" else "switch"), records[index]
     except (ValueError, IndexError) as error:
         raise PickerError("Unexpected fzf selection") from error
+
+
+def live_kill_target(record, source):
+    """Fail closed: deletion only reaches this exact still-live identity/name."""
+    name, identity = record["name"], record.get("id")
+    if not isinstance(identity, str) or not re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", identity):
+        raise PickerError("Cannot kill a session without a daemon UUID.")
+    sessions = tuios_json("ls")
+    if not isinstance(sessions, list):
+        raise PickerError("Expected session-list array")
+    targets = [s for s in sessions if s.get("id") == identity and s.get("name") == name and not s.get("saved")]
+    if len(targets) != 1:
+        raise PickerError("Session disappeared or was renamed/replaced; reopen the picker.")
+    source_id = next((s.get("id") for s in sessions if s.get("name") == source), None)
+    if name == source or identity == source_id:
+        raise PickerError("Cannot kill the picker's own session; open it from another session.")
+    return targets[0]
+
+
+def confirm_kill(record):
+    name = text(record["name"])
+    payload = b"0\tCancel (keep session)\0" + f"1\tKill session: {name}".encode() + b"\0"
+    result = subprocess.run(
+        ["fzf", "--read0", "--print0", "--delimiter=\t", "--with-nth=2..",
+         "--no-multi", "--no-sort", "--no-input", "--layout=reverse", "--border",
+         "--border-label=Confirm session kill",
+         *(["--color=header:yellow,border:red"] if colors_enabled() else ["--no-color"]),
+         "--header=" + f"Terminate ALL windows/processes and disconnect clients: {name}\n"
+         "Cancel selected by default · Down then Enter: kill · Esc: cancel"],
+        input=payload, stdout=subprocess.PIPE, env=fzf_env(),
+    )
+    parts = fzf_output(result)
+    if parts is None:
+        return False
+    if len(parts) != 1 or parts[0].split(b"\t", 1)[0] not in (b"0", b"1"):
+        raise PickerError("Unexpected kill confirmation")
+    return parts[0].split(b"\t", 1)[0] == b"1"
+
+
+def kill_selected(record, source):
+    live_kill_target(record, source)
+    if not confirm_kill(record):
+        return False
+    # Confirming may take time; re-check identity, never kill a same-name replacement.
+    live_kill_target(record, source)
+    # JSON params keep hostile names literal (no shell or host/session parsing).
+    tuios_json("call", "kill-session", json.dumps({"session": record["name"]}))
+    return True
+
+
+def enter_popup_terminal_mode(source):
+    if not source:
+        raise PickerError("Popup terminal mode requires --source SESSION.")
+    # run-command selects an attached client, not a client UUID. Refuse to
+    # change an arbitrary peer when several clients show the same session.
+    clients = tuios_json("list-clients")
+    if not isinstance(clients, list):
+        raise PickerError("Expected client-list array")
+    if len([c for c in clients if c.get("session") == source]) != 1:
+        raise PickerError("Popup terminal mode needs exactly one client showing the source session.")
+    tuios_json("call", "run-command", json.dumps({"session": source, "command": "TerminalMode"}))
 
 
 def main(argv=None):
@@ -196,10 +298,13 @@ def main(argv=None):
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--inline", action="store_true", help="Run fzf in this terminal")
     mode.add_argument("--list", action="store_true", help="Print a read-only session table")
+    parser.add_argument("--terminal-mode", action="store_true", help="Enter terminal mode for this popup (requires --inline)")
     parser.add_argument("--source", default=os.environ.get("TUIOS_SESSION", ""), help="Session whose client to switch")
     parser.add_argument("--active-pane", default=os.environ.get("TUIOS_ACTIVE_PANE_ID") or os.environ.get("TUIOS_WINDOW_ID", ""))
     parser.add_argument("--preview", nargs=2, metavar=("SNAPSHOT", "INDEX"), help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.terminal_mode and (not args.inline or args.preview):
+        raise PickerError("--terminal-mode requires --inline; --list remains read-only.")
     if args.preview:
         path, index = args.preview
         print(json.loads(Path(path).read_text())[int(index)])
@@ -212,25 +317,36 @@ def main(argv=None):
             raise PickerError("Run inside tuios, or use --inline in a terminal")
         return subprocess.call([
             "tuios", "popup", "-s", args.source, "--width", "95%", "--height", "85%", "--",
-            sys.executable, str(Path(__file__).resolve()), "--inline", "--source", args.source,
+            sys.executable, str(Path(__file__).resolve()), "--inline", "--terminal-mode", "--source", args.source,
             "--active-pane", args.active_pane,
         ])
-    records = collect(args.source, args.active_pane)
-    if not records:
-        print("No live tuios sessions.", file=sys.stderr)
-        return 0
-    if args.list:
-        header, display = rows(records)
-        print("\n".join([header, *display]))
-        return 0
-    selected = choose(records)
-    if selected is None or selected == args.source:
-        return 0
-    command = ["tuios", "switch-session"]
-    if args.source:
-        command += ["-s", args.source]
-    # End flag parsing; pass the exact name, never the formatted display row.
-    return subprocess.call([*command, "--", selected])
+    if args.terminal_mode:
+        enter_popup_terminal_mode(args.source)
+    while True:
+        records = collect(args.source, args.active_pane)
+        if not records:
+            print("No live tuios sessions.", file=sys.stderr)
+            return 0
+        if args.list:
+            header, display = rows(records)
+            print("\n".join([header, *display]))
+            return 0
+        selected = choose(records)
+        if selected is None:
+            return 0
+        action, record = selected
+        if action == "kill":
+            kill_selected(record, args.source)
+            # Refresh after either cancellation or successful deletion. Errors
+            # leave the picker, with no retry of an uncertain destructive call.
+            continue
+        name = record["name"]
+        if name == args.source:
+            return 0
+        command = ["tuios", "switch-session"]
+        if args.source:
+            command += ["-s", args.source]
+        return subprocess.call([*command, "--", name])
 
 
 if __name__ == "__main__":
