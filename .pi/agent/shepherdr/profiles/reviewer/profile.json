@@ -1,6 +1,7 @@
 {
 	"description": "Read-only review",
 	"blocking": true,
+	"share_context": false,
 	"model": "newapi/gpt-6.1-sol",
 	"thinking": "xhigh",
 	"prompt": "prompt.md",
