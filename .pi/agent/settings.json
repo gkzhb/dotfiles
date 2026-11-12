@@ -65,9 +65,10 @@
   },
   "tidy": {
     "userMessageTime": true,
-    "userMessageStyle": "off",
+    "userMessageStyle": "rules",
+    "userMessagePaddingY": 0,
     "finalReplyStyle": "rules",
-    "messageTimeFormat": "HH:mm:ss",
+    "messageTimeFormat": "YYYY-MM-DD HH:mm:ss",
     "messageHeaderStyle": "split",
     "collapseTurns": "live"
   },
