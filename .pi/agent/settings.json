@@ -63,6 +63,14 @@
       "interactiveWhenEmpty": true
     }
   },
+  "tidy": {
+    "userMessageTime": true,
+    "userMessageStyle": "off",
+    "finalReplyStyle": "rules",
+    "messageTimeFormat": "HH:mm:ss",
+    "messageHeaderStyle": "split",
+    "collapseTurns": "live"
+  },
   "outputPad": 0,
   "tuiMode": "fullscreen",
   "hideThinkingBlock": true
