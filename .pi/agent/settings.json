@@ -23,14 +23,14 @@
     "npm:@furbyhaxx/pi-session-naming",
     "npm:@fitchmultz/pi-stash",
     "https://github.com/monotykamary/pi-retry",
-    "npm:@narumitw/pi-stamp",
     "npm:pi-paster",
     "npm:pi-tidy",
     "npm:@narumitw/pi-tool",
     "npm:pi-context-view",
     "npm:@99percentpeople/pi-ssh-remote",
     "npm:@gkzhb/pi-shepherdr",
-    "npm:@gkzhb/pi-ntfy"
+    "npm:@gkzhb/pi-ntfy",
+    "npm:pi-hud-footer"
   ],
   "session": {
     "titleGeneration": {
