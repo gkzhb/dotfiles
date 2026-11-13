@@ -162,26 +162,35 @@ class PickerTests(unittest.TestCase):
             with self.assertRaises(picker.PickerError):
                 picker.collect()
 
-    def test_fzf_contract_and_safe_preview(self):
+    def test_tv_contract_and_safe_preview(self):
+        import tomllib
         records = [{'name': '-name with spaces', 'fields': [' ', 'name', 'repo', 'main', 'dir', 'main', '1', 'detached'], 'preview': 'FULL PATH'}]
-        def fzf(args, **kwargs):
-            self.assertIn('--read0', args)
-            self.assertIn('--ansi', args)
-            self.assertIn('--expect=enter,ctrl-r', args)
-            self.assertNotIn('FZF_DEFAULT_OPTS', kwargs['env'])
-            self.assertEqual(kwargs['input'].split(b'\t')[0], b'0')
-            self.assertTrue(kwargs['input'].endswith(b'\0'))
-            preview = next(a.split('=', 1)[1] for a in args if a.startswith('--preview='))
-            result = subprocess.run([kwargs['env']['SHELL'], '-c', preview.replace('{1}', '0')], capture_output=True, text=True, check=True)
-            self.assertEqual(result.stdout.strip(), 'FULL PATH')
-            return subprocess.CompletedProcess(args, 0, b'enter\x000\twhatever\0')
         real_run = subprocess.run
-        def dispatch(args, **kwargs):
-            if args[0] == 'fzf':
-                with patch.object(picker.subprocess, 'run', real_run):
-                    return fzf(args, **kwargs)
-            return real_run(args, **kwargs)
-        with patch.dict(os.environ, {'FZF_DEFAULT_OPTS': '--multi'}), patch.object(picker.subprocess, 'run', side_effect=dispatch):
+        def tv(args, **kwargs):
+            self.assertEqual(args[:2], ['tv', 'tuios-sessions'])
+            self.assertIn('--ansi', args)
+            self.assertEqual(args[args.index('--expect') + 1], 'ctrl-r')
+            self.assertIn('--no-remote', args)
+            self.assertIn('--no-sort', args)
+            self.assertNotIn('input', kwargs)
+            self.assertNotIn('stderr', kwargs)  # UI stays visible in the popup.
+            state = Path(kwargs['env']['TS_STATE'])
+            payload = (state / 'rows.tsv').read_text()
+            self.assertTrue(payload.startswith('s0\t'))
+            self.assertTrue(payload.endswith('\n'))
+            config = tomllib.loads(Path(args[args.index('--config-file') + 1]).read_text())
+            self.assertEqual(config['shell'], 'bash')
+            self.assertEqual(config['history_size'], 0)
+            self.assertEqual(config['keybindings']['tab'], 'no_op')
+            self.assertEqual(config['keybindings']['backtab'], 'no_op')
+            channel = tomllib.loads((picker.TV_ROOT / 'cable/tuios-sessions.toml').read_text())
+            self.assertNotIn('display', channel['source'])  # DisplayProcessor disables ANSI.
+            preview = channel['preview']['command'].replace('{split:\t:0}', 's0')
+            result = real_run(['bash', '-c', preview], capture_output=True, text=True,
+                              env=kwargs['env'], check=True)
+            self.assertEqual(result.stdout.strip(), 'FULL PATH')
+            return subprocess.CompletedProcess(args, 0, b's0\n')
+        with patch.dict(os.environ, {'FZF_DEFAULT_OPTS': '--multi', 'SHELL': '/bin/fish'}), patch.object(picker.subprocess, 'run', side_effect=tv):
             self.assertEqual(picker.choose(records), ('switch', records[0]))
 
     def test_colored_rows_preserve_alignment_and_sanitize(self):
@@ -189,7 +198,8 @@ class PickerTests(unittest.TestCase):
         plain_header, plain_rows = picker.rows([record])
         header, rows = picker.rows([record], colored=True)
         import re
-        strip = lambda s: re.sub(r'\x1b\[[0-9;]*m', '', s)
+        def strip(s):
+            return re.sub(r'\x1b\[[0-9;]*m', '', s)
         self.assertEqual(strip(header), plain_header)
         self.assertEqual(strip(rows[0]), plain_rows[0])
         self.assertIn('\x1b[36mrepo', rows[0])
@@ -202,18 +212,29 @@ class PickerTests(unittest.TestCase):
 
     def test_no_color_and_kill_action_keep_exact_record(self):
         record = {'name': 'name', 'fields': [' ', 'name', 'repo', 'main', 'dir', 'dev', '1', 'detached'], 'preview': ''}
-        with patch.dict(os.environ, {'NO_COLOR': '1'}), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, b'ctrl-r\x000\tignored\0')) as run:
+        def tv(args, **kwargs):
+            self.assertNotIn('--ansi', args)
+            self.assertNotIn('\x1b', (Path(kwargs['env']['TS_STATE']) / 'rows.tsv').read_text())
+            return subprocess.CompletedProcess(args, 0, b'ctrl-r\ns0\n')
+        with patch.dict(os.environ, {'NO_COLOR': '1'}), patch.object(picker.subprocess, 'run', side_effect=tv):
             self.assertEqual(picker.choose([record]), ('kill', record))
-        self.assertIn('--no-color', run.call_args.args[0])
-        self.assertNotIn(b'\x1b', run.call_args.kwargs['input'])
 
     def test_malformed_selection_is_rejected(self):
         record = {'name': 's', 'fields': [' ', 's', 'r', 'b', 'd', 'b', '1', 'detached'], 'preview': ''}
-        for output in (b'enter\x00-1\trow\0', b'enter\x0099\trow\0',
-                       b'unknown\x000\trow\0', b'0\trow\0'):
+        for output in (b's-1\n', b's99\n', b'unknown\ns0\n', b's0\ns0\n',
+                       b'ctrl-r\n', b'enter\ns0\n', b's0\trow\n', b'\xff'):
             with self.subTest(output=output), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, output)):
                 with self.assertRaises(picker.PickerError):
                     picker.choose([record])
+
+    def test_tv_cancellation_and_failure_contract(self):
+        for code in (0, 130):
+            with self.subTest(code=code), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], code, b'')):
+                self.assertIsNone(picker.television(['row'], 'header'))
+        for code in (1, 2):
+            with self.subTest(code=code), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], code, b'')):
+                with self.assertRaisesRegex(picker.PickerError, 'Television exited'):
+                    picker.television(['row'], 'header')
 
     def test_kill_uses_exact_json_name_and_checks_twice(self):
         record = {'name': '-name \"; $(bad) @host\n', 'id': '12345678-1234-1234-1234-123456789abc'}
@@ -253,12 +274,28 @@ class PickerTests(unittest.TestCase):
         self.assertEqual(api.call_count, 2)
 
     def test_confirmation_requires_explicit_kill_selection(self):
-        for code, output, confirmed in ((0, b'0\tCancel\0', False), (0, b'1\tKill\0', True), (130, b'', False)):
-            with self.subTest(code=code, output=output), patch.object(picker.subprocess, 'run', return_value=subprocess.CompletedProcess([], code, output)) as run:
-                self.assertEqual(picker.confirm_kill({'name': 'unsafe\n\x1b'}), confirmed)
-                payload = run.call_args.kwargs['input']
-                self.assertTrue(payload.startswith(b'0\tCancel'))
+        for code, output, confirmed in ((0, b's0\n', False), (0, b's1\n', True),
+                                        (0, b'', False), (130, b'', False)):
+            def tv(args, **kwargs):
+                payload = (Path(kwargs['env']['TS_STATE']) / 'rows.tsv').read_bytes()
+                self.assertTrue(payload.startswith(b's0\tCancel'))
                 self.assertNotIn(b'\x1b', payload)
+                self.assertIn('--no-preview', args)
+                self.assertNotIn('--expect', args)
+                header = args[args.index('--input-header') + 1]
+                self.assertNotIn('{', header)
+                self.assertIn('Terminate ALL windows/processes', header)
+                return subprocess.CompletedProcess(args, code, output)
+            with self.subTest(code=code, output=output), patch.object(picker.subprocess, 'run', side_effect=tv):
+                self.assertEqual(picker.confirm_kill({'name': 'unsafe\n\x1b{bad}'}), confirmed)
+
+    def test_invalid_preview_token_is_rejected(self):
+        for token in ('-1', 's0; touch /tmp/unsafe', 's0\n', 's99'):
+            with self.subTest(token=token), tempfile.TemporaryDirectory() as directory:
+                snapshot = Path(directory) / 'preview.json'
+                snapshot.write_text('["preview"]')
+                with self.assertRaises(picker.PickerError):
+                    picker.main(['--preview', str(snapshot), token])
 
     def test_kill_refreshes_and_never_switches(self):
         record = {'name': 'target'}

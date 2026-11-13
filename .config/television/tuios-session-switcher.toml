@@ -1,0 +1,19 @@
+# Private picker config: no shared query history, shell integration or multi-select.
+shell = "bash"
+history_size = 0
+
+[ui]
+theme = "default"
+
+[keybindings]
+esc = "quit"
+ctrl-c = "quit"
+down = "select_next_entry"
+up = "select_prev_entry"
+# Defaults are merged, so omission does not disable multi-selection.
+tab = "no_op"
+backtab = "no_op"
+enter = "confirm_selection"
+"ctrl-/" = "toggle_preview"
+pageup = "scroll_preview_half_page_up"
+pagedown = "scroll_preview_half_page_down"

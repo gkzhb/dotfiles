@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""fzf session picker: tuios repository groups first, live pane context second.
+"""Television session picker: tuios repository groups first, live pane context second.
 
 Default: open a popup from a tuios pane. --inline: use this terminal (also
 for type="popup" keybindings). --list: read-only table, useful for diagnosis.
-Requires python3, tuios, fzf and git. No attach, session creation or Git writes.
+Requires python3, tuios, tv, bash and git. No attach, session creation or Git writes.
 """
 
 import argparse
@@ -11,12 +11,13 @@ import json
 import os
 from pathlib import Path
 import re
-import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
 import unicodedata
+
+TV_ROOT = Path(__file__).resolve().parent.parent / "television"
 
 
 class PickerError(Exception):
@@ -182,54 +183,62 @@ def rows(records, colored=False):
     return render(header, True), [render(row) for row in fields]
 
 
-def fzf_env():
-    env = dict(os.environ)
-    for key in ("FZF_DEFAULT_OPTS", "FZF_DEFAULT_OPTS_FILE", "FZF_DEFAULT_COMMAND"):
-        env.pop(key, None)
-    env["SHELL"] = shutil.which("sh") or "/bin/sh"
-    return env
-
-
-def fzf_output(result):
-    if result.returncode in (1, 130):
+def television(labels, header, previews=None, expect_kill=False, colored=False):
+    """Only snapshot tokens cross tv's shell/template and output boundaries."""
+    with tempfile.TemporaryDirectory(prefix="tuios-sessions-") as directory:
+        state = Path(directory)
+        tokens = [f"s{i}" for i in range(len(labels))]
+        (state / "rows.tsv").write_text(
+            "".join(f"{token}\t{label}\n" for token, label in zip(tokens, labels)),
+            encoding="utf-8",
+        )
+        snapshot = state / "preview.json"
+        snapshot.write_text(json.dumps(previews or []), encoding="utf-8")
+        snapshot.chmod(0o600)
+        env = dict(os.environ, TS_STATE=directory, TS_PYTHON=sys.executable,
+                   TS_SCRIPT=str(Path(__file__).resolve()))
+        argv = ["tv", "tuios-sessions", "--config-file", str(TV_ROOT / "tuios-session-switcher.toml"),
+                "--cable-dir", str(TV_ROOT / "cable"), "--no-remote", "--no-sort",
+                "--input-header", text(header).replace("{", "(").replace("}", ")"),
+                "--input-prompt", "Session> "]
+        if colored:
+            argv.append("--ansi")
+        if expect_kill:
+            argv += ["--expect", "ctrl-r"]
+        if previews is None:
+            argv.append("--no-preview")
+        # tv renders to stderr; inherit it live, capture only selection tokens.
+        result = subprocess.run(argv, stdout=subprocess.PIPE, env=env)
+    if result.returncode == 130:
         return None
     if result.returncode:
-        raise PickerError(f"fzf exited {result.returncode}")
-    return result.stdout.rstrip(b"\0").split(b"\0")
+        raise PickerError(f"Television exited {result.returncode}")
+    try:
+        parts = result.stdout.decode("utf-8").splitlines()
+        if not parts:
+            return None  # Esc / Ctrl+C can also exit 0 without a selection.
+        action = "switch"
+        if expect_kill and parts[0] == "ctrl-r":
+            action = "kill"
+            parts.pop(0)
+        if len(parts) != 1 or parts[0] not in tokens:
+            raise ValueError()
+        return action, tokens.index(parts[0])
+    except (ValueError, UnicodeError) as error:
+        raise PickerError("Unexpected Television selection") from error
 
 
 def choose(records):
     colored = colors_enabled()
     header, display = rows(records, colored=colored)
-    with tempfile.TemporaryDirectory(prefix="tuios-sessions-") as directory:
-        snapshot = Path(directory) / "preview.json"
-        snapshot.write_text(json.dumps([r["preview"] for r in records]), encoding="utf-8")
-        snapshot.chmod(0o600)
-        preview = " ".join(map(shlex.quote, [sys.executable, str(Path(__file__).resolve()), "--preview", str(snapshot)])) + " {1}"
-        payload = b"\0".join(f"{i}\t{row}".encode() for i, row in enumerate(display)) + b"\0"
-        env = fzf_env()
-        # This picker owns its fzf options and action/selection output contract.
-        result = subprocess.run(
-            ["fzf", "--read0", "--print0", "--delimiter=\t", "--with-nth=2..",
-             "--ansi", *([] if colored else ["--no-color"]),
-             "--expect=enter,ctrl-r", "--no-multi", "--no-sort",
-             "--layout=reverse", "--border", "--prompt=Session> ",
-             "--header=" + "Enter: switch · Ctrl+R: kill (confirm) · Esc: cancel · Ctrl-/: preview\n" + header,
-             "--preview=" + preview, "--preview-window=down,45%,wrap", "--bind=ctrl-/:toggle-preview"],
-            input=payload, stdout=subprocess.PIPE, env=env,
-        )
-    parts = fzf_output(result)
-    if parts is None:
+    selected = television(
+        display, "Enter: switch · Ctrl+R: kill (confirm) · Esc: cancel · Ctrl-/: preview | " + header,
+        previews=[r["preview"] for r in records], expect_kill=True, colored=colored,
+    )
+    if selected is None:
         return None
-    try:
-        if len(parts) != 2 or parts[0] not in (b"enter", b"ctrl-r"):
-            raise ValueError()
-        index = int(parts[1].split(b"\t", 1)[0])
-        if index < 0:
-            raise ValueError()
-        return ("kill" if parts[0] == b"ctrl-r" else "switch"), records[index]
-    except (ValueError, IndexError) as error:
-        raise PickerError("Unexpected fzf selection") from error
+    action, index = selected
+    return action, records[index]
 
 
 def live_kill_target(record, source):
@@ -251,22 +260,12 @@ def live_kill_target(record, source):
 
 def confirm_kill(record):
     name = text(record["name"])
-    payload = b"0\tCancel (keep session)\0" + f"1\tKill session: {name}".encode() + b"\0"
-    result = subprocess.run(
-        ["fzf", "--read0", "--print0", "--delimiter=\t", "--with-nth=2..",
-         "--no-multi", "--no-sort", "--no-input", "--layout=reverse", "--border",
-         "--border-label=Confirm session kill",
-         *(["--color=header:yellow,border:red"] if colors_enabled() else ["--no-color"]),
-         "--header=" + f"Terminate ALL windows/processes and disconnect clients: {name}\n"
-         "Cancel selected by default · Down then Enter: kill · Esc: cancel"],
-        input=payload, stdout=subprocess.PIPE, env=fzf_env(),
+    selected = television(
+        ["Cancel (keep session)", f"Kill session: {name}"],
+        f"Confirm session kill · Terminate ALL windows/processes and disconnect clients: {name} · "
+        "Cancel selected by default · Down then Enter: kill · Esc: cancel",
     )
-    parts = fzf_output(result)
-    if parts is None:
-        return False
-    if len(parts) != 1 or parts[0].split(b"\t", 1)[0] not in (b"0", b"1"):
-        raise PickerError("Unexpected kill confirmation")
-    return parts[0].split(b"\t", 1)[0] == b"1"
+    return selected is not None and selected[1] == 1
 
 
 def kill_selected(record, source):
@@ -296,20 +295,26 @@ def enter_popup_terminal_mode(source):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--inline", action="store_true", help="Run fzf in this terminal")
+    mode.add_argument("--inline", action="store_true", help="Run Television in this terminal")
     mode.add_argument("--list", action="store_true", help="Print a read-only session table")
     parser.add_argument("--terminal-mode", action="store_true", help="Enter terminal mode for this popup (requires --inline)")
     parser.add_argument("--source", default=os.environ.get("TUIOS_SESSION", ""), help="Session whose client to switch")
     parser.add_argument("--active-pane", default=os.environ.get("TUIOS_ACTIVE_PANE_ID") or os.environ.get("TUIOS_WINDOW_ID", ""))
-    parser.add_argument("--preview", nargs=2, metavar=("SNAPSHOT", "INDEX"), help=argparse.SUPPRESS)
+    parser.add_argument("--preview", nargs=2, metavar=("SNAPSHOT", "TOKEN"), help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     if args.terminal_mode and (not args.inline or args.preview):
         raise PickerError("--terminal-mode requires --inline; --list remains read-only.")
     if args.preview:
-        path, index = args.preview
-        print(json.loads(Path(path).read_text())[int(index)])
+        path, token = args.preview
+        if not re.fullmatch(r"s[0-9]+", token):
+            raise PickerError("Invalid preview token")
+        previews = json.loads(Path(path).read_text(encoding="utf-8"))
+        index = int(token[1:])
+        if index >= len(previews):
+            raise PickerError("Unknown preview token")
+        print(previews[index])
         return 0
-    for dependency in ("tuios", "git") + (() if args.list else ("fzf",)):
+    for dependency in ("tuios", "git") + (() if args.list else ("tv", "bash")):
         if not shutil.which(dependency):
             raise PickerError(f"Missing executable: {dependency}")
     if not args.inline and not args.list:

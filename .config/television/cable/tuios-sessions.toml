@@ -1,0 +1,23 @@
+[metadata]
+name = "tuios-sessions"
+description = "Session switcher snapshots (launch via session-switcher.py)"
+requirements = ["python3"]
+
+[source]
+command = 'cat "$TS_STATE/rows.tsv"'
+# Do not set source.display: tv 0.15.x gives it precedence over ANSI parsing.
+# Keep the small snapshot ID column visible so source/output/preview share a safe token.
+output = '{split:	:0}'
+
+[preview]
+command = '''"$TS_PYTHON" "$TS_SCRIPT" --preview "$TS_STATE/preview.json" '{split:	:0}' '''
+
+[ui]
+layout = "portrait"
+
+[ui.preview_panel]
+size = 45
+
+[ui.status_bar]
+separator_open = ""
+separator_close = ""
