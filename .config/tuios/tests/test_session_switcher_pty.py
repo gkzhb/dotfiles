@@ -27,7 +27,7 @@ if sys.argv[2] == 'multiple':
     records.append(dict(record, name='second-session',
                         fields=[' ', 'second-session', 'other-repo', 'feature', 'other-dir', 'topic', '2', 'attached'],
                         preview='SECOND PREVIEW'))
-result = picker.confirm_kill(record) if sys.argv[2] == 'confirm' else picker.choose(records)
+result = picker.confirm_kill(record) if sys.argv[2] == 'confirm' else picker.choose(records, manual_input=sys.argv[2] == 'manual')
 print('RESULT=' + json.dumps(result), flush=True)
 '''
 
@@ -103,6 +103,16 @@ class TelevisionPTYTests(unittest.TestCase):
                     self.assertEqual(result[1]['name'], '-name "with spaces"')
                 finally:
                     terminal.close()
+
+    def test_manual_mode_hint_visible_and_picker_still_interactive(self):
+        terminal = Terminal('manual')
+        try:
+            terminal.wait(b'press i')
+            terminal.wait(b'PREVIEW')
+            os.write(terminal.fd, b'\r')
+            self.assertEqual(terminal.result()[0], 'switch')
+        finally:
+            terminal.close()
 
     def test_source_ansi_colors_reach_rendered_fields(self):
         terminal = Terminal('choose')

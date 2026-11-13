@@ -339,18 +339,61 @@ class PickerTests(unittest.TestCase):
     def test_popup_terminal_mode_routes_exact_session(self):
         source = '-source @literal'
         with patch.object(picker, 'tuios_json', side_effect=[[{'session': source}, {'session': 'other'}], {'routed': True}]) as api:
-            picker.enter_popup_terminal_mode(source)
+            self.assertTrue(picker.enter_popup_terminal_mode(source))
         self.assertEqual(api.call_args_list[0].args, ('list-clients',))
         args = api.call_args_list[1].args
         self.assertEqual(args[:2], ('call', 'run-command'))
         self.assertEqual(json.loads(args[2]), {'session': source, 'command': 'TerminalMode'})
 
-    def test_popup_terminal_mode_refuses_ambiguous_client(self):
-        for listing in ([], [{'session': 's'}, {'session': 's'}], {}):
+    def test_popup_terminal_mode_skips_ambiguous_client_without_command(self):
+        clients = [{'session': 's', 'client_id': 'first'},
+                   {'session': 's', 'client_id': 'second'}]
+        with patch.object(picker, 'tuios_json', return_value=clients) as api:
+            self.assertFalse(picker.enter_popup_terminal_mode('s'))
+        api.assert_called_once_with('list-clients')
+
+    def test_popup_terminal_mode_refuses_missing_client_or_invalid_listing(self):
+        for listing in ([], [{'session': 'other'}], {}, [None]):
             with self.subTest(listing=listing), patch.object(picker, 'tuios_json', return_value=listing) as api:
                 with self.assertRaises(picker.PickerError):
                     picker.enter_popup_terminal_mode('s')
                 api.assert_called_once_with('list-clients')
+
+    def test_multiple_clients_keep_picker_open_and_hint_after_refresh(self):
+        record = {'name': 'target'}
+        clients = [{'session': 'source'}, {'session': 'source'}]
+        with patch.object(picker.shutil, 'which', return_value='/bin/tool'), \
+             patch.object(picker, 'tuios_json', return_value=clients) as api, \
+             patch.object(picker, 'collect', return_value=[record]), \
+             patch.object(picker, 'choose', side_effect=[('kill', record), None]) as choose, \
+             patch.object(picker, 'kill_selected', return_value=False), \
+             patch.object(picker.subprocess, 'call') as switch:
+            self.assertEqual(picker.main(['--inline', '--terminal-mode', '--source', 'source']), 0)
+        api.assert_called_once_with('list-clients')
+        self.assertEqual(choose.call_count, 2)
+        for call in choose.call_args_list:
+            self.assertEqual(call.kwargs, {'manual_input': True})
+        switch.assert_not_called()
+
+    def test_manual_input_title_is_short_and_plain(self):
+        record = {'fields': [' ', 'name', 'repo', 'main', 'dir', 'dev', '1', 'detached'], 'preview': ''}
+        with patch.object(picker, 'television', return_value=None) as tv:
+            self.assertIsNone(picker.choose([record], manual_input=True))
+        header = tv.call_args.args[1]
+        self.assertIn('press i', header)
+        self.assertLess(len(header), 60)
+        self.assertNotIn('\x1b', header)
+
+    def test_terminal_mode_api_errors_do_not_fall_back(self):
+        for failure in (picker.PickerError('forbidden'), subprocess.TimeoutExpired('tuios', 15)):
+            with self.subTest(failure=failure), \
+                 patch.object(picker.shutil, 'which', return_value='/bin/tool'), \
+                 patch.object(picker, 'tuios_json', side_effect=failure), \
+                 patch.object(picker, 'choose') as choose:
+                with self.assertRaises(type(failure)):
+                    picker.main(['--inline', '--terminal-mode', '--source', 'source'])
+                choose.assert_not_called()
+
 
     def test_terminal_mode_runs_before_picker_only_when_explicit(self):
         events = []

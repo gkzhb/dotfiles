@@ -228,11 +228,17 @@ def television(labels, header, previews=None, expect_kill=False, colored=False):
         raise PickerError("Unexpected Television selection") from error
 
 
-def choose(records):
+def choose(records, manual_input=False):
     colored = colors_enabled()
-    header, display = rows(records, colored=colored)
+    _, display = rows(records, colored=colored)
+    # Input headers are plain templates, not ANSI-aware result rows. Keep the
+    # manual-mode hint short: tv truncates long titles from the left.
+    header = "Multiple clients: press i in this UI to type" if manual_input else (
+        "Enter: switch · Ctrl+R: kill (confirm) · Esc: cancel · Ctrl-/: preview | "
+        + rows(records)[0]
+    )
     selected = television(
-        display, "Enter: switch · Ctrl+R: kill (confirm) · Esc: cancel · Ctrl-/: preview | " + header,
+        display, header,
         previews=[r["preview"] for r in records], expect_kill=True, colored=colored,
     )
     if selected is None:
@@ -282,14 +288,18 @@ def kill_selected(record, source):
 def enter_popup_terminal_mode(source):
     if not source:
         raise PickerError("Popup terminal mode requires --source SESSION.")
-    # run-command selects an attached client, not a client UUID. Refuse to
-    # change an arbitrary peer when several clients show the same session.
+    # run-command selects an attached client, not a client UUID. With several
+    # viewers skip only this convenience: the current UI can enter mode with i.
     clients = tuios_json("list-clients")
-    if not isinstance(clients, list):
+    if not isinstance(clients, list) or any(not isinstance(c, dict) for c in clients):
         raise PickerError("Expected client-list array")
-    if len([c for c in clients if c.get("session") == source]) != 1:
-        raise PickerError("Popup terminal mode needs exactly one client showing the source session.")
+    viewers = [c for c in clients if c.get("session") == source]
+    if not viewers:
+        raise PickerError("No client is showing the source session.")
+    if len(viewers) > 1:
+        return False
     tuios_json("call", "run-command", json.dumps({"session": source, "command": "TerminalMode"}))
+    return True
 
 
 def main(argv=None):
@@ -325,8 +335,9 @@ def main(argv=None):
             sys.executable, str(Path(__file__).resolve()), "--inline", "--terminal-mode", "--source", args.source,
             "--active-pane", args.active_pane,
         ])
+    manual_input = False
     if args.terminal_mode:
-        enter_popup_terminal_mode(args.source)
+        manual_input = not enter_popup_terminal_mode(args.source)
     while True:
         records = collect(args.source, args.active_pane)
         if not records:
@@ -336,7 +347,7 @@ def main(argv=None):
             header, display = rows(records)
             print("\n".join([header, *display]))
             return 0
-        selected = choose(records)
+        selected = choose(records, manual_input=manual_input)
         if selected is None:
             return 0
         action, record = selected

@@ -8,9 +8,11 @@
 
 ## 自动进入 terminal mode
 
-Ctrl+F s 的 popup 绑定显式传入 `--inline --terminal-mode`。脚本在 popup 中启动后，先对源 session 执行 `TerminalMode`，再打开 Television，因此从 window mode 呼出后可直接输入搜索，无需再手动按 i。不修改全局 `auto_enter_terminal_on_focus` 设置。
+Ctrl+F s 的 popup 绑定显式传入 `--inline --terminal-mode`。脚本在 popup 中启动后检查显示源 session 的客户端；恰好一个时先执行 `TerminalMode`，再打开 Television，因此从 window mode 呼出后可直接输入搜索，无需再手动按 i。不修改全局 `auto_enter_terminal_on_focus` 设置。
 
-直接运行脚本创建的 popup 同样会传入该选项；普通 `--inline` 不改变模式，`--list` 始终只读。模式命令需要现有权限；拒绝时直接报错，不调整授权。当前 tuios 按 session 路由模式命令，为避免改到其他客户端，只允许恰好一个客户端显示源 session；多个客户端时停止并报错。关闭 popup 后不强制恢复 window mode。
+这里的客户端指独立的 tuios 界面（如终端或 SSH 中分别 `tuios attach` 同一会话），不是会话内的窗口或 Pi 数量。**多个客户端显示同一会话是正常用法**：由于模式命令只按 session 路由，无法安全确认呼出界面，脚本跳过自动切换，继续打开选择器，并用短标题提示 `Multiple clients: press i in this UI to type`。如果当前仍是 window mode，先按 `i`，由当前界面本地进入输入模式；已经在 terminal mode 时无需再按。
+
+直接运行脚本创建的 popup 同样会传入该选项；普通 `--inline` 不改变模式，`--list` 始终只读。没有显示源会话的客户端、listing 无效、API 错误／权限拒绝／超时仍然报错，不把这些异常当作多客户端，不调整授权、不自动重试。关闭 popup 后不强制恢复 window mode。此处仅处理模式自动切换的歧义，不猜测客户端 ID，也不改变原有 session 切换／删除协议。
 
 ## 删除 session
 
