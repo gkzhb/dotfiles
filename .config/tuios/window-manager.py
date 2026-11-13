@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import unicodedata
+import uuid
 
 ROOT = Path(__file__).resolve().parent
 TV_ROOT = Path.home() / ".config" / "television"
@@ -216,23 +217,63 @@ def apply_intent(api, ctx, intent):
         api.run("switch-session", intent["session"], "--client", ctx["client"])
 
 
+ACTIONS = {"move", "follow", "focus"}
+
+
+def action_selection(action, tokens, entries):
+    if not isinstance(action, str) or action not in ACTIONS or not isinstance(tokens, list) or not tokens:
+        raise ManagerError("Invalid action request.")
+    if any(not isinstance(token, str) or not re.fullmatch(r"w[0-9]+", token)
+           or token not in entries or "window" not in entries[token] for token in tokens):
+        raise ManagerError("Action returned an unknown window token.")
+    selected = set(tokens)
+    return action, [entry for token, entry in entries.items() if token in selected]
+
+
+def request_action(directory, identity, action, tokens):
+    """Cable action adapter: record intent only; never call tuios or choose targets."""
+    directory = Path(directory)
+    picker = load(directory / "picker.json")
+    if not isinstance(picker, dict) or picker.get("windows") is not True or picker.get("id") != identity:
+        raise ManagerError("Action belongs to a stale or non-window picker.")
+    action_selection(action, tokens, load(directory / "entries.json"))
+    save(directory / "request.json", {"picker": identity, "action": action, "tokens": tokens})
+
+
+def consume_request(directory, identity, entries):
+    path = Path(directory) / "request.json"
+    try:
+        request = load(path)
+    except (ValueError, OSError) as exc:
+        raise ManagerError("Invalid action request file.") from exc
+    finally:
+        path.unlink(missing_ok=True)
+    if not isinstance(request, dict) or request.get("picker") != identity:
+        raise ManagerError("Action request is stale or malformed.")
+    return action_selection(request.get("action"), request.get("tokens"), entries)
+
+
 class Picker:
     def __init__(self, directory):
         self.directory = Path(directory)
 
     def choose(self, entries, header, windows=False, preview=True):
         # Only generated opaque tokens cross the shell/template boundary.
+        identity = uuid.uuid4().hex
+        request_file = self.directory / "request.json"
+        request_file.unlink(missing_ok=True)
+        save(self.directory / "picker.json", {"id": identity, "windows": windows})
         save(self.directory / "entries.json", entries)
         rows = "".join(f"{key}\t{entry['label']}\n" for key, entry in entries.items())
         (self.directory / "rows.tsv").write_text(rows, encoding="utf-8")
         env = dict(os.environ, TWM_STATE=str(self.directory), TWM_SCRIPT=str(ROOT / "window-manager.py"),
-                   TWM_PYTHON=sys.executable)
+                   TWM_PYTHON=sys.executable, TWM_PICKER=identity)
         argv = ["tv", "tuios-windows" if windows else "tuios-destinations",
                 "--config-file", str(TV_ROOT / "tuios-window-manager.toml"),
                 "--cable-dir", str(TV_ROOT / "cable"), "--no-remote", "--no-sort",
                 "--input-header", plain(header).replace("{", "(").replace("}", ")")]
         if windows:
-            argv += ["--expect", "alt-m;alt-g;alt-f;ctrl-r"]
+            argv += ["--expect", "ctrl-r"]
         if not preview:
             argv.append("--no-preview")
         # tv draws its UI on stderr. Forward it live while retaining a bounded
@@ -253,27 +294,30 @@ class Picker:
         process.stdout.close()
         process.stderr.close()
         error = diagnostic.decode("utf-8", errors="replace")
+        (self.directory / "picker.json").unlink(missing_ok=True)
         if process.returncode:
+            request_file.unlink(missing_ok=True)
             if process.returncode == 130:
                 return "cancel", []
             raise ManagerError(f"Television exited {process.returncode}: {plain(error)}")
+        # execute actions attach stdout to the TTY, not our output pipe.
+        # Consume only this invocation's atomically written request, once.
+        if windows and request_file.exists():
+            if output:
+                request_file.unlink()
+                raise ManagerError("Action request conflicts with Television output.")
+            return consume_request(self.directory, identity, entries)
         lines = output.decode("utf-8").splitlines()
-        # tv 0.15.9: only EXPECT keys add a key line; ordinary Enter emits
-        # tokens directly. Esc/Ctrl+C may exit 0 with no output at all.
         if not lines:
             return "cancel", []
-        key = "enter"
-        if windows and lines[0] not in entries:
-            key = lines.pop(0) or "enter"
-        if key == "ctrl-r":
-            return key, []
-        if key not in ("enter", "alt-m", "alt-g", "alt-f"):
-            raise ManagerError(f"Unexpected Television key: {plain(key)}")
-        # Preserve source order and remove duplicates; reject unknown outputs.
+        if windows:
+            if lines[0] == "ctrl-r":
+                return "ctrl-r", []
+            raise ManagerError("Window picker exited without a cable action request.")
         if any(line not in entries for line in lines):
             raise ManagerError("Television returned an unknown selection.")
         selected = set(lines)
-        return key, [entries[k] for k in entries if k in selected]
+        return "enter", [entries[k] for k in entries if k in selected]
 
 
 def notice(message):
@@ -300,19 +344,9 @@ def manage(api, ctx, directory, picker=None):
         if key == "ctrl-r" or not selection:
             continue
         selected = [entry["window"] for entry in selection]
-        action = {"alt-m": "move", "alt-g": "follow", "alt-f": "focus"}.get(key)
-        if action is None:
-            actions = {"m0": {"label": "Move to…", "action": "move"},
-                       "m1": {"label": "Move to… and follow", "action": "follow"}}
-            if len(selected) == 1:
-                actions["m2"] = {"label": "Focus window", "action": "focus"}
-            _, picked = picker.choose(actions, f"Actions · {len(selected)} window(s)", preview=False)
-            if not picked:
-                continue
-            if len(picked) != 1:
-                notice("Choose just one action.")
-                continue
-            action = picked[0]["action"]
+        action = key
+        if action not in ACTIONS:
+            raise ManagerError("Unknown window action.")
         try:
             if action == "focus":
                 if len(selected) != 1:
@@ -389,9 +423,13 @@ def main():
     parser.add_argument("--client", help="Client ID when several show the source session")
     parser.add_argument("--view", metavar="STATE_DIR", help=argparse.SUPPRESS)
     parser.add_argument("--preview", metavar="TOKEN", help=argparse.SUPPRESS)
+    parser.add_argument("--request", choices=sorted(ACTIONS), help=argparse.SUPPRESS)
+    parser.add_argument("tokens", nargs="*", help=argparse.SUPPRESS)
     args = parser.parse_args()
     try:
-        if args.preview:
+        if args.request:
+            request_action(os.environ["TWM_STATE"], os.environ["TWM_PICKER"], args.request, args.tokens)
+        elif args.preview:
             preview(args.preview)
         elif args.view:
             manage(Tuios(), load(Path(args.view) / "context.json"), args.view)

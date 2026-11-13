@@ -1,7 +1,6 @@
 """Unit tests and real Television PTY tests; no live-user daemon mutations."""
 import fcntl
 import importlib.util
-import json
 import os
 from pathlib import Path
 import pty
@@ -48,17 +47,23 @@ class FakeAPI:
         return {}
 
 
-def pty_picker(directory, keys, windows=True, env=None):
+def pty_picker(directory, keys, windows=True, env=None, menu_keys=None, after_menu_keys=None):
     """Exercise the installed tv, not a mock. Bound waits to actual screen text."""
     outcome = Path(directory) / "outcome.json"
     pid, master = pty.fork()
     if pid == 0:
         try:
             os.environ.update(env or {})
+            os.environ.update(HOME=directory, XDG_CONFIG_HOME=str(Path(directory) / "config"),
+                              XDG_DATA_HOME=str(Path(directory) / "data"),
+                              XDG_STATE_HOME=str(Path(directory) / "state"),
+                              XDG_CACHE_HOME=str(Path(directory) / "cache"))
             os.environ["TERM"] = "xterm-256color"
             fcntl.ioctl(0, termios.TIOCSWINSZ, struct.pack("HHHH", 32, 140, 0, 0))
+            wm.TV_ROOT = ROOT.parent / "television"
             choice = wm.Picker(directory).choose(
-                {"w0": {"label": "alpha"}, "w1": {"label": "beta"}},
+                {"w0": {"label": "alpha", "window": {"window_id": "a"}},
+                 "w1": {"label": "beta", "window": {"window_id": "b"}}},
                 "PICKER-READY", windows=windows, preview=False)
             wm.save(outcome, choice)
             os._exit(0)
@@ -67,6 +72,8 @@ def pty_picker(directory, keys, windows=True, env=None):
             os._exit(1)
     screen = b""
     sent = False
+    menu_sent = False
+    after_menu_sent = False
     deadline = time.monotonic() + 12
     try:
         while time.monotonic() < deadline:
@@ -85,6 +92,16 @@ def pty_picker(directory, keys, windows=True, env=None):
             if not sent and b"alpha" in screen and b"beta" in screen:
                 os.write(master, keys)
                 sent = True
+            elif menu_keys is not None and not menu_sent and b"Focus window" in screen:
+                os.write(master, menu_keys)
+                menu_sent = True
+                if after_menu_keys is not None:
+                    screen = b""
+            elif menu_sent and after_menu_keys is not None and not after_menu_sent and b" CHANNEL " in screen:
+                # Returning from a mode queues another action. Wait for its
+                # rendered acknowledgement rather than batching the next key.
+                os.write(master, after_menu_keys)
+                after_menu_sent = True
         if not outcome.exists():
             raise AssertionError(f"tv did not finish: {screen[-3500:]!r}")
         return wm.load(outcome)
@@ -207,19 +224,69 @@ class UnitTests(unittest.TestCase):
             def choose(self, entries, header, **kw):
                 self.n += 1
                 if self.n == 1:
-                    return "alt-m", [next(iter(entries.values()))]
+                    return "move", [next(iter(entries.values()))]
                 return "cancel", []
         with tempfile.TemporaryDirectory() as directory:
             wm.manage(api, CTX, directory, Picker())
             self.assertFalse((Path(directory) / "intent.json").exists())
         self.assertFalse(api.calls)
 
+    def test_normal_move_returns_to_window_list_without_follow(self):
+        api = FakeAPI()
+        class Picker:
+            calls = 0
+            def choose(self, entries, header, **kw):
+                self.calls += 1
+                if self.calls == 1:
+                    return "move", [next(iter(entries.values()))]
+                if self.calls == 2:
+                    return "enter", [next(v for v in entries.values() if v.get("session") == "target-id")]
+                self.assert_header = header
+                return "cancel", []
+        picker = Picker()
+        with tempfile.TemporaryDirectory() as directory:
+            wm.manage(api, CTX, directory, picker)
+            self.assertFalse((Path(directory) / "intent.json").exists())
+        self.assertEqual(picker.calls, 3)
+        self.assertIn("Moved 1/1", picker.assert_header)
+        self.assertEqual(sum(c[0] == "move-window" for c in api.calls), 1)
+        self.assertFalse(any(c[0] in ("focus-window", "switch-session") for c in api.calls))
+
+    def test_multiselect_focus_is_rejected_without_intent(self):
+        api = FakeAPI()
+        class Picker:
+            calls = 0
+            def choose(self, entries, header, **kw):
+                self.calls += 1
+                return ("focus", list(entries.values())) if self.calls == 1 else ("cancel", [])
+        with tempfile.TemporaryDirectory() as directory:
+            wm.manage(api, CTX, directory, Picker())
+            self.assertFalse((Path(directory) / "intent.json").exists())
+        self.assertFalse(api.calls)
+
+    def test_partial_batch_follow_never_writes_intent(self):
+        api = FakeAPI()
+        api.fail.add("b")
+        class Picker:
+            calls = 0
+            def choose(self, entries, header, **kw):
+                self.calls += 1
+                if self.calls == 1:
+                    return "follow", list(entries.values())
+                if self.calls == 2:
+                    return "enter", [next(v for v in entries.values() if v.get("session") == "target-id")]
+                return "cancel", []
+        with tempfile.TemporaryDirectory() as directory, patch.object(wm, "notice", return_value=True):
+            wm.manage(api, CTX, directory, Picker())
+            self.assertFalse((Path(directory) / "intent.json").exists())
+        self.assertFalse(any(c[0] in ("focus-window", "switch-session") for c in api.calls))
+
     def test_batch_follow_writes_intent_only_after_success(self):
         api = FakeAPI()
         class Picker:
             def choose(self, entries, header, **kw):
                 if kw.get("windows"):
-                    return "alt-g", list(entries.values())
+                    return "follow", list(entries.values())
                 return "enter", [next(v for v in entries.values() if v.get("session") == "target-id")]
         with tempfile.TemporaryDirectory() as directory:
             wm.manage(api, CTX, directory, Picker())
@@ -228,26 +295,126 @@ class UnitTests(unittest.TestCase):
         self.assertFalse(any(c[0] in ("focus-window", "switch-session") for c in api.calls))
 
 
+class RequestTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.directory = Path(self.temp.name)
+        self.entries = {"w0": {"label": "alpha", "window": {"window_id": "a"}},
+                        "w1": {"label": "$(touch bad) ' beta", "window": {"window_id": "b"}}}
+        wm.save(self.directory / "entries.json", self.entries)
+        wm.save(self.directory / "picker.json", {"id": "current", "windows": True})
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def test_request_only_records_tokens_and_preserves_source_order(self):
+        with patch.object(wm, "Tuios", side_effect=AssertionError("No tuios in request helper")):
+            wm.request_action(self.directory, "current", "follow", ["w1", "w0", "w1"])
+        self.assertEqual(wm.consume_request(self.directory, "current", self.entries),
+                         ("follow", list(self.entries.values())))
+        self.assertFalse((self.directory / "request.json").exists())
+
+    def test_invalid_action_token_and_picker_are_rejected_without_request(self):
+        for identity, action, tokens in (("old", "move", ["w0"]), ("current", "kill", ["w0"]),
+                                        ("current", "move", []), ("current", "move", ["w9"]),
+                                        ("current", "move", ["w0; touch bad"]),
+                                        ("current", "move", ["d0"])):
+            with self.subTest(action=action, tokens=tokens), self.assertRaises(wm.ManagerError):
+                wm.request_action(self.directory, identity, action, tokens)
+        self.assertFalse((self.directory / "request.json").exists())
+
+    def test_destination_picker_cannot_submit_window_actions(self):
+        wm.save(self.directory / "picker.json", {"id": "current", "windows": False})
+        with self.assertRaises(wm.ManagerError):
+            wm.request_action(self.directory, "current", "move", ["w0"])
+
+    def test_stale_malformed_and_unknown_requests_consumed_once(self):
+        for request in ({"picker": "old", "action": "move", "tokens": ["w0"]},
+                        {"picker": "current", "action": "kill", "tokens": ["w0"]},
+                        {"picker": "current", "action": "move", "tokens": ["w9"]},
+                        {"picker": "current", "action": "focus", "tokens": "w0"}, []):
+            wm.save(self.directory / "request.json", request)
+            with self.subTest(request=request), self.assertRaises(wm.ManagerError):
+                wm.consume_request(self.directory, "current", self.entries)
+            self.assertFalse((self.directory / "request.json").exists())
+        (self.directory / "request.json").write_text("not JSON")
+        with self.assertRaises(wm.ManagerError):
+            wm.consume_request(self.directory, "current", self.entries)
+        self.assertFalse((self.directory / "request.json").exists())
+
+    def test_tv_error_discards_written_request_and_does_not_select(self):
+        original = subprocess.Popen
+        def failed(*args, **kwargs):
+            identity = kwargs["env"]["TWM_PICKER"]
+            wm.save(self.directory / "request.json", {"picker": identity, "action": "focus", "tokens": ["w0"]})
+            return original([sys.executable, "-c", "raise SystemExit(1)"], **kwargs)
+        with patch.object(wm.subprocess, "Popen", side_effect=failed), self.assertRaises(wm.ManagerError):
+            wm.Picker(self.directory).choose(self.entries, "test", windows=True)
+        self.assertFalse((self.directory / "request.json").exists())
+
+    def test_raw_output_and_request_conflict_is_rejected(self):
+        original = subprocess.Popen
+        def conflict(*args, **kwargs):
+            wm.save(self.directory / "request.json", {"picker": kwargs["env"]["TWM_PICKER"],
+                                                     "action": "focus", "tokens": ["w0"]})
+            return original([sys.executable, "-c", "print('w0')"], **kwargs)
+        with patch.object(wm.subprocess, "Popen", side_effect=conflict), self.assertRaises(wm.ManagerError):
+            wm.Picker(self.directory).choose(self.entries, "test", windows=True)
+        self.assertFalse((self.directory / "request.json").exists())
+
+    def test_unexpected_raw_window_output_is_not_an_action(self):
+        original = subprocess.Popen
+        def raw(*args, **kwargs):
+            return original([sys.executable, "-c", "print('w0')"], **kwargs)
+        with patch.object(wm.subprocess, "Popen", side_effect=raw), self.assertRaises(wm.ManagerError):
+            wm.Picker(self.directory).choose(self.entries, "test", windows=True)
+
+    def test_cancel_removes_previous_request_before_starting_tv(self):
+        wm.save(self.directory / "request.json", {"picker": "old", "action": "focus", "tokens": ["w0"]})
+        original = subprocess.Popen
+        def cancelled(*args, **kwargs):
+            return original([sys.executable, "-c", "pass"], **kwargs)
+        with patch.object(wm.subprocess, "Popen", side_effect=cancelled):
+            self.assertEqual(wm.Picker(self.directory).choose(self.entries, "test", windows=True), ("cancel", []))
+        self.assertFalse((self.directory / "request.json").exists())
+
+
 class TelevisionTests(unittest.TestCase):
+    alpha = {"label": "alpha", "window": {"window_id": "a"}}
+    beta = {"label": "beta", "window": {"window_id": "b"}}
     def test_escape_returns_without_selection(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(pty_picker(directory, b"\x1b"), ["cancel", []])
 
-    def test_expect_enter_outputs_token(self):
+    def test_native_enter_menu_focus(self):
         with tempfile.TemporaryDirectory() as directory:
-            result = pty_picker(directory, b"\r")
-            self.assertEqual(result, ["enter", [{"label": "alpha"}]])
+            result = pty_picker(directory, b"\r", menu_keys=b"focus\r")
+            self.assertEqual(result, ["focus", [self.alpha]])
+
+    def test_native_ctrl_x_menu_multiselect_move(self):
+        with tempfile.TemporaryDirectory() as directory:
+            result = pty_picker(directory, b"\t\t\x18", menu_keys=b"move\r")
+            self.assertEqual(result, ["move", [self.alpha, self.beta]])
+
+    def test_native_menu_escape_returns_then_cancel(self):
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(pty_picker(directory, b"\x18", menu_keys=b"\x1b", after_menu_keys=b"\x03"), ["cancel", []])
+
+    def test_native_menu_toggle_back_then_direct_action(self):
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(pty_picker(directory, b"\x18", menu_keys=b"\x18", after_menu_keys=b"\x1bm"),
+                             ["move", [self.alpha]])
 
     def test_alt_follow_and_focus(self):
-        for key in ("g", "f"):
+        for key, action in (("g", "follow"), ("f", "focus")):
             with self.subTest(key=key), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(pty_picker(directory, b"\x1b" + key.encode()),
-                                 ["alt-" + key, [{"label": "alpha"}]])
+                                 [action, [self.alpha]])
 
     def test_alt_move_and_tab_multiselect(self):
         with tempfile.TemporaryDirectory() as directory:
             result = pty_picker(directory, b"\t\t\x1bm")
-            self.assertEqual(result, ["alt-m", [{"label": "alpha"}, {"label": "beta"}]])
+            self.assertEqual(result, ["move", [self.alpha, self.beta]])
 
     def test_ctrl_r_returns_even_without_mutation(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -259,7 +426,7 @@ class TelevisionTests(unittest.TestCase):
 
     def test_destination_enter_has_no_expect_line(self):
         with tempfile.TemporaryDirectory() as directory:
-            self.assertEqual(pty_picker(directory, b"\r", windows=False), ["enter", [{"label": "alpha"}]])
+            self.assertEqual(pty_picker(directory, b"\r", windows=False), ["enter", [self.alpha]])
 
 
 if __name__ == "__main__":

@@ -9,7 +9,6 @@ import json
 import os
 from pathlib import Path
 import pty
-import select
 import shutil
 import shlex
 import signal
@@ -134,8 +133,9 @@ class IntegrationTests(unittest.TestCase):
                 self.assertTrue(all(w["workspace"] == 3 for w in destination if w["window_id"] in moved))
                 print("PASS: same/cross-session batch moves preserve full IDs and PIDs", flush=True)
 
-                # Move one disposable pane back; attach a test-only tuios client.
-                tuios("move-window", 1, "-s", "target", "-w", first["window_id"], "--to-session", "source")
+                # Move both disposable panes back; attach a test-only tuios client.
+                for identity in (first["window_id"], second_id):
+                    tuios("move-window", 1, "-s", "target", "-w", identity, "--to-session", "source")
                 tuios("focus-window", "-s", "source", first["window_id"])
                 client = Terminal(["tuios", "--server", server, "attach", "source"], env)
                 client.wait(b"source-one")
@@ -152,8 +152,10 @@ class IntegrationTests(unittest.TestCase):
                     listing = api.windows(source["id"])
                     # Real version omits popup=true: the pinned allowlist must exclude it.
                     self.assertGreater(len(listing["windows"]), len(wm.source_windows(api, context)))
-                    self.assertEqual([w["window_id"] for w in wm.source_windows(api, context)], [first["window_id"]])
-                    client.send(b"\x1bg")  # real Alt+g → destinations
+                    self.assertEqual({w["window_id"] for w in wm.source_windows(api, context)}, {first["window_id"], second_id})
+                    client.send(b"\t\t\x18")  # Real multi-select → native Ctrl+X menu.
+                    client.wait(b"Focus window")
+                    client.send(b"move_follow\r")
                     client.wait(b"Move and follow")
                     client.send(b"target 2")
                     client.wait(b"target / 2")
@@ -167,7 +169,10 @@ class IntegrationTests(unittest.TestCase):
                     clients = api.run("list-clients")
                     self.assertTrue(any(c["client_id"] == context["client"] and c["session"] == "target" for c in clients))
                     self.assertEqual(api.windows(target["id"])["current_workspace"], 2)
-                    print("PASS: real tv popup excludes itself, moves to selected workspace and follows exact client", flush=True)
+                    current = api.windows(target["id"])["windows"]
+                    self.assertTrue(all(w["workspace"] == 2 and w["pid"] == same_pid[w["window_id"]]
+                                        for w in current if w["window_id"] in same_pid))
+                    print("PASS: native Ctrl+X batch action excludes popup, preserves PIDs and follows exact client", flush=True)
                     client.wait(b"source-one")
                     # Exercise the public launcher: it must wait for the popup,
                     # close it, then focus the target without restarting processes.
@@ -177,10 +182,8 @@ class IntegrationTests(unittest.TestCase):
                     try:
                         client.wait(b"Enter actions")
                         client.send(b"\r")
-                        client.wait(b"Actions")
-                        client.send(b"Focus window")
                         client.wait(b"Focus window")
-                        client.send(b"\r")
+                        client.send(b"focus\r")
                         output, error = launcher.communicate(timeout=15)
                         self.assertEqual(launcher.returncode, 0, (output, error))
                         current = api.windows(target["id"])

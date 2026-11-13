@@ -8,6 +8,7 @@ theme = "default"
 [keybindings]
 esc = "quit"
 ctrl-c = "quit"
+ctrl-x = "toggle_action_picker"
 down = "select_next_entry"
 up = "select_prev_entry"
 tab = "toggle_selection_down"

@@ -11,6 +11,37 @@ output = '{split:	:0}'
 [preview]
 command = '''"$TWM_PYTHON" "$TWM_SCRIPT" --preview '{split:	:0}' '''
 
+[keybindings]
+# Channel Enter opens the menu; global Enter confirms an action/destination.
+enter = "toggle_action_picker"
+ctrl-x = "toggle_action_picker"
+alt-m = "actions:move"
+alt-g = "actions:move_follow"
+alt-f = "actions:focus"
+
+# Actions receive raw TSV rows, not source.output. Extract every safe token.
+# execute ends tv; Python consumes the request before selecting a destination.
+[actions.move]
+description = "Move to…"
+command = '''"$TWM_PYTHON" "$TWM_SCRIPT" --request move {split:
+:..|map:{split:	:0}|join: }'''
+mode = "execute"
+separator = "\n"
+
+[actions.move_follow]
+description = "Move to… and follow"
+command = '''"$TWM_PYTHON" "$TWM_SCRIPT" --request follow {split:
+:..|map:{split:	:0}|join: }'''
+mode = "execute"
+separator = "\n"
+
+[actions.focus]
+description = "Focus window (single selection)"
+command = '''"$TWM_PYTHON" "$TWM_SCRIPT" --request focus {split:
+:..|map:{split:	:0}|join: }'''
+mode = "execute"
+separator = "\n"
+
 [ui]
 layout = "landscape"
 
