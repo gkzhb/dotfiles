@@ -191,6 +191,8 @@ move_and_follow_9 = ["ctrl+alt+shift+9"]
 [keybindings.prefix_mode]
 # Reserve Ctrl+F a for Ask Pi; the launcher remains available on Alt+Space.
 launcher = []
+# Reserve Ctrl+F o for Television's window manager (available via palette otherwise).
+prefix_next_attention = []
 # Ctrl+F c opens the first empty workspace; Ctrl+F w creates a window.
 new_workspace = ["c"]
 prefix_new_window = ["w"]
@@ -264,3 +266,14 @@ key = "prefix+s"
 type = "popup"
 command = "python3 ~/.config/tuios/session-switcher.py --inline --terminal-mode"
 description = "Sessions (Television · directory · Git)"
+
+# Capture source context before opening the popup; follow only after it closes.
+[[keybindings.command]]
+key = "prefix+o"
+type = "shell"
+command = "python3 ~/.config/tuios/window-manager.py"
+name = "window-manager"
+description = "Manage workspace windows (Television)"
+
+# Machine-specific hosts belong in ~/.config/tuios/config.d/hosts.local.toml.
+# Tuios loads config.d/*.toml automatically; keep [hosts] out of this shared file.

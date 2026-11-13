@@ -1,0 +1,17 @@
+# Private picker config: do not inherit shell integration or query history.
+shell = "bash"
+history_size = 0
+
+[ui]
+theme = "default"
+
+[keybindings]
+esc = "quit"
+ctrl-c = "quit"
+down = "select_next_entry"
+up = "select_prev_entry"
+tab = "toggle_selection_down"
+backtab = "toggle_selection_up"
+enter = "confirm_selection"
+pageup = "scroll_preview_half_page_up"
+pagedown = "scroll_preview_half_page_down"

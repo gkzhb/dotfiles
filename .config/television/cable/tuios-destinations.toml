@@ -1,0 +1,22 @@
+[metadata]
+name = "tuios-destinations"
+description = "Destination session and workspace"
+requirements = ["tuios", "python3"]
+
+[source]
+command = 'cat "$TWM_STATE/rows.tsv"'
+display = '{split:	:1}'
+output = '{split:	:0}'
+
+[preview]
+command = '''"$TWM_PYTHON" "$TWM_SCRIPT" --preview '{split:	:0}' '''
+
+[ui]
+layout = "landscape"
+
+[ui.status_bar]
+separator_open = ""
+separator_close = ""
+
+[ui.preview_panel]
+size = 40
