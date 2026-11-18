@@ -186,8 +186,8 @@ class TelevisionPTYTests(unittest.TestCase):
         finally:
             terminal.close()
 
-    def test_confirmation_defaults_to_cancel_and_requires_down(self):
-        for keys, confirmed in ((b'\r', False), (b'\x1b[B\r', True),
+    def test_confirmation_defaults_to_kill_and_down_selects_cancel(self):
+        for keys, confirmed in ((b'\r', True), (b'\x1b[B\r', False),
                                 (b'\x03', False), (b'\x1b', False)):
             with self.subTest(confirmed=confirmed, keys=keys):
                 terminal = Terminal('confirm')

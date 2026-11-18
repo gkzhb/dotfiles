@@ -273,18 +273,20 @@ class PickerTests(unittest.TestCase):
                 picker.kill_selected(record, 'source')
         self.assertEqual(api.call_count, 2)
 
-    def test_confirmation_requires_explicit_kill_selection(self):
-        for code, output, confirmed in ((0, b's0\n', False), (0, b's1\n', True),
+    def test_confirmation_defaults_to_kill_and_cancel_is_second(self):
+        for code, output, confirmed in ((0, b's0\n', True), (0, b's1\n', False),
                                         (0, b'', False), (130, b'', False)):
             def tv(args, **kwargs):
                 payload = (Path(kwargs['env']['TS_STATE']) / 'rows.tsv').read_bytes()
-                self.assertTrue(payload.startswith(b's0\tCancel'))
+                self.assertTrue(payload.startswith(b's0\tKill session:'))
+                self.assertIn(b'\ns1\tCancel (keep session)\n', payload)
                 self.assertNotIn(b'\x1b', payload)
                 self.assertIn('--no-preview', args)
                 self.assertNotIn('--expect', args)
                 header = args[args.index('--input-header') + 1]
                 self.assertNotIn('{', header)
                 self.assertIn('Terminate ALL windows/processes', header)
+                self.assertIn('Kill selected by default · Enter: kill', header)
                 return subprocess.CompletedProcess(args, code, output)
             with self.subTest(code=code, output=output), patch.object(picker.subprocess, 'run', side_effect=tv):
                 self.assertEqual(picker.confirm_kill({'name': 'unsafe\n\x1b{bad}'}), confirmed)

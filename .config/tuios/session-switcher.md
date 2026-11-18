@@ -16,7 +16,7 @@ Ctrl+F s 的 popup 绑定显式传入 `--inline --terminal-mode`。脚本在 pop
 
 ## 删除 session
 
-Ctrl+R 打开二次确认，明确说明会终止 session 的全部窗口／进程并断开客户端。默认选中 **Cancel**；按 Down 选择 Kill，再按 Enter 才执行。直接 Enter、Esc / Ctrl+C 均不删除。确认取消或删除成功后重新读取列表；失败／超时退出并报错，不自动重试。
+Ctrl+R 打开二次确认，明确说明会终止 session 的全部窗口／进程并断开客户端。**Kill** 位于第一项并默认选中，直接按 Enter 即确认删除；按 Down 选择 Cancel 再按 Enter，或按 Esc / Ctrl+C 均可取消。确认取消或删除成功后重新读取列表；失败／超时退出并报错，不自动重试。
 
 - 禁止在弹窗内删除弹窗所属的当前 session；请从另一个 session 打开选择器。
 - 删除前及确认后均校验 daemon UUID 和原始名称，拒绝已消失、重命名或同名重建的目标。没有 UUID 的旧 daemon 不支持该删除入口。
@@ -51,4 +51,4 @@ python3 ~/.config/tuios/session-switcher.py --list
 python3 -m unittest discover -s ~/.config/tuios/tests -p 'test_session_switcher*.py' -v
 ```
 
-`--list` 只读取 session/pane 元数据和 Git，不打开弹窗、不切换客户端。测试使用替身及一次性临时 Git 仓库；PTY 测试只启动真实 Television 验证 Enter / Ctrl+R 和确认默认取消，不调用 tuios 或操作现有 session。
+`--list` 只读取 session/pane 元数据和 Git，不打开弹窗、不切换客户端。测试使用替身及一次性临时 Git 仓库；PTY 测试只启动真实 Television 验证 Enter / Ctrl+R，以及确认默认删除、Down / Esc / Ctrl+C 取消，不调用 tuios 或操作现有 session。

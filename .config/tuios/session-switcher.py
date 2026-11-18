@@ -267,11 +267,11 @@ def live_kill_target(record, source):
 def confirm_kill(record):
     name = text(record["name"])
     selected = television(
-        ["Cancel (keep session)", f"Kill session: {name}"],
+        [f"Kill session: {name}", "Cancel (keep session)"],
         f"Confirm session kill · Terminate ALL windows/processes and disconnect clients: {name} · "
-        "Cancel selected by default · Down then Enter: kill · Esc: cancel",
+        "Kill selected by default · Enter: kill · Down then Enter / Esc: cancel",
     )
-    return selected is not None and selected[1] == 1
+    return selected is not None and selected[1] == 0
 
 
 def kill_selected(record, source):
