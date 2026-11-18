@@ -17,58 +17,6 @@
         {
           "contextWindow": 512000,
           "cost": {
-            "cacheRead": 0.4,
-            "cacheWrite": 5,
-            "input": 4,
-            "output": 20
-          },
-          "id": "auto/gpt-5.6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Sol · routing group",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "auto/gpt-6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6 Sol · routing group",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
             "cacheRead": 0.1,
             "cacheWrite": 2.5,
             "input": 2,
@@ -81,32 +29,6 @@
           ],
           "maxTokens": 128000,
           "name": "GPT-6.1 Sol · routing group",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 1,
-            "cacheWrite": 12.5,
-            "input": 10,
-            "output": 50
-          },
-          "id": "auto/gpt-6-astra",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6 Astra · routing group",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -179,58 +101,6 @@
         {
           "contextWindow": 512000,
           "cost": {
-            "cacheRead": 0.4,
-            "cacheWrite": 5,
-            "input": 4,
-            "output": 20
-          },
-          "id": "byte/gpt-5.6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-5.6 Sol · Byte",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "byte/gpt-6-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6 Sol · Byte",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
             "cacheRead": 0.1,
             "cacheWrite": 2.5,
             "input": 2,
@@ -268,7 +138,7 @@
             "image"
           ],
           "maxTokens": 512000,
-          "name": "kimi-k3 · Byte",
+          "name": "Kimi K3 · Byte",
           "reasoning": true,
           "thinkingLevelMap": {
             "high": "high",
@@ -364,32 +234,6 @@
         {
           "contextWindow": 512000,
           "cost": {
-            "cacheRead": 1,
-            "cacheWrite": 12.5,
-            "input": 10,
-            "output": 50
-          },
-          "id": "new-api/gpt-6-astra",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6 Astra · New API",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
             "cacheRead": 0.01,
             "cacheWrite": 0.125,
             "input": 0.1,
@@ -411,84 +255,6 @@
             "minimal": null,
             "off": "none",
             "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 0.1,
-            "cacheWrite": 2.5,
-            "input": 2,
-            "output": 10
-          },
-          "id": "new-api/gpt-6.1-sol",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6.1 Sol · New API",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": null,
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 0.05,
-            "cacheWrite": 1.25,
-            "input": 1,
-            "output": 5
-          },
-          "id": "new-api/gpt-6.1-terra",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 128000,
-          "name": "GPT-6.1 Terra · New API",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": "medium",
-            "minimal": null,
-            "off": "none",
-            "xhigh": "xhigh"
-          }
-        },
-        {
-          "contextWindow": 512000,
-          "cost": {
-            "cacheRead": 0.2,
-            "cacheWrite": 2,
-            "input": 2,
-            "output": 10
-          },
-          "id": "new-api/kimi-k3.1-pro",
-          "input": [
-            "text",
-            "image"
-          ],
-          "maxTokens": 512000,
-          "name": "Kimi K3.1 Pro · New API",
-          "reasoning": true,
-          "thinkingLevelMap": {
-            "high": "high",
-            "low": "low",
-            "max": "max",
-            "medium": null,
-            "minimal": null,
-            "off": null,
-            "xhigh": null
           }
         },
         {
@@ -540,6 +306,58 @@
             "medium": "medium",
             "minimal": null,
             "off": null,
+            "xhigh": "xhigh"
+          }
+        },
+        {
+          "contextWindow": 512000,
+          "cost": {
+            "cacheRead": 0.2,
+            "cacheWrite": 2,
+            "input": 2,
+            "output": 10
+          },
+          "id": "new-api/kimi-k3.1-pro",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 512000,
+          "name": "Kimi K3.1 Pro · New API",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": "max",
+            "medium": null,
+            "minimal": null,
+            "off": null,
+            "xhigh": null
+          }
+        },
+        {
+          "contextWindow": 512000,
+          "cost": {
+            "cacheRead": 0.05,
+            "cacheWrite": 1.25,
+            "input": 1,
+            "output": 5
+          },
+          "id": "new-api/gpt-6.1-terra",
+          "input": [
+            "text",
+            "image"
+          ],
+          "maxTokens": 128000,
+          "name": "GPT-6.1 Terra · New API",
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "high": "high",
+            "low": "low",
+            "max": "max",
+            "medium": "medium",
+            "minimal": null,
+            "off": "none",
             "xhigh": "xhigh"
           }
         }
