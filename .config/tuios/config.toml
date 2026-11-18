@@ -125,6 +125,13 @@ border_focused_color = "white"
 border_unfocused_color = "bright_black"
 nvim_navigation = true
 
+# optimize ssh terminal performance
+max_fps = 30
+focus_follows_mouse = false
+niri_hover_reveals = false
+links = "off"
+dock_workspace_tooltip = false
+
 [appearance.sidebar]
 enabled = true
 position = "right"
