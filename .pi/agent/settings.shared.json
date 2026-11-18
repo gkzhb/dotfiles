@@ -1,0 +1,71 @@
+{
+  "defaultThinkingLevel": "high",
+  "defaultTools": [
+    "+codemode"
+  ],
+  "quietStartup": true,
+  "enableInstallTelemetry": false,
+  "showHardwareCursor": true,
+  "theme": "dark",
+  "packages": [
+    "npm:pi-goal",
+    "npm:pi-metrics",
+    "npm:pi-copy-message",
+    "npm:pi-background-tasks",
+    "npm:pi-custom-system-prompt",
+    "npm:@furbyhaxx/pi-session-naming",
+    "npm:@fitchmultz/pi-stash",
+    "https://github.com/monotykamary/pi-retry",
+    "npm:pi-paster",
+    "npm:pi-tidy",
+    "npm:@narumitw/pi-tool",
+    "npm:pi-context-view",
+    "npm:@99percentpeople/pi-ssh-remote",
+    "npm:@gkzhb/pi-shepherdr",
+    "npm:@gkzhb/pi-ntfy",
+    "npm:pi-hud-footer"
+  ],
+  "session": {
+    "titleGeneration": {
+      "enabled": true,
+      "language": "auto",
+      "model": "MiniMax-M3.1-Flash",
+      "retries": 3,
+      "emojis": false,
+      "maxLength": 52,
+      "scopeMaxLength": 12,
+      "maxMessageCount": -1,
+      "includeTools": true,
+      "useTags": true,
+      "builtinTags": true,
+      "tags": []
+    },
+    "browser": {
+      "enabled": true,
+      "command": "sessions",
+      "pageSize": 12,
+      "delete": {
+        "enabled": true,
+        "useTrash": true,
+        "confirmPresses": 2
+      }
+    },
+    "rename": {
+      "enabled": true,
+      "command": "rename",
+      "interactiveWhenEmpty": true
+    }
+  },
+  "tidy": {
+    "userMessageTime": true,
+    "userMessageStyle": "rules",
+    "userMessagePaddingY": 0,
+    "finalReplyStyle": "rules",
+    "messageTimeFormat": "YYYY-MM-DD HH:mm:ss",
+    "messageHeaderStyle": "split",
+    "collapseTurns": "live"
+  },
+  "outputPad": 0,
+  "tuiMode": "fullscreen",
+  "hideThinkingBlock": true
+}
