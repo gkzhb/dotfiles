@@ -1,6 +1,6 @@
 {
 	"description": "General implementation",
-	"model": "newapi/gpt-6.1-sol",
+	"model": "newapi/gpt-6.2-sol",
 	"thinking": "high",
 	"prompt": "prompt.md",
 	"accepts": [],
