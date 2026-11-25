@@ -1,377 +1,244 @@
-// Isolated lifecycle tests: execute the real extension with mocked tuios/fs IO.
-// No daemon, pane, model, or installed Pi packages are required.
-// Run: node --test dotfiles/.pi/agent/tests/test-tuios-agent-state.mjs
+// Smoke tests for the official tuios integration and the local settlement policy.
+// Run: node --test .pi/agent/tests/test-tuios-agent-state.mjs
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { readFileSync } from "node:fs";
+import { stripTypeScriptTypes } from "node:module";
+import { basename, dirname } from "node:path";
 import test from "node:test";
 import vm from "node:vm";
-import { basename, dirname } from "node:path";
 
 const source = readFileSync(new URL("../extensions/tuios-agent-state.ts", import.meta.url), "utf8")
-  .replace(/^import .*;\n/gm, "")
-  .replace("export default function (pi)", "function install(pi)");
-const tick = () => new Promise(resolve => setImmediate(resolve));
+  .replace(/^import .*;$/gm, "")
+  .replace("export default function (pi)", "function installTuios(pi)");
+const policySource = stripTypeScriptTypes(readFileSync(new URL("../extensions/tuios-agent-policy.ts", import.meta.url), "utf8"))
+  .replace(/^import .*;$/gm, "")
+  .replace("export default function (", "function installPolicy(");
 
-function harness({ env = {}, hold = false, spawnError = false, watchError = false } = {}) {
-  const calls = [];
+function harness({ mode = "tui", inside = true, socketError, policy = false, env = {}, idleError = false } = {}) {
+  const requests = [];
+  const cli = [];
   const watchers = [];
+  const idle = [];
   const handlers = new Map();
   const bus = new EventEmitter();
-  const timers = new Map();
-  let nextTimer = 0;
-  const state = { idle: true, id: "pi-session", file: "/tmp/transcript.jsonl", leaf: "leaf-0" };
+  const state = { idle: true, leaf: "leaf-0" };
   const ctx = {
-    mode: "tui",
+    mode,
     isIdle: () => state.idle,
     sessionManager: {
-      getSessionId: () => state.id,
-      getSessionFile: () => state.file,
+      getSessionId: () => "pi-session",
+      getSessionFile: () => "/fake/transcript.jsonl",
       getLeafId: () => state.leaf,
     },
   };
-  const sandbox = {
-    Buffer, basename, dirname,
-    process: { env: { TUIOS_ENV: "1", TUIOS_SESSION: "tuios-session", TUIOS_PANE_ID: "pane-id", ...env } },
-    setTimeout(fn, ms) { const id = ++nextTimer; timers.set(id, { fn, ms }); return id; },
-    clearTimeout(id) { timers.delete(id); },
-    spawn(command, args, options) {
-      if (spawnError === "throw") throw new Error("tuios unavailable");
+  vm.runInNewContext(source + policySource + (policy ? "\ninstallPolicy(pi);" : "\ninstallTuios(pi);"), {
+    Buffer, AbortController, basename, dirname, setTimeout, clearTimeout,
+    process: { env: {
+      ...(inside && { TUIOS_ENV: "1", TUIOS_SOCKET: "/fake/tuios.sock", TUIOS_SESSION: "session", TUIOS_PANE_ID: "pane" }),
+      ...env,
+    } },
+    pi: {
+      on(name, handler) {
+        if (!handlers.has(name)) handlers.set(name, []);
+        handlers.get(name).push(handler);
+      },
+      events: { on(name, fn) { bus.on(name, fn); return () => bus.off(name, fn); } },
+      async exec(command, args) {
+        idle.push([command, ...args]);
+        if (idleError) throw new Error("tuios unavailable");
+      },
+    },
+    // Exercise the shipped transports without contacting the current tuios daemon.
+    tuiosConnect(path) {
+      assert.equal(path, "/fake/tuios.sock");
+      const socket = new EventEmitter();
+      socket.setEncoding = socket.destroy = () => {};
+      socket.write = text => {
+        requests.push(JSON.parse(text));
+        queueMicrotask(() => socket.emit("data", JSON.stringify(socketError
+          ? { id: 1, error: { code: socketError } }
+          : { id: 1, result: { stdout: "" } }) + "\n"));
+      };
+      queueMicrotask(() => socket.emit("connect"));
+      return socket;
+    },
+    spawn(command, args) {
       const child = new EventEmitter();
-      const call = { command, args: [...args], options, child, payload: undefined, killed: false };
-      child.stdin = options.stdio === "ignore" ? null : new EventEmitter();
-      if (child.stdin) child.stdin.end = payload => { call.payload = JSON.parse(payload); };
-      child.kill = () => { call.killed = true; child.emit("close", null); };
-      calls.push(call);
-      if (!hold) queueMicrotask(() => {
-        if (spawnError === "event") {
-          child.emit("error", new Error("ENOENT"));
-          child.stdin?.emit("error", new Error("EPIPE"));
-        }
-        child.emit("close", spawnError ? -1 : 0);
-      });
+      child.stdin = new EventEmitter();
+      child.stdin.end = data => {
+        cli.push({ command, args: [...args], payload: JSON.parse(data) });
+        queueMicrotask(() => child.emit("close", 0));
+      };
       return child;
     },
+    readFileSync() { throw new Error("No pi-subagents config"); },
     watch(directory, options, callback) {
-      if (watchError) throw new Error("watch unavailable");
       const watcher = new EventEmitter();
       watcher.close = () => { watcher.closed = true; };
-      Object.assign(watcher, { directory, options, callback, closed: false });
+      Object.assign(watcher, { directory, options, callback });
       watchers.push(watcher);
       return watcher;
     },
-  };
-  vm.runInNewContext(source + "\ninstall(pi);", {
-    ...sandbox,
-    pi: {
-      on(name, handler) { handlers.set(name, handler); },
-      events: bus,
-    },
   }, { filename: "tuios-agent-state.ts" });
+  const tick = () => new Promise(resolve => setImmediate(resolve));
   return {
-    calls, watchers, state, ctx, timers,
-    async emit(name, event = {}, context = ctx) {
-      await handlers.get(name)?.(event, context);
+    state, requests, cli, watchers, bus, tick, idle,
+    async emit(name, event = {}) {
+      for (const handler of handlers.get(name) ?? []) await handler(event, ctx);
       await tick();
     },
-    retry(name, retryId) { bus.emit(`pi-retry:${name}`, { retryId }); },
-    hooks(name) { return calls.filter(call => call.payload?.hook_event_name === name); },
-    idleCalls() { return calls.filter(call => call.args[0] === "set-agent-state" && call.args[1] === "idle"); },
-    async finish({ outcome = "completed", stopReason = "stop", content = [{ type: "text", text: "Answer" }], aborted = false } = {}) {
-      state.idle = true;
-      await this.emit("agent_end", { messages: [{ role: "assistant", stopReason, content }] });
-      await this.emit("agent_before_settle", { outcome });
-      await this.emit("agent_settled", { aborted });
-    },
-    release() { calls.at(-1)?.child.emit("close", 0); },
+    payloads: () => requests.map(request => {
+      assert.equal(request.verb, "agent-hook-event");
+      assert.equal(request.params.harness, "pi");
+      return JSON.parse(request.params.payload);
+    }),
   };
 }
 
-async function started(options) {
-  const h = harness(options);
+const names = payloads => payloads.map(payload => payload.hook_event_name);
+
+test("official lifecycle uses the socket and reports blocking prompts and settlement", async () => {
+  const h = harness();
   await h.emit("session_start");
   h.state.idle = false;
   await h.emit("agent_start");
-  return h;
+  await h.emit("ui_prompt_start", { kind: "confirm", title: "Approve?" });
+  await h.emit("ui_prompt_end", { kind: "confirm" });
+  await h.emit("agent_settled"); // Not yet idle: no report.
+  h.state.idle = true;
+  h.state.leaf = "leaf-final";
+  await h.emit("agent_settled", { aborted: true }); // The official hook does not filter aborts.
+  await h.emit("session_shutdown");
+  const payloads = h.payloads();
+  assert.deepEqual(names(payloads), ["session_start", "agent_start", "ui_prompt_start", "ui_prompt_end", "agent_settled"]);
+  assert.equal(payloads[2].title, "Approve?");
+  assert.equal(payloads[3].busy, true);
+  assert.equal(payloads.at(-1).transcript_leaf, "leaf-final");
+  assert.equal(h.cli.length, 0);
+  assert.equal(h.watchers[0].closed, true);
+});
+
+test("an older daemon falls back to the v5 CLI hook in report order", async () => {
+  const h = harness({ socketError: "unknown_verb" });
+  await h.emit("session_start");
+  await h.emit("agent_start");
+  await h.emit("agent_settled");
+  await h.emit("session_shutdown");
+  assert.equal(h.requests.length, 1);
+  assert.deepEqual(names(h.cli.map(call => call.payload)), ["session_start", "agent_start", "agent_settled"]);
+  for (const call of h.cli) {
+    assert.equal(call.command, "tuios");
+    assert.deepEqual(call.args, ["agent-hook", "pi", "--integration", "5"]);
+  }
+});
+
+test("transcript updates report only changed selections and ignore unrelated file events", async () => {
+  const h = harness();
+  await h.emit("session_start");
+  h.state.leaf = "leaf-1";
+  h.watchers[0].callback("change", "unrelated.jsonl");
+  await h.tick();
+  assert.equal(h.requests.length, 1);
+  h.watchers[0].callback("change", "transcript.jsonl");
+  await h.emit("turn_end"); // Same leaf, not a second report.
+  h.state.leaf = null;
+  await h.emit("session_tree");
+  await h.emit("session_shutdown");
+  assert.deepEqual(names(h.payloads()), ["session_start", "transcript_update", "transcript_update"]);
+  assert.deepEqual(h.payloads().map(payload => payload.transcript_leaf), ["leaf-0", "leaf-1", ""]);
+});
+
+test("pi-subagents lifecycle adds child reports without settling the parent", async () => {
+  const h = harness();
+  await h.emit("session_start");
+  h.bus.emit("subagent:async-started", { id: "run-1", agent: "reviewer", label: "Review diff" });
+  h.bus.emit("subagent:async-complete", { id: "run-1", results: [{ summary: "No findings" }] });
+  await h.emit("session_shutdown");
+  const payloads = h.payloads();
+  assert.deepEqual(names(payloads), ["session_start", "subagent_start", "subagent_stop"]);
+  assert.equal(payloads[1].agent_type, "reviewer");
+  assert.equal(payloads[2].agent_id, "run-1");
+  assert.equal(payloads[2].text, "No findings");
+  assert.equal(h.bus.listenerCount("subagent:async-started"), 0);
+});
+
+test("non-TUI sessions and sessions outside tuios do not report", async () => {
+  for (const policy of [false, true]) {
+    for (const options of [{ mode: "print" }, { mode: "json" }, { mode: "rpc" }, { inside: false }]) {
+      const h = harness({ policy, ...options });
+      await h.emit("session_start");
+      await h.emit("agent_start");
+      await h.emit("agent_settled");
+      await h.emit("session_shutdown");
+      assert.equal(h.requests.length + h.cli.length + h.watchers.length + h.idle.length, 0);
+    }
+  }
+});
+
+const answer = { role: "assistant", stopReason: "stop", content: [{ type: "text", text: "Answer" }] };
+
+async function turn(h, { messages = [answer], outcome = "completed", aborted = false } = {}) {
+  h.state.idle = false;
+  await h.emit("agent_start");
+  await h.emit("agent_end", { messages });
+  if (outcome !== null) await h.emit("agent_before_settle", { outcome });
+  h.state.idle = true;
+  await h.emit("agent_settled", { aborted });
 }
 
-for (const [name, ending] of [
-  ["error", { outcome: "error", stopReason: "error" }],
-  ["empty text", { content: [{ type: "text", text: " \n " }] }],
-  ["thinking only", { content: [{ type: "thinking", thinking: "Thought" }] }],
-  ["tool call", { content: [{ type: "text", text: "Calling" }, { type: "toolCall", name: "bash" }] }],
-  ["length stop", { stopReason: "length" }],
-  ["aborted outcome", { outcome: "aborted" }],
-  ["Escape after answer", { aborted: true }],
+test("wrapped success still uses the official socket, transcript and child reports", async () => {
+  const h = harness({ policy: true });
+  await h.emit("session_start");
+  h.bus.emit("subagent:async-started", { id: "run-1", agent: "reviewer" });
+  await h.emit("ui_prompt_start", { kind: "confirm" });
+  await h.emit("ui_prompt_end", { kind: "confirm" });
+  h.state.leaf = "answer-leaf";
+  await turn(h);
+  assert.deepEqual(names(h.payloads()), ["session_start", "subagent_start", "ui_prompt_start", "ui_prompt_end", "agent_start", "agent_settled"]);
+  assert.equal(h.payloads().at(-1).transcript_leaf, "answer-leaf");
+  assert.equal(h.idle.length + h.cli.length, 0);
+  await h.emit("session_shutdown");
+});
+
+for (const [reason, result] of [
+  ["failure", { outcome: "error" }],
+  ["cancelled", { aborted: true, outcome: null }],
+  ["abort after pre-settle", { aborted: true }],
+  ["empty output", { messages: [{ ...answer, content: [{ type: "text", text: " \n " }] }] }],
+  ["tool call", { messages: [{ ...answer, content: [...answer.content, { type: "toolCall" }] }] }],
+  ["truncated output", { messages: [{ ...answer, stopReason: "length" }] }],
+  ["no assistant reply", { messages: [{ role: "user" }] }],
+  ["unknown outcome", { outcome: null }],
 ]) {
-  test(`${name} settles to idle, never done/errored`, async () => {
-    const h = await started();
-    await h.finish(ending);
-    assert.equal(h.hooks("agent_settled").length, 0);
-    assert.equal(h.idleCalls().length, 1);
-    assert.deepEqual(h.idleCalls()[0].args, ["set-agent-state", "idle", "--session", "tuios-session", "--window", "pane-id", "--harness", "pi", "--agent-session-id", "pi-session"]);
+  test(`wrapped ${reason} never reports done and only clears a working pane`, async () => {
+    const h = harness({ policy: true });
+    await h.emit("session_start");
+    await turn(h);
+    await turn(h, result); // A prior success must not leak into the next turn.
+    assert.deepEqual(names(h.payloads()), ["session_start", "agent_start", "agent_settled", "agent_start"]);
+    assert.deepEqual(h.idle, [["tuios", "set-agent-state", "idle", "--session", "session", "--window", "pane",
+      "--harness", "pi", "--if-state", "working", "--agent-session-id", "pi-session"]]);
+    await h.emit("session_shutdown");
   });
 }
 
-test("only a nonempty completed normal answer reports done using v3 and its leaf", async () => {
-  const h = await started();
-  h.state.leaf = "final-leaf";
-  await h.finish();
-  const [done] = h.hooks("agent_settled");
-  assert.ok(done);
-  assert.deepEqual(done.args, ["agent-hook", "pi", "--integration", "3"]);
-  assert.equal(done.payload.transcript_leaf, "final-leaf");
-  assert.equal(h.idleCalls().length, 0);
-});
-
-test("pi-retry backoff stays working; stale receipts cannot finish a newer retry", async () => {
-  const h = await started();
-  h.retry("started", 11);
-  h.retry("started", 12);
-  await h.finish({ outcome: "error", stopReason: "error" });
-  assert.equal(h.hooks("agent_settled").length, 0);
-  assert.equal(h.idleCalls().length, 0);
-  assert.equal(h.hooks("agent_start").length, 2);
-  h.retry("cancelled", 11);
-  await tick();
-  assert.equal(h.idleCalls().length, 0);
-  h.retry("cancelled", 12);
-  await tick();
-  assert.equal(h.idleCalls().length, 1);
-  h.retry("completed", 12);
-  await tick();
-  assert.equal(h.idleCalls().length, 1);
-});
-
-test("successful detached retry reports done only after its own lifecycle completion", async () => {
-  const h = await started();
-  h.retry("started", 1);
-  await h.finish({ outcome: "error", stopReason: "error" });
-  h.state.idle = false;
-  await h.emit("agent_start");
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 0);
-  h.retry("completed", 1);
-  await tick();
-  assert.equal(h.hooks("agent_settled").length, 1);
-  assert.equal(h.idleCalls().length, 0);
-});
-
-test("retry receipts ignore invalid IDs", async () => {
-  const h = await started();
-  for (const id of [undefined, "1", 1.1, NaN]) h.retry("started", id);
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 1);
-});
-
-test("nested UI prompts defer settlement until the last prompt ends", async () => {
-  const h = await started();
-  await h.emit("ui_prompt_start", { kind: "confirm", title: "Approve?" });
-  await h.emit("ui_prompt_start", { kind: "input" });
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 0);
-  await h.emit("ui_prompt_end", { kind: "input" });
-  assert.equal(h.hooks("agent_settled").length, 0);
-  await h.emit("ui_prompt_end", { kind: "confirm" });
-  assert.equal(h.hooks("agent_settled").length, 1);
-});
-
-test("answering a prompt during retry backoff returns to working, not rest", async () => {
-  const h = await started();
-  h.retry("started", 9);
-  await h.emit("ui_prompt_start", { kind: "confirm" });
-  await h.finish({ outcome: "error", stopReason: "error" });
-  await h.emit("ui_prompt_end", { kind: "confirm" });
-  assert.equal(h.hooks("ui_prompt_end")[0].payload.busy, true);
-  assert.equal(h.idleCalls().length, 0);
-  h.retry("cancelled", 9);
-  await tick();
-  assert.equal(h.idleCalls().length, 1);
-});
-
-test("busy settlement is ignored, and a new run clears previous final-answer state", async () => {
-  const h = await started();
-  await h.emit("agent_end", { messages: [{ role: "assistant", stopReason: "stop", content: [{ type: "text", text: "Old answer" }] }] });
-  await h.emit("agent_before_settle", { outcome: "completed" });
-  await h.emit("agent_settled", { aborted: false });
-  assert.equal(h.hooks("agent_settled").length, 0);
-  await h.emit("agent_start");
-  await h.emit("agent_end", { messages: [{ role: "user", content: "No assistant" }] });
-  await h.emit("agent_before_settle", { outcome: "completed" });
-  h.state.idle = true;
-  await h.emit("agent_settled", { aborted: false });
-  assert.equal(h.idleCalls().length, 1);
-});
-
-test("idle never falls back to whichever pane has focus", async () => {
-  for (const env of [{ TUIOS_SESSION: "" }, { TUIOS_PANE_ID: "" }]) {
-    const h = await started({ env });
-    await h.finish({ outcome: "error" });
-    assert.equal(h.idleCalls().length, 0);
-    assert.equal(h.hooks("agent_settled").length, 0);
-  }
-});
-
-test("new session clears deferred retry/prompt/answer state and closes the old watcher", async () => {
-  const h = await started();
-  h.retry("started", 7);
-  await h.emit("ui_prompt_start", { kind: "input" });
-  await h.finish({ aborted: true });
-  const old = h.watchers[0];
-  h.state.id = "new-session";
-  h.state.leaf = "new-leaf";
-  await h.emit("session_start");
-  assert.equal(old.closed, true);
-  const count = h.calls.length;
-  old.callback("change", "transcript.jsonl");
-  h.retry("completed", 7);
-  await tick();
-  assert.equal(h.calls.length, count);
-  h.state.idle = false;
-  await h.emit("agent_start");
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 1);
-});
-
-test("leaf metadata is deduplicated and updated by filesystem, tree, compact and turn events", async () => {
-  const h = await started();
-  const w = h.watchers[0];
-  assert.equal(w.directory, "/tmp");
-  assert.equal(w.options.persistent, false);
-  await h.emit("turn_end");
-  assert.equal(h.hooks("transcript_update").length, 0);
-  h.state.leaf = "leaf-1";
-  w.callback("change", "unrelated.jsonl");
-  await tick();
-  assert.equal(h.hooks("transcript_update").length, 0);
-  w.callback("change", "transcript.jsonl");
-  await tick();
-  await h.emit("turn_end");
-  assert.equal(h.hooks("transcript_update").length, 1);
-  h.state.leaf = "leaf-2";
-  await h.emit("session_tree");
-  h.state.leaf = "leaf-3";
-  await h.emit("session_compact");
-  h.state.leaf = null;
-  await h.emit("turn_end");
-  assert.deepEqual(h.hooks("transcript_update").map(call => call.payload.transcript_leaf), ["leaf-1", "leaf-2", "leaf-3", ""]);
-});
-
-test("idle state is FIFO behind in-flight v3 reports; settlement still updates the final leaf", async () => {
-  const h = await started({ hold: true });
-  h.state.leaf = "failure-leaf";
-  await h.finish({ outcome: "error" });
-  assert.equal(h.calls.length, 1, "idle must not race the in-flight session_start");
-  h.release(); await tick();
-  assert.equal(h.calls[1].payload.hook_event_name, "agent_start");
-  h.release(); await tick();
-  assert.equal(h.calls[2].payload.hook_event_name, "transcript_update");
-  assert.equal(h.calls[2].payload.transcript_leaf, "failure-leaf");
-  h.release(); await tick();
-  assert.equal(h.calls[3].args[0], "set-agent-state");
-  h.release(); await h.emit("session_shutdown");
-});
-
-test("adjacent metadata reports coalesce to the latest leaf while delivery is blocked", async () => {
-  const h = harness({ hold: true });
-  await h.emit("session_start");
-  for (let i = 1; i <= 100; i++) {
-    h.state.leaf = `leaf-${i}`;
-    await h.emit("turn_end");
-  }
-  h.release(); await tick();
-  assert.equal(h.calls.length, 2);
-  assert.equal(h.calls[1].payload.transcript_leaf, "leaf-100");
-  h.release(); await h.emit("session_shutdown");
-});
-
-test("report queue stays bounded and preferentially drops metadata when full", async () => {
-  const h = harness({ hold: true });
-  await h.emit("session_start");
-  h.state.leaf = "obsolete";
-  await h.emit("turn_end");
-  for (let i = 0; i < 40; i++) await h.emit("agent_start");
-  for (let i = 0; i < 33; i++) { h.release(); await tick(); }
-  assert.equal(h.calls.length, 33, "one active child plus at most 32 pending reports");
-  assert.equal(h.hooks("transcript_update").length, 0);
-  await h.emit("session_shutdown");
-});
-
-test("shutdown closes watchers, clears deferred settlement and bounds draining", async () => {
-  const h = await started({ hold: true });
-  h.retry("started", 3);
-  await h.finish({ outcome: "error" });
-  const shutdown = h.emit("session_shutdown");
-  await tick();
-  assert.equal(h.watchers[0].closed, true);
-  h.retry("cancelled", 3);
-  for (const timer of h.timers.values()) {
-    assert.equal(timer.ms, 1000);
-    timer.fn();
-  }
-  await shutdown;
-  assert.equal(h.calls[0].killed, true);
-  assert.equal(h.calls.length, 1);
-  assert.equal(h.timers.size, 0);
-});
-
-test("reload session_start retains mid-turn busy status", async () => {
-  const h = harness();
-  h.state.idle = false;
-  await h.emit("session_start");
-  assert.equal(h.hooks("session_start")[0].payload.busy, true);
-});
-
-test("non-TUI sessions and non-tuios environments do not report or watch", async () => {
-  for (const mode of ["print", "json", "rpc"]) {
-    const h = harness();
-    h.ctx.mode = mode;
+test("wrapped idle never targets a focused pane by default or another harness", async () => {
+  for (const env of [{ TUIOS_PANE_ID: "" }, { TUIOS_SESSION: "" }, { TUIOS_AGENT: "codex" }]) {
+    const h = harness({ policy: true, env });
     await h.emit("session_start");
-    await h.emit("agent_start");
-    h.retry("started", 1);
-    await h.finish();
-    await h.emit("ui_prompt_start");
-    await h.emit("ui_prompt_end");
+    await turn(h, { aborted: true });
+    assert.equal(h.idle.length, 0);
+    assert.ok(!names(h.payloads()).includes("agent_settled"));
     await h.emit("session_shutdown");
-    assert.equal(h.calls.length, 0);
-    assert.equal(h.watchers.length, 0);
   }
-  const h = harness({ env: { TUIOS_ENV: "", TUIOS_AGENT: "" } });
+});
+
+test("wrapped idle reporting failure does not break settlement", async () => {
+  const h = harness({ policy: true, idleError: true });
   await h.emit("session_start");
-  await h.emit("agent_start");
-  assert.equal(h.calls.length, 0);
-});
-
-test("missing tuios and optional filesystem watching cannot break Pi", async () => {
-  const h = await started({ spawnError: "throw", watchError: true });
-  await h.finish({ outcome: "error" });
-  await h.emit("session_shutdown");
-  assert.equal(h.calls.length, 0);
-  assert.equal(h.watchers.length, 0);
-});
-
-test("asynchronous spawn/stdin errors release the FIFO and do not reject handlers", async () => {
-  const h = await started({ spawnError: "event" });
-  await h.finish({ outcome: "error" });
-  assert.equal(h.idleCalls().length, 1);
-  await h.emit("session_shutdown");
-});
-
-test("oversized reports are dropped without preventing later lifecycle delivery", async () => {
-  const h = await started();
-  const before = h.calls.length;
-  await h.emit("ui_prompt_start", { title: "x".repeat(64 * 1024) });
-  assert.equal(h.calls.length, before);
-  await h.emit("ui_prompt_end");
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 1);
-});
-
-test("watcher errors close optional watching while lifecycle reports still work", async () => {
-  const h = await started();
-  h.watchers[0].emit("error", new Error("watch failure"));
-  assert.equal(h.watchers[0].closed, true);
-  await h.finish();
-  assert.equal(h.hooks("agent_settled").length, 1);
+  await turn(h, { outcome: "error" });
+  assert.equal(h.idle.length, 1);
+  assert.ok(!names(h.payloads()).includes("agent_settled"));
   await h.emit("session_shutdown");
 });

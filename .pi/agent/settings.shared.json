@@ -7,6 +7,9 @@
   "enableInstallTelemetry": false,
   "showHardwareCursor": true,
   "theme": "dark",
+  "extensions": [
+    "-extensions/tuios-agent-state.ts"
+  ],
   "packages": [
     "npm:pi-goal",
     "npm:pi-metrics",

@@ -2,27 +2,123 @@
 // managed by tuios; `tuios integration install pi` overwrites this file and
 // `tuios integration uninstall pi` removes it. Put your own extensions beside
 // it instead of editing it.
-// Local override: only nonempty normal answers report done; pi-retry backoff
-// stays working. Failed/empty/cancelled stops report idle, not done/errored.
-// Keep idle commands in the v3 FIFO with lifecycle and transcript reports.
 // TUIOS_INTEGRATION_ID=pi
-// TUIOS_INTEGRATION_VERSION=3
+// TUIOS_INTEGRATION_VERSION=5
 // @ts-nocheck
 //
-// Reports Pi's turns to the tuios pane it runs in, through
-// `tuios agent-hook pi`: session_start names the session, agent_start starts
+// Reports Pi's turns to the tuios pane it runs in, through the daemon's
+// agent-hook-event verb, or `tuios agent-hook pi` where the daemon has no
+// such verb: session_start names the session, agent_start starts
 // work and agent_settled ends it. ui_prompt_start says Pi is waiting on the
 // person in a blocking prompt (a confirm, a choice, a line of input), and
 // ui_prompt_end that the prompt was answered; both say whether a turn is
-// running, so an answered prompt goes back to working or to rest. Only the TUI
+// running, so an answered prompt goes back to working or to rest. Pi's
+// subagents report as children of the pane: subagent_start names one and what
+// it was asked, subagent_update what it runs now, subagent_stop how it ended
+// — an empty stop text is a stop, a non-empty one a finish. Only the TUI
 // mode reports, since the print, JSON and RPC modes run with no terminal a
 // pane could show.
 
 import { spawn } from "node:child_process";
-import { watch } from "node:fs";
+import { readFileSync, watch } from "node:fs";
 import { basename, dirname } from "node:path";
+import { homedir } from "node:os";
 
 const TUIOS = "tuios";
+
+// hookViaSocket sends one hook event to the tuios daemon over its socket, as
+// the agent-hook-event verb, so no tuios process starts for it. The daemon
+// finds the pane from this process, as `tuios agent-hook` finds it from its
+// own. It resolves to what the hook prints for the harness to read (a string,
+// often empty, and empty when signal aborts the call), or to null when the
+// event has to go through `tuios agent-hook` instead: no socket in the
+// environment, a socket that cannot be reached, or a daemon older than the
+// verb. The two last are remembered, so
+// the events after them go to the process at once. A call that reached the
+// daemon is never sent again, so an event is never reported twice.
+import { connect as tuiosConnect } from "node:net";
+
+// The variables the hook mapping reads, as tuios integration writes them.
+const TUIOS_HOOK_ENV = ["TUIOS_AGENT","CODEX_THREAD_ID","CURSOR_VERSION","GROK_SESSION_ID","CRUSH_SESSION_ID"];
+let tuiosSocketOff = !process.env.TUIOS_SOCKET;
+
+// verb is agent-hook-event unless named (agent-statusline-event for a status
+// line run), and extra holds that verb's own params.
+function hookViaSocket(harness, payload, limitMs, signal, verb = "agent-hook-event", extra = {}) {
+  if (tuiosSocketOff) return Promise.resolve(null);
+  if (signal?.aborted) return Promise.resolve("");
+  return new Promise((resolve) => {
+    let settled = false;
+    let connected = false;
+    let buf = "";
+    let sock = null;
+    let timer = null;
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      signal?.removeEventListener("abort", abort);
+      try {
+        sock?.destroy();
+      } catch {}
+      resolve(value);
+    };
+    // An abort ends the call with nothing printed; the daemon ends the hold
+    // when it sees the connection go.
+    const abort = () => done("");
+    signal?.addEventListener("abort", abort, { once: true });
+    const env = {};
+    for (const name of TUIOS_HOOK_ENV) {
+      if (process.env[name]) env[name] = process.env[name];
+    }
+    try {
+      sock = tuiosConnect(process.env.TUIOS_SOCKET);
+    } catch {
+      tuiosSocketOff = true;
+      done(null);
+      return;
+    }
+    // Past the limit nothing is printed, as when the hook process gives up.
+    timer = setTimeout(() => done(connected ? "" : null), limitMs);
+    sock.setEncoding("utf8");
+    sock.on("connect", () => {
+      connected = true;
+      sock.write(JSON.stringify({ id: 1, verb, params: { ...extra, harness, payload, env } }) + "\n");
+    });
+    sock.on("data", (chunk) => {
+      buf += chunk;
+      const nl = buf.indexOf("\n");
+      if (nl < 0) {
+        if (buf.length > 1 << 20) done("");
+        return;
+      }
+      let msg = null;
+      try {
+        msg = JSON.parse(buf.slice(0, nl));
+      } catch {
+        done("");
+        return;
+      }
+      if (msg && msg.error) {
+        if (msg.error.code === "unknown_verb") {
+          tuiosSocketOff = true;
+          done(null);
+          return;
+        }
+        done("");
+        return;
+      }
+      const out = msg && msg.result ? msg.result.stdout : "";
+      done(typeof out === "string" ? out : "");
+    });
+    sock.on("error", () => {
+      if (!connected) tuiosSocketOff = true;
+      done(connected ? "" : null);
+    });
+    sock.on("close", () => done(connected ? "" : null));
+  });
+}
+
 
 // Delivery is best-effort, bounded and FIFO for retained state reports. Keep
 // only the newest adjacent metadata update; a slow daemon must not accumulate
@@ -36,14 +132,27 @@ let activeChild;
 let idle;
 let lastSelection = "";
 
-function send(payload, args) {
+let activeAbort;
+
+// send reports one event: over the daemon's socket, else through tuios.
+async function send(payload) {
+  const abort = new AbortController();
+  activeAbort = abort;
+  try {
+    if ((await hookViaSocket("pi", payload, 2000, abort.signal)) !== null) return;
+  } finally {
+    if (activeAbort === abort) activeAbort = undefined;
+  }
+  await spawnSend(payload);
+}
+
+function spawnSend(payload) {
   return new Promise(resolve => {
     try {
-      const child = spawn(TUIOS, args ?? ["agent-hook", "pi", "--integration", "3"], {
-        stdio: args ? "ignore" : ["pipe", "ignore", "ignore"],
+      const child = spawn(TUIOS, ["agent-hook", "pi", "--integration", "5"], {
+        stdio: ["pipe", "ignore", "ignore"],
         windowsHide: true,
-        timeout: args ? 750 : 2000,
-        ...(args ? { killSignal: "SIGKILL" } : {}),
+        timeout: 2000,
       });
       activeChild = child;
       child.on("error", resolve);
@@ -51,8 +160,8 @@ function send(payload, args) {
         if (activeChild === child) activeChild = undefined;
         resolve();
       });
-      child.stdin?.on("error", () => {});
-      child.stdin?.end(payload);
+      child.stdin.on("error", () => {});
+      child.stdin.end(payload);
     } catch {
       resolve();
     }
@@ -63,10 +172,7 @@ async function pump() {
   if (sending) return;
   sending = true;
   try {
-    while (queue.length) {
-      const next = queue.shift();
-      await send(next.payload, next.args);
-    }
+    while (queue.length) await send(queue.shift().payload);
   } finally {
     sending = false;
     idle?.();
@@ -74,7 +180,7 @@ async function pump() {
   }
 }
 
-function enqueue(payload, key, args) {
+function enqueue(payload, key) {
   if (Buffer.byteLength(payload) > MAX_REPORT_BYTES) return;
   const last = queue.at(-1);
   if (key && last?.key === key) {
@@ -82,10 +188,12 @@ function enqueue(payload, key, args) {
     return;
   }
   if (queue.length >= MAX_PENDING) {
+    // Under saturation the oldest keyed report is evicted, so a pending keyed
+    // report — a stop, say — can be the one dropped. Best-effort by contract.
     const obsolete = queue.findIndex(report => report.key);
     queue.splice(obsolete < 0 ? 0 : obsolete, 1);
   }
-  queue.push({ payload, key, args });
+  queue.push({ payload, key });
   void pump();
 }
 
@@ -99,10 +207,11 @@ async function drain() {
   clearTimeout(timer);
   idle = undefined;
   queue.length = 0;
+  activeAbort?.abort(); // the report on the daemon's socket, if one is out
   activeChild?.kill(); // only our reporting child, never the daemon or Pi
 }
 
-function report(event, ctx, extra) {
+function report(event, ctx, extra, key) {
   let sessionID = "";
   let sessionFile = "";
   let leaf;
@@ -130,9 +239,14 @@ function report(event, ctx, extra) {
   // Every report that carries a selection counts, not only the metadata ones.
   const selection = sessionFile && leaf !== undefined ? sessionID + "\0" + sessionFile + "\0" + leaf : "";
   if (event === "transcript_update" && selection && selection === lastSelection) return;
-  if (selection) lastSelection = selection;
+  // Subagent reports' transcript fields are dropped by the daemon's
+  // translatePi, so they must not count as a selection: a subagent report
+  // firing between a transcript leaf advance and the watcher callback would
+  // otherwise suppress the parent's next transcript_update.
+  const dropsTranscript = event === "subagent_start" || event === "subagent_update" || event === "subagent_stop";
+  if (selection && !dropsTranscript) lastSelection = selection;
   // A report that cannot be sent must never break Pi.
-  enqueue(payload, event === "transcript_update" ? sessionID + "\0" + sessionFile : "");
+  enqueue(payload, key || (event === "transcript_update" ? sessionID + "\0" + sessionFile : ""));
 }
 
 export default function (pi) {
@@ -140,58 +254,8 @@ export default function (pi) {
     return;
   }
   let tui = false;
-  let outcome;
-  let finalAnswer = false;
-  let retryID;
-  let settledCtx;
-  let cancelled = false;
-  let promptDepth = 0;
   let epoch = 0;
   let watcher;
-
-  function reportRest() {
-    if (!tui || !settledCtx || promptDepth > 0) return;
-    const ctx = settledCtx;
-    if (retryID !== undefined) {
-      report("agent_start", ctx, {});
-      return;
-    }
-    settledCtx = undefined;
-    if (!cancelled && outcome === "completed" && finalAnswer) {
-      report("agent_settled", ctx, {});
-      return;
-    }
-    // The idle CLI has no leaf field; keep v3's final transcript selection in
-    // sync even when this stop intentionally does not create a done report.
-    report("transcript_update", ctx, {});
-    // Idle ends activity without creating a successful or errored Inbox item.
-    // Do not use session_start, which would reset the session's state.
-    const pane = process.env.TUIOS_PANE_ID;
-    const session = process.env.TUIOS_SESSION;
-    if (!pane || !session) return; // Never fall back to the focused pane.
-    const args = ["set-agent-state", "idle", "--session", session,
-      "--window", pane, "--harness", "pi"];
-    try {
-      const id = ctx?.sessionManager?.getSessionId?.();
-      if (typeof id === "string" && id) args.push("--agent-session-id", id);
-    } catch {}
-    enqueue("", "", args);
-  }
-
-  // pi-retry emits these synchronously before detached retries and after their
-  // final settlement. Match receipts so an old loop cannot finish a newer one.
-  pi.events.on("pi-retry:started", (event) => {
-    if (!tui || !Number.isSafeInteger(event?.retryId)) return;
-    retryID = event.retryId;
-  });
-  function retryEnded(event) {
-    if (event?.retryId !== retryID || retryID === undefined) return;
-    retryID = undefined;
-    reportRest();
-  }
-  pi.events.on("pi-retry:completed", retryEnded);
-  pi.events.on("pi-retry:cancelled", retryEnded);
-
   const stopWatching = () => {
     watcher?.close();
     watcher = undefined;
@@ -218,16 +282,13 @@ export default function (pi) {
   };
   pi.on("session_start", (_event, ctx) => {
     stopWatching();
+    stopSubagents();
     epoch++;
     tui = ctx?.mode === "tui";
-    outcome = undefined;
-    finalAnswer = false;
-    retryID = undefined;
-    settledCtx = undefined;
-    cancelled = false;
-    promptDepth = 0;
     if (!tui) return;
     startWatching(ctx);
+    subCtx = ctx;
+    startSubagents();
     // A reload replaces the extension mid-turn without a new agent_start.
     report("session_start", ctx, { busy: ctx?.isIdle?.() === false });
   });
@@ -243,34 +304,18 @@ export default function (pi) {
   pi.on("session_shutdown", () => {
     tui = false;
     epoch++;
-    retryID = undefined;
-    settledCtx = undefined;
     stopWatching();
+    stopSubagents();
     return drain();
   });
   pi.on("agent_start", (_event, ctx) => {
-    outcome = undefined;
-    finalAnswer = false;
-    settledCtx = undefined;
-    cancelled = false;
     if (tui) report("agent_start", ctx, {});
   });
-  pi.on("agent_end", (event) => {
-    const last = event.messages.findLast((message) => message.role === "assistant");
-    finalAnswer = last?.stopReason === "stop" &&
-      last.content.some((part) => part.type === "text" && part.text.trim()) &&
-      !last.content.some((part) => part.type === "toolCall");
-  });
-  pi.on("agent_before_settle", (event) => { outcome = event.outcome; });
-  pi.on("agent_settled", (event, ctx) => {
-    if (!tui || ctx?.isIdle?.() === false) return;
-    cancelled = event.aborted === true;
-    settledCtx = ctx;
-    reportRest();
+  pi.on("agent_settled", (_event, ctx) => {
+    if (tui && ctx?.isIdle?.() !== false) report("agent_settled", ctx, {});
   });
   pi.on("ui_prompt_start", (event, ctx) => {
     if (!tui) return;
-    promptDepth++;
     report("ui_prompt_start", ctx, {
       kind: typeof event?.kind === "string" ? event.kind : "",
       title: typeof event?.title === "string" ? event.title : "",
@@ -279,11 +324,313 @@ export default function (pi) {
   });
   pi.on("ui_prompt_end", (event, ctx) => {
     if (!tui) return;
-    promptDepth = Math.max(0, promptDepth - 1);
     report("ui_prompt_end", ctx, {
       kind: typeof event?.kind === "string" ? event.kind : "",
-      busy: retryID !== undefined || ctx?.isIdle?.() === false,
+      busy: ctx?.isIdle?.() === false,
     });
-    reportRest();
+  });
+
+  // Pi-subagents announces its runs on the in-process event bus. Each run
+  // becomes a child row under the pane: subagent_start names one and what it
+  // was asked, subagent_update what it runs now, subagent_stop how it ended
+  // (empty text a stop, non-empty a finish). A foreground run is the parent's
+  // own tool call on the subagent tool, so its id is that call's, behind fg:
+  // to keep it off the run ids; a background or workflow run reports through
+  // the async events and, for workflow children, through child-status. A
+  // workflow child never reports its own natural completion: it ends with
+  // its parent's async-complete, which carries a result per child. None of
+  // them say anything about the pane's own state.
+  let subCtx;
+  let subUnsub;
+  const subTaskByCall = new Map(); // toolCallId -> task text of a background launch
+  const subSeen = new Map(); // subagent id -> the last update reported for it
+  const subRuns = new Map(); // run id -> asyncDir, for the live tool line
+  const subPolled = new Map(); // run id -> when status was last read
+  const subChildParent = new Map(); // child id -> { parent, index, agent } of a workflow child
+
+  const subFirstLine = value => {
+    if (typeof value !== "string") return "";
+    const line = value.trim().split(/\r?\n/, 1)[0].trim();
+    return line.length > 200 ? line.slice(0, 200) : line;
+  };
+
+  // The daemon's ValidSubagentID accepts only [A-Za-z0-9_.:@-], and OpenAI
+  // Responses/Codex toolCallIds contain '|', so the foreground id built from
+  // one must be sanitised. The cap is 128 including the fg: prefix.
+  const subId = call => "fg:" + call.replace(/[^A-Za-z0-9_.:@-]/g, "_").slice(0, 125);
+
+  const subResultText = content => {
+    if (!Array.isArray(content)) return "";
+    for (const block of content) {
+      if (block?.type === "text" && typeof block.text === "string" && block.text.trim()) {
+        return subFirstLine(block.text);
+      }
+    }
+    return "";
+  };
+
+  const subReport = (event, id, extra) => {
+    if (!id) return;
+    const prior = subSeen.get(id);
+    const tool = typeof extra.tool === "string" ? extra.tool : "";
+    const target = typeof extra.target === "string" ? extra.target : "";
+    const line = tool ? tool + (target ? ": " + target : "") : "";
+    const text = typeof extra.text === "string" ? extra.text : prior?.text || "";
+    // An update that carries only an outcome never repeats the last report:
+    // its line and text may be the ones already given.
+    if (event === "subagent_update" && prior && extra.outcome === undefined &&
+        line === (prior.line || "") && text === (prior.text || "")) {
+      return; // the daemon is not told again what it already has
+    }
+    subSeen.set(id, { line, text });
+    report(event, subCtx, { agent_id: id, ...extra, tool, target }, event + "\0" + id);
+  };
+
+  // pi-subagents emits child-status only on user-stop paths: a workflow
+  // child that runs to its end is never named again. Track each child under
+  // the parent run that child-status names, with the step index and agent
+  // that map it to one of the parent's results.
+  const subTrackChild = (id, p) => {
+    const parent = typeof p.runId === "string" ? p.runId : "";
+    if (!parent || parent === id) return;
+    subChildParent.set(id, {
+      parent,
+      index: typeof p.stepIndex === "number" ? p.stepIndex : undefined,
+      agent: typeof p.agent === "string" ? p.agent : "",
+    });
+  };
+
+  const subDropChild = id => {
+    subChildParent.delete(id);
+    subRuns.delete(id);
+    subPolled.delete(id);
+  };
+
+  // The parent's async-complete is the only end a workflow child gets on
+  // natural completion: end every child it owns, with the child's own result
+  // where one maps to it — by step index, else by agent — else a plain done.
+  const subEndChildren = (parent, p) => {
+    const results = Array.isArray(p.results) ? p.results : [];
+    const consumed = new Set();
+    for (const [id, tracked] of [...subChildParent]) {
+      if (tracked.parent !== parent) continue;
+      subDropChild(id);
+      let result;
+      if (tracked.index !== undefined) {
+        result = results.find(r => r && typeof r === "object" && !consumed.has(r) && r.index === tracked.index);
+      }
+      if (!result) {
+        result = results.find(r => r && typeof r === "object" && !consumed.has(r) &&
+          typeof r.agent === "string" && r.agent && r.agent === tracked.agent);
+      }
+      if (result) consumed.add(result);
+      if (result?.status === "failed") {
+        subReport("subagent_update", id, { outcome: "failed", text: subFirstLine(result.summary) || "failed" });
+      } else if (result?.status === "stopped") {
+        subReport("subagent_stop", id, { text: "" });
+      } else {
+        subReport("subagent_stop", id, { text: subFirstLine(result?.summary) || "done" });
+      }
+    }
+  };
+
+  const pollStatuses = async () => {
+    const now = Date.now();
+    for (const [id, dir] of subRuns) {
+      if (!dir || now - (subPolled.get(id) || 0) < 2000) continue;
+      subPolled.set(id, now);
+      let status;
+      try {
+        const { readFile } = await import("node:fs/promises");
+        status = JSON.parse(await readFile(dir + "/status.json", "utf8"));
+      } catch {
+        continue; // the file may not exist yet, or not parse mid-write
+      }
+      try {
+        const tool = subFirstLine(status.currentTool);
+        subReport("subagent_update", id, { tool, target: subFirstLine(status.currentPath) });
+      } catch {}
+    }
+  };
+
+  const stopSubagents = () => {
+    for (const off of subUnsub || []) {
+      try { off?.(); } catch {}
+    }
+    subUnsub = undefined;
+    subTaskByCall.clear();
+    subSeen.clear();
+    subRuns.clear();
+    subPolled.clear();
+    subChildParent.clear();
+  };
+
+  // pi-subagents runs a call in the background unless the model said
+  // async: false — or unless asyncByDefault: false says the quiet default
+  // the other way. The tool_call event carries the model's validated and
+  // coerced args (pi core coerces before the event fires), so an explicit
+  // async flag is a boolean here. The two defaults are read from
+  // pi-subagents' own config, once per extension load: pi-subagents loads
+  // its config once per process, so a hand-edited file mid-session changes
+  // neither side until a reload. An agent that is an external CLI or has a
+  // launcher is forced background with async omitted even when the default
+  // is foreground; that combination is not detected here and draws a
+  // phantom foreground row.
+  const subConfig = () => {
+    try {
+      let dir = process.env.PI_CODING_AGENT_DIR || homedir() + "/.pi/agent";
+      if (dir.startsWith("~/")) dir = homedir() + dir.slice(1);
+      const config = JSON.parse(readFileSync(dir + "/extensions/subagent/config.json", "utf8"));
+      return {
+        asyncByDefault: config.asyncByDefault !== false,
+        forceTopLevelAsync: config.forceTopLevelAsync === true,
+      };
+    } catch {
+      // No config, or one that cannot be read: background is the default.
+      return { asyncByDefault: true, forceTopLevelAsync: false };
+    }
+  };
+
+  // Latched at extension load, the way pi-subagents latches its own.
+  const subLadder = subConfig();
+
+  const startSubagents = () => {
+    if (subUnsub || !pi?.events?.on) return;
+    try {
+      subUnsub = [
+        pi.events.on("subagent:async-started", p => {
+          try {
+            if (!tui || !p || typeof p !== "object") return;
+            const id = typeof p.id === "string" && p.id ? p.id : "";
+            if (!id) return;
+            if (typeof p.asyncDir === "string") subRuns.set(id, p.asyncDir);
+            // A single background run was launched by a tool call whose
+            // input holds the task unredacted; the event redacts it. The
+            // stash marks the call as launched: present means async-started
+            // has not named this call yet.
+            let text = "";
+            if (subTaskByCall.has(p.toolCallId)) {
+              text = subTaskByCall.get(p.toolCallId);
+              subTaskByCall.delete(p.toolCallId);
+            } else {
+              text = subFirstLine(p.label);
+            }
+            subReport("subagent_start", id, { agent_type: subFirstLine(p.agent), text });
+          } catch {}
+        }),
+        pi.events.on("subagent:child-status", p => {
+          try {
+            if (!tui || !p || typeof p !== "object" || p.type !== "subagent.child-status") return;
+            const id = (typeof p.childRunId === "string" && p.childRunId) ||
+              (typeof p.childId === "string" && p.childId) || "";
+            if (!id) return;
+            if (typeof p.asyncDir === "string") subRuns.set(id, p.asyncDir);
+            if (p.status === "started") {
+              subTrackChild(id, p);
+              subReport("subagent_start", id, { agent_type: subFirstLine(p.agent), text: subFirstLine(p.label) });
+            } else if (p.status === "stopping") {
+              subTrackChild(id, p);
+              subReport("subagent_update", id, { outcome: "stopping" });
+            } else if (p.status === "stopped") {
+              subReport("subagent_stop", id, { text: "" });
+              subDropChild(id);
+            }
+          } catch {}
+        }),
+        pi.events.on("subagent:async-complete", p => {
+          try {
+            if (!tui || !p || typeof p !== "object") return;
+            const id = (typeof p.runId === "string" && p.runId) ||
+              (typeof p.id === "string" && p.id) || "";
+            subRuns.delete(id);
+            if (!id) return;
+            if (p.state === "stopped" || p.stopped === true) {
+              // A user stop is published with success false and stopped set
+              // both; it is a stop, not a failure.
+              subReport("subagent_stop", id, { text: "" });
+            } else if (p.success === false || p.state === "failed") {
+              subReport("subagent_update", id, { outcome: "failed", text: subFirstLine(p.error) || "failed" });
+            } else {
+              // A stop the daemon reads as done needs a text: a run that
+              // finished but left no summary still says so.
+              subReport("subagent_stop", id, { text: subFirstLine(p.results?.[0]?.summary) || "done" });
+            }
+            subEndChildren(id, p);
+          } catch {}
+        }),
+        pi.events.on("subagent:jobs-changed", () => {
+          try {
+            if (!tui) return;
+            void pollStatuses().catch(() => {});
+          } catch {}
+        }),
+      ];
+    } catch {
+      subUnsub = undefined; // pi-subagents not loaded, or a bus that never fires
+    }
+  };
+
+  pi.on("tool_call", (event, ctx) => {
+    try {
+      if (!tui || event?.toolName !== "subagent") return;
+      subCtx = ctx;
+      const input = event.input;
+      const call = typeof event.toolCallId === "string" ? event.toolCallId : "";
+      if (!call) return;
+      // pi-subagents 0.84.0: management calls ('status', 'guide', 'list',
+      // ...) carry an action; executions carry none. Only executions are
+      // runs the pane can show, so a management call reports nothing at all.
+      if (typeof input?.action === "string" && input.action) return;
+      // The ladder, in pi-subagents' own order: an explicit flag wins;
+      // forceTopLevelAsync rewrites async: false at depth 0; else the quiet
+      // default. Nested calls (parentToolCallId set) are depth > 0, which
+      // the rewrite does not touch.
+      const forced = subLadder.forceTopLevelAsync && !event.parentToolCallId;
+      const background = input?.async === true ||
+        (input?.async === false ? forced : subLadder.asyncByDefault || forced);
+      if (background) {
+        // A background run reports through the async events; keep what they
+        // redact stashed against its tool call. A workflow call's start
+        // event names no tool call, so its stash is never consumed there —
+        // a failed launch still reports through the tool_result instead.
+        const task = subFirstLine(input?.task) || subFirstLine(input?.goal);
+        subTaskByCall.set(call, task);
+        return;
+      }
+      subReport("subagent_start", subId(call), {
+        agent_type: subFirstLine(input?.agent),
+        text: subFirstLine(input?.task) || subFirstLine(input?.goal),
+      });
+    } catch {}
+  });
+
+  pi.on("tool_result", (event, ctx) => {
+    try {
+      if (!tui || event?.toolName !== "subagent") return;
+      subCtx = ctx;
+      const call = typeof event.toolCallId === "string" ? event.toolCallId : "";
+      if (!call) return;
+      const id = subId(call);
+      if (subTaskByCall.has(call)) {
+        // A failed launch was never started, so no row exists yet and the
+        // stash is the only witness. Name it, then end it failed, or the
+        // rejection is invisible on the pane. A successful launch also
+        // leaves the stash unconsumed (a workflow's async-started names no
+        // tool call), but its rows came from the async and child-status
+        // events: reporting here would draw a phantom start and failure.
+        const task = subTaskByCall.get(call) ?? "";
+        subTaskByCall.delete(call);
+        if (event.isError) {
+          subReport("subagent_start", id, { text: task });
+          subReport("subagent_update", id, { outcome: "failed", text: subResultText(event.content) || "failed" });
+        }
+      } else if (event.isError) {
+        subReport("subagent_update", id, { outcome: "failed", text: subResultText(event.content) || "failed" });
+      } else {
+        // A stop the daemon reads as done needs a text, so a success with
+        // no text block still says done.
+        subReport("subagent_stop", id, { text: subResultText(event.content) || "done" });
+      }
+    } catch {}
   });
 }
