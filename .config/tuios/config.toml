@@ -207,6 +207,8 @@ prefix_workspace = []
 # Ctrl+F s uses the fzf popup command below; disable the native list.
 prefix_session_switcher = []
 prefix_scrollback = []
+# Reserve Ctrl+F Shift+E for VS Code; scrollback editing remains in the palette.
+edit_scrollback = []
 last_session = ["tab"]
 # Focus/leave the sidebar from either mode with Ctrl+F e.
 prefix_explore = ["e"]
@@ -273,6 +275,15 @@ key = "prefix+s"
 type = "popup"
 command = "python3 ~/.config/tuios/session-switcher.py --inline --terminal-mode"
 description = "Sessions (Television · directory · Git)"
+
+# Ctrl+F Shift+E opens the session project (including linked worktrees) in VS Code.
+# Lowercase e continues to focus/leave the sidebar.
+[[keybindings.command]]
+key = "prefix+E"
+type = "shell"
+command = "python3 ~/.config/tuios/open-vscode.py"
+name = "open-vscode"
+description = "Open session project in VS Code"
 
 # Capture source context before opening the popup; follow only after it closes.
 [[keybindings.command]]
