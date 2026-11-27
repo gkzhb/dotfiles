@@ -43,6 +43,23 @@
           }
         },
         {
+          "id": "gemini-4-neon",
+          "name": "Gemini 4 Neon",
+          "input": ["text", "image"],
+          "contextWindow": 500000,
+          "maxTokens": 32000,
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "xhigh",
+            "max": null
+          }
+        },
+        {
           "id": "gpt-6.1-sol",
           "name": "GPT 6.1 Sol",
           "input": ["text", "image"],
