@@ -43,7 +43,7 @@
           }
         },
         {
-          "id": "gemini-4-neon",
+          "id": "gemini-4-neon-chat",
           "name": "Gemini 4 Neon",
           "input": ["text", "image"],
           "contextWindow": 500000,
